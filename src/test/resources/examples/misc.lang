@@ -1,0 +1,32 @@
+interface Mammal {
+    fun void eatMilk();
+}
+
+interface Fluffy {
+    fun void getPetted();
+}
+
+class abstract CatLikeAnimal : Mammal, Fluffy {
+    field static protected int pawsCount = 4;
+}
+
+class Lion : CatLikeAnimal {
+
+    field String name;
+
+    constructor (String name) {
+        this.name = name;
+    }
+}
+
+class Main {
+    fun public static void main(String[] args) {
+        var int x;
+        x = 1;
+        if (args.length > 0) {
+            new Lion("Banach").getPetted();
+        } else {
+            System.consolePrint("No arguments");
+        }
+    }
+}

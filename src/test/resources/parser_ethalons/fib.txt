@@ -1,0 +1,126 @@
+class: Fib (1:1 - 18:1)
+  METHOD: fib[PRIVATE, STATIC] (3:5 - 13:5)
+    RETURN TYPE: int (3:24 - 3:26)
+    PARAMETERS: (3:31 - 3:37)
+      PARAMETER: n (3:32 - 3:36)
+        type: int (3:32 - 3:34)
+    BODY:
+      BLOCK: (3:39 - 13:5)
+        IF: (4:9 - 6:9)
+          CONDITION:
+            BINARY OP: EQ (4:13 - 4:18)
+              LEFT:
+                n (4:13 - 4:13)
+              RIGHT:
+                0 (4:18 - 4:18)
+          THEN:
+            BLOCK: (4:21 - 6:9)
+              RETURN (5:13 - 5:21):
+                VALUE:
+                  0 (5:20 - 5:20)
+        VAR: fibs (7:9 - 7:40)
+          TYPE: int (7:13 - 7:15)[]
+          INIT:
+            ARRAY CREATION: (7:26 - 7:39)
+              COMPONENT TYPE:
+                int (7:30 - 7:32)
+              DIMENSIONS:
+                BINARY OP: PLUS (7:34 - 7:38)
+                  LEFT:
+                    n (7:34 - 7:34)
+                  RIGHT:
+                    1 (7:38 - 7:38)
+        ASSIGN: (8:9 - 8:20)
+          LVALUE:
+            ARRAY ACCESS: (8:9 - 8:15)
+              ARRAY:
+                fibs (8:9 - 8:12)
+              INDEX:
+                1 (8:14 - 8:14)
+          RVALUE:
+            1 (8:19 - 8:19)
+        FOR: (9:9 - 11:9)
+          INIT:
+            VAR: i (9:13 - 9:26)
+              TYPE: int (9:17 - 9:19)
+              INIT:
+                2 (9:25 - 9:25)
+          CONDITION:
+            BINARY OP: LEQ (9:28 - 9:33)
+              LEFT:
+                i (9:28 - 9:28)
+              RIGHT:
+                n (9:33 - 9:33)
+          UPDATE:
+            ASSIGN: (9:36 - 9:45)
+              LVALUE:
+                i (9:36 - 9:36)
+              RVALUE:
+                BINARY OP: PLUS (9:40 - 9:44)
+                  LEFT:
+                    i (9:40 - 9:40)
+                  RIGHT:
+                    1 (9:44 - 9:44)
+          BODY:
+            BLOCK: (9:48 - 11:9)
+              ASSIGN: (10:13 - 10:48)
+                LVALUE:
+                  ARRAY ACCESS: (10:13 - 10:19)
+                    ARRAY:
+                      fibs (10:13 - 10:16)
+                    INDEX:
+                      i (10:18 - 10:18)
+                RVALUE:
+                  BINARY OP: PLUS (10:23 - 10:47)
+                    LEFT:
+                      ARRAY ACCESS: (10:23 - 10:33)
+                        ARRAY:
+                          fibs (10:23 - 10:26)
+                        INDEX:
+                          BINARY OP: MINUS (10:28 - 10:32)
+                            LEFT:
+                              i (10:28 - 10:28)
+                            RIGHT:
+                              2 (10:32 - 10:32)
+                    RIGHT:
+                      ARRAY ACCESS: (10:37 - 10:47)
+                        ARRAY:
+                          fibs (10:37 - 10:40)
+                        INDEX:
+                          BINARY OP: MINUS (10:42 - 10:46)
+                            LEFT:
+                              i (10:42 - 10:42)
+                            RIGHT:
+                              1 (10:46 - 10:46)
+        RETURN (12:9 - 12:23):
+          VALUE:
+            ARRAY ACCESS: (12:16 - 12:22)
+              ARRAY:
+                fibs (12:16 - 12:19)
+              INDEX:
+                n (12:21 - 12:21)
+  METHOD: main[PUBLIC, STATIC] (15:5 - 17:5)
+    RETURN TYPE: VOID
+    PARAMETERS: (15:32 - 15:46)
+      PARAMETER: args (15:33 - 15:45)
+        type: String (15:33 - 15:38)[]
+    BODY:
+      BLOCK: (15:48 - 17:5)
+        EXPRESSION STATEMENT: (16:9 - 16:62)
+          METHOD CALL: consolePrint (16:9 - 16:61)
+            TARGET:
+              System (16:9 - 16:14)
+            ARGUMENTS: (16:28 - 16:61)
+              METHOD CALL: fib (16:29 - 16:60)
+                TARGET:
+                  Fib (16:29 - 16:31)
+                ARGUMENTS: (16:36 - 16:60)
+                  METHOD CALL: parseInt (16:37 - 16:59)
+                    TARGET:
+                      Utils (16:37 - 16:41)
+                    ARGUMENTS: (16:51 - 16:59)
+                      ARRAY ACCESS: (16:52 - 16:58)
+                        ARRAY:
+                          args (16:52 - 16:55)
+                        INDEX:
+                          0 (16:57 - 16:57)

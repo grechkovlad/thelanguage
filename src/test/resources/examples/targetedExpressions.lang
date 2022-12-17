@@ -1,0 +1,48 @@
+class Point {
+    field public float x;
+    field public float y;
+
+    fun String stringify() {
+        return "";
+    }
+
+    constructor public (float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+class Segment {
+    field public Point from;
+    field public Point to;
+
+    fun String stringify() {
+        return "";
+    }
+
+    fun Point getFrom() {
+        return this.from;
+    }
+
+    fun Point[] asArray() {
+        var Point[] res = new Point[2];
+        res[0] = from;
+        res[1] = to;
+        return res;
+    }
+
+    constructor public (Point from, Point to) {
+        this.from = from;
+        this.to = to;
+    }
+}
+
+class Main {
+    fun public static void main(String[] args) {
+        var Segment[][] segmentMatrix = new Segment[2][2];
+
+        (segmentMatrix[0][1]).from.x = 1;
+        segmentMatrix[(0 / 1)][0 + 1].asArray()[0].stringify();
+        segmentMatrix[1 / 1 + 1 - 1][0 + 1].asArray().x = 5;
+    }
+}

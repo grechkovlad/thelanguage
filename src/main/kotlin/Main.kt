@@ -1,7 +1,10 @@
-fun main(args: Array<String>) {
-    println("Hello World!")
+import ast.dump
+import parser.Parser
+import java.nio.file.Files
+import java.nio.file.Paths
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+fun main(args: Array<String>) {
+    val input = Files.readString(Paths.get("/Users/vladislav.grechko/IdeaProjects/thelanguage/src/test/resources/examples/arithmeticExpressions.lang"))
+    val ast = Parser(input).parse()
+    println(ast.dump())
 }

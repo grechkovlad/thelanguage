@@ -1,0 +1,66 @@
+interface: Animal (1:1 - 4:1)
+  METHOD: makeSound (2:5 - 2:27)
+    RETURN TYPE: String (2:9 - 2:14)
+  METHOD: createChild (3:5 - 3:29)
+    RETURN TYPE: Animal (3:9 - 3:14)
+interface: Mammal (6:1 - 8:1)
+  SUPERCLASSES: Animal
+  METHOD: milk (7:5 - 7:20)
+    RETURN TYPE: VOID
+class: Dog (10:1 - 19:1)[ABSTRACT]
+  SUPERCLASSES: Mammal
+  FIELD: PAWS_COUNT [PUBLIC, STATIC] (12:5 - 12:43)
+    TYPE: int (12:25 - 12:27)
+    INIT:
+      4 (12:42 - 12:42)
+  METHOD: milk (14:5 - 14:22)
+    RETURN TYPE: VOID
+    BODY:
+      BLOCK: (14:21 - 14:22)
+  METHOD: makeSound (16:5 - 18:5)
+    RETURN TYPE: String (16:9 - 16:14)
+    BODY:
+      BLOCK: (16:28 - 18:5)
+        RETURN (17:9 - 17:23):
+          VALUE:
+            "Bark!" (17:16 - 17:22)
+class: NamedDog (21:1 - 38:1)
+  SUPERCLASSES: Dog
+  FIELD: name [PRIVATE] (23:5 - 23:37)
+    TYPE: String (23:19 - 23:24)
+    INIT:
+      NULL (23:33 - 23:36)
+  CONSTRUCTOR: [PUBLIC]
+    PARAMETERS: (25:24 - 25:36)
+      PARAMETER: name (25:25 - 25:35)
+        type: String (25:25 - 25:30) (25:5 - 28:5)
+    BODY:
+      BLOCK: (25:38 - 28:5)
+        SUPER CALL:
+        ASSIGN: (27:9 - 27:25)
+          LVALUE:
+            FIELD ACCESS: name (27:9 - 27:17)
+              TARGET:
+                THIS (27:9 - 27:12)
+          RVALUE:
+            name (27:21 - 27:24)
+  METHOD: makeSound (30:5 - 32:5)
+    RETURN TYPE: String (30:9 - 30:14)
+    BODY:
+      BLOCK: (30:28 - 32:5)
+        RETURN (31:9 - 31:30):
+          VALUE:
+            "Fluffy bark!" (31:16 - 31:29)
+  METHOD: createChild (34:5 - 36:5)
+    RETURN TYPE: Animal (34:9 - 34:14)
+    BODY:
+      BLOCK: (34:30 - 36:5)
+        RETURN (35:9 - 35:47):
+          VALUE:
+            CONSTRUCTOR CALL: NamedDog (35:16 - 35:46)
+              ARGUMENTS: (35:28 - 35:46)
+                BINARY OP: PLUS (35:29 - 35:45)
+                  LEFT:
+                    name (35:29 - 35:32)
+                  RIGHT:
+                    "'s child" (35:36 - 35:45)
