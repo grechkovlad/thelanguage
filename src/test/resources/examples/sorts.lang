@@ -1,0 +1,66 @@
+interface Sorter {
+    void sort(int[] a);
+}
+
+class BubbleSort : Sorter {
+    void sort(int[] arr) {
+        int n = arr.length;
+        for(int i = 0; i < n; i++) {
+            int j = i;
+            while (j > 0 && arr[j - 1] > arr[j]) {
+                int tmp = arr[j - 1];
+                arr[j - 1] = arr[j];
+                arr[j] = tmp;
+                j--;
+            }
+            i++;
+        }
+    }
+}
+
+class CountSort : Sorter {
+
+    void sort(int[] arr) {
+        int n = arr.length;
+        int maxVal = Utils.MIN_INT;
+        int minVal = Utils.MAX_INT;
+        for(int i = 0; i < n; i++) {
+            maxVal = Utils.max(maxVal, arr[i]);
+            minVal = Utils.min(minVal, arr[i]);
+        }
+        int size = maxVal - minVal + 1;
+        int count = new int[size];
+        for(int i = 0; i < n; i++) {
+            count[arr[i] + minVal]++;
+        }
+        int index = 0;
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < count[i]; j++) {
+                arr[index++] = i - minVal;
+            }
+        }
+    }
+}
+
+class TestSorts {
+
+    static int testArray = new int[]{42, -1, 3, 1, 34, 4, 8, 9, 0};
+
+    static void sort(int[] a, Sorter sorter) {
+        sorter.sort(a);
+    }
+
+    public static void main(String[] args) {
+        int[] copy1 = Utils.arrayCopy(testArray);
+        int[] copy2 = Utils.arrayCopy(testArray);
+        sort(copy1, new BubbleSorter());
+        sort(copy2, new CountSort()));
+        for(int i = 0; i < copy1.size; i++) {
+            if (copy1[i] != copy2[i]) {
+                System.consolePrint("Fail");
+                return;
+            }
+        }
+        System.consolePrint("OK");
+    }
+}
