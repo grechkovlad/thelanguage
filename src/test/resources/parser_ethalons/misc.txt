@@ -1,0 +1,69 @@
+interface: Mammal (1:1 - 3:1)
+  METHOD: eatMilk (2:5 - 2:23)
+    RETURN TYPE: VOID
+interface: Fluffy (5:1 - 7:1)
+  METHOD: getPetted (6:5 - 6:25)
+    RETURN TYPE: VOID
+class: CatLikeAnimal (9:1 - 11:1)[ABSTRACT]
+  SUPERCLASSES: Mammal, Fluffy
+  FIELD: pawsCount [STATIC, PROTECTED] (10:5 - 10:45)
+    TYPE: int (10:28 - 10:30)
+    INIT:
+      4 (10:44 - 10:44)
+class: Lion (13:1 - 20:1)
+  SUPERCLASSES: CatLikeAnimal
+  FIELD: name  (15:5 - 15:22)
+    TYPE: String (15:11 - 15:16)
+  CONSTRUCTOR: []
+    PARAMETERS: (17:17 - 17:29)
+      PARAMETER: name (17:18 - 17:28)
+        type: String (17:18 - 17:23) (17:5 - 19:5)
+    BODY:
+      BLOCK: (17:31 - 19:5)
+        ASSIGN: (18:9 - 18:25)
+          LVALUE:
+            FIELD ACCESS: name (18:9 - 18:17)
+              TARGET:
+                THIS (18:9 - 18:12)
+          RVALUE:
+            name (18:21 - 18:24)
+class: Main (22:1 - 32:1)
+  METHOD: main[PUBLIC, STATIC] (23:5 - 31:5)
+    RETURN TYPE: VOID
+    PARAMETERS: (23:32 - 23:46)
+      PARAMETER: args (23:33 - 23:45)
+        type: String (23:33 - 23:38)[]
+    BODY:
+      BLOCK: (23:48 - 31:5)
+        VAR: x (24:9 - 24:18)
+          TYPE: int (24:13 - 24:15)
+        ASSIGN: (25:9 - 25:14)
+          LVALUE:
+            x (25:9 - 25:9)
+          RVALUE:
+            1 (25:13 - 25:13)
+        IF: (26:9 - 30:9)
+          CONDITION:
+            BINARY OP: GREATER (26:13 - 26:27)
+              LEFT:
+                FIELD ACCESS: length (26:13 - 26:23)
+                  TARGET:
+                    args (26:13 - 26:16)
+              RIGHT:
+                0 (26:27 - 26:27)
+          THEN:
+            BLOCK: (26:30 - 28:9)
+              EXPRESSION STATEMENT: (27:13 - 27:43)
+                METHOD CALL: getPetted (27:13 - 27:42)
+                  TARGET:
+                    CONSTRUCTOR CALL: Lion (27:13 - 27:30)
+                      ARGUMENTS: (27:21 - 27:30)
+                        "Banach" (27:22 - 27:29)
+          ELSE:
+            BLOCK: (28:16 - 30:9)
+              EXPRESSION STATEMENT: (29:13 - 29:48)
+                METHOD CALL: consolePrint (29:13 - 29:47)
+                  TARGET:
+                    System (29:13 - 29:18)
+                  ARGUMENTS: (29:32 - 29:47)
+                    "No arguments" (29:33 - 29:46)

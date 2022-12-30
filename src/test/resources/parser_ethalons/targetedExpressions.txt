@@ -1,0 +1,203 @@
+class: Point (1:1 - 13:1)
+  FIELD: x [PUBLIC] (2:5 - 2:25)
+    TYPE: float (2:18 - 2:22)
+  FIELD: y [PUBLIC] (3:5 - 3:25)
+    TYPE: float (3:18 - 3:22)
+  METHOD: stringify (5:5 - 7:5)
+    RETURN TYPE: String (5:9 - 5:14)
+    BODY:
+      BLOCK: (5:28 - 7:5)
+        RETURN (6:9 - 6:18):
+          VALUE:
+            "" (6:16 - 6:17)
+  CONSTRUCTOR: [PUBLIC]
+    PARAMETERS: (9:24 - 9:41)
+      PARAMETER: x (9:25 - 9:31)
+        type: float (9:25 - 9:29)
+      PARAMETER: y (9:34 - 9:40)
+        type: float (9:34 - 9:38) (9:5 - 12:5)
+    BODY:
+      BLOCK: (9:43 - 12:5)
+        ASSIGN: (10:9 - 10:19)
+          LVALUE:
+            FIELD ACCESS: x (10:9 - 10:14)
+              TARGET:
+                THIS (10:9 - 10:12)
+          RVALUE:
+            x (10:18 - 10:18)
+        ASSIGN: (11:9 - 11:19)
+          LVALUE:
+            FIELD ACCESS: y (11:9 - 11:14)
+              TARGET:
+                THIS (11:9 - 11:12)
+          RVALUE:
+            y (11:18 - 11:18)
+class: Segment (15:1 - 38:1)
+  FIELD: from [PUBLIC] (16:5 - 16:28)
+    TYPE: Point (16:18 - 16:22)
+  FIELD: to [PUBLIC] (17:5 - 17:26)
+    TYPE: Point (17:18 - 17:22)
+  METHOD: stringify (19:5 - 21:5)
+    RETURN TYPE: String (19:9 - 19:14)
+    BODY:
+      BLOCK: (19:28 - 21:5)
+        RETURN (20:9 - 20:18):
+          VALUE:
+            "" (20:16 - 20:17)
+  METHOD: getFrom (23:5 - 25:5)
+    RETURN TYPE: Point (23:9 - 23:13)
+    BODY:
+      BLOCK: (23:25 - 25:5)
+        RETURN (24:9 - 24:25):
+          VALUE:
+            FIELD ACCESS: from (24:16 - 24:24)
+              TARGET:
+                THIS (24:16 - 24:19)
+  METHOD: asArray (27:5 - 32:5)
+    RETURN TYPE: Point (27:9 - 27:13)[]
+    BODY:
+      BLOCK: (27:27 - 32:5)
+        VAR: res (28:9 - 28:39)
+          TYPE: Point (28:13 - 28:17)[]
+          INIT:
+            ARRAY CREATION: (28:27 - 28:38)
+              COMPONENT TYPE:
+                Point (28:31 - 28:35)
+              DIMENSIONS:
+                2 (28:37 - 28:37)
+        ASSIGN: (29:9 - 29:22)
+          LVALUE:
+            ARRAY ACCESS: (29:9 - 29:14)
+              ARRAY:
+                res (29:9 - 29:11)
+              INDEX:
+                0 (29:13 - 29:13)
+          RVALUE:
+            from (29:18 - 29:21)
+        ASSIGN: (30:9 - 30:20)
+          LVALUE:
+            ARRAY ACCESS: (30:9 - 30:14)
+              ARRAY:
+                res (30:9 - 30:11)
+              INDEX:
+                1 (30:13 - 30:13)
+          RVALUE:
+            to (30:18 - 30:19)
+        RETURN (31:9 - 31:19):
+          VALUE:
+            res (31:16 - 31:18)
+  CONSTRUCTOR: [PUBLIC]
+    PARAMETERS: (34:24 - 34:45)
+      PARAMETER: from (34:25 - 34:34)
+        type: Point (34:25 - 34:29)
+      PARAMETER: to (34:37 - 34:44)
+        type: Point (34:37 - 34:41) (34:5 - 37:5)
+    BODY:
+      BLOCK: (34:47 - 37:5)
+        ASSIGN: (35:9 - 35:25)
+          LVALUE:
+            FIELD ACCESS: from (35:9 - 35:17)
+              TARGET:
+                THIS (35:9 - 35:12)
+          RVALUE:
+            from (35:21 - 35:24)
+        ASSIGN: (36:9 - 36:21)
+          LVALUE:
+            FIELD ACCESS: to (36:9 - 36:15)
+              TARGET:
+                THIS (36:9 - 36:12)
+          RVALUE:
+            to (36:19 - 36:20)
+class: Main (40:1 - 48:1)
+  METHOD: main[PUBLIC, STATIC] (41:5 - 47:5)
+    RETURN TYPE: VOID
+    PARAMETERS: (41:32 - 41:46)
+      PARAMETER: args (41:33 - 41:45)
+        type: String (41:33 - 41:38)[]
+    BODY:
+      BLOCK: (41:48 - 47:5)
+        VAR: segmentMatrix (42:9 - 42:58)
+          TYPE: Segment (42:13 - 42:19)[][]
+          INIT:
+            ARRAY CREATION: (42:41 - 42:57)
+              COMPONENT TYPE:
+                Segment (42:45 - 42:51)
+              DIMENSIONS:
+                2 (42:53 - 42:53)
+                2 (42:56 - 42:56)
+        ASSIGN: (44:10 - 44:41)
+          LVALUE:
+            FIELD ACCESS: x (44:10 - 44:36)
+              TARGET:
+                FIELD ACCESS: from (44:10 - 44:34)
+                  TARGET:
+                    ARRAY ACCESS: (44:10 - 44:28)
+                      ARRAY:
+                        ARRAY ACCESS: (44:10 - 44:25)
+                          ARRAY:
+                            segmentMatrix (44:10 - 44:22)
+                          INDEX:
+                            0 (44:24 - 44:24)
+                      INDEX:
+                        1 (44:27 - 44:27)
+          RVALUE:
+            1 (44:40 - 44:40)
+        EXPRESSION STATEMENT: (45:9 - 45:63)
+          METHOD CALL: stringify (45:9 - 45:62)
+            TARGET:
+              ARRAY ACCESS: (45:9 - 45:50)
+                ARRAY:
+                  METHOD CALL: asArray (45:9 - 45:47)
+                    TARGET:
+                      ARRAY ACCESS: (45:9 - 45:37)
+                        ARRAY:
+                          ARRAY ACCESS: (45:9 - 45:30)
+                            ARRAY:
+                              segmentMatrix (45:9 - 45:21)
+                            INDEX:
+                              BINARY OP: DIV (45:24 - 45:28)
+                                LEFT:
+                                  0 (45:24 - 45:24)
+                                RIGHT:
+                                  1 (45:28 - 45:28)
+                        INDEX:
+                          BINARY OP: PLUS (45:32 - 45:36)
+                            LEFT:
+                              0 (45:32 - 45:32)
+                            RIGHT:
+                              1 (45:36 - 45:36)
+                INDEX:
+                  0 (45:49 - 45:49)
+        ASSIGN: (46:9 - 46:60)
+          LVALUE:
+            FIELD ACCESS: x (46:9 - 46:55)
+              TARGET:
+                METHOD CALL: asArray (46:9 - 46:53)
+                  TARGET:
+                    ARRAY ACCESS: (46:9 - 46:43)
+                      ARRAY:
+                        ARRAY ACCESS: (46:9 - 46:36)
+                          ARRAY:
+                            segmentMatrix (46:9 - 46:21)
+                          INDEX:
+                            BINARY OP: MINUS (46:23 - 46:35)
+                              LEFT:
+                                BINARY OP: PLUS (46:23 - 46:31)
+                                  LEFT:
+                                    BINARY OP: DIV (46:23 - 46:27)
+                                      LEFT:
+                                        1 (46:23 - 46:23)
+                                      RIGHT:
+                                        1 (46:27 - 46:27)
+                                  RIGHT:
+                                    1 (46:31 - 46:31)
+                              RIGHT:
+                                1 (46:35 - 46:35)
+                      INDEX:
+                        BINARY OP: PLUS (46:38 - 46:42)
+                          LEFT:
+                            0 (46:38 - 46:38)
+                          RIGHT:
+                            1 (46:42 - 46:42)
+          RVALUE:
+            5 (46:59 - 46:59)

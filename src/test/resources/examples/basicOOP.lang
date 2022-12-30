@@ -1,0 +1,38 @@
+interface Animal {
+    fun String makeSound();
+    fun Animal createChild();
+}
+
+interface Mammal : Animal {
+    fun void milk();
+}
+
+class abstract Dog : Mammal {
+
+    field public static int PAWS_COUNT = 4;
+
+    fun void milk() {}
+
+    fun String makeSound() {
+        return "Bark!";
+    }
+}
+
+class NamedDog : Dog {
+
+    field private String name = null;
+
+    constructor public (String name) {
+        super();
+        this.name = name;
+    }
+
+    fun String makeSound() {
+        return "Fluffy bark!";
+    }
+
+    fun Animal createChild() {
+        return new NamedDog(name + "'s child");
+    }
+
+}
