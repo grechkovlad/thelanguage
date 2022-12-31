@@ -1,6 +1,8 @@
 package parser
 
 import ClassKind
+import EMPTY_LOCATION
+import Location
 import ast.*
 import ast.Identifier
 import lexer.*
@@ -9,10 +11,10 @@ import lexer.KeySeqType.*
 
 class Parser(input: CharSequence, private val fileName: String) {
 
-    private fun TokenLocation.toAstLocation() = FileRelativeLocation(line, columnStart, line, columnEnd)
+    private fun TokenLocation.toAstLocation() = Location(fileName, line, columnStart, line, columnEnd)
 
-    private infix fun FileRelativeLocation.between(to: FileRelativeLocation) =
-        FileRelativeLocation(lineStart, columnStart, to.lineEnd, to.columnEnd)
+    private infix fun Location.between(to: Location) =
+        Location(fileName, lineStart, columnStart, to.lineEnd, to.columnEnd)
 
     private val lexer: LL3Lexer = LL3Lexer(input)
 
@@ -76,7 +78,7 @@ class Parser(input: CharSequence, private val fileName: String) {
             classes.add(classDecl)
             endLocation = classDecl.location
         }
-        return SourceFile(classes, fileName, startLocation between endLocation)
+        return SourceFile(classes, startLocation between endLocation)
     }
 
     private fun parseClass(): ClassDeclaration {
@@ -165,7 +167,7 @@ class Parser(input: CharSequence, private val fileName: String) {
     }
 
     private fun parseModifiers(): ModifiersList {
-        if (!atModifier()) return ModifiersList(emptyList(), FileRelativeLocation(0, 0, 0, -1))
+        if (!atModifier()) return ModifiersList(emptyList(), EMPTY_LOCATION)
         val startLocation = lexer.current.location.toAstLocation()
         var endLocation = startLocation
         val modifiers = mutableListOf<Modifier>()
@@ -211,7 +213,7 @@ class Parser(input: CharSequence, private val fileName: String) {
         val name = parseIdentifier()
         val parameters = parseParametersList()
         var body: Block? = null
-        val endLocation: FileRelativeLocation
+        val endLocation: Location
         if (!atKeySeq(SEMICOLON)) {
             body = parseBlock()
             endLocation = body.location
@@ -440,7 +442,7 @@ class Parser(input: CharSequence, private val fileName: String) {
 
     private fun parseArrayCreation(): Expression {
         val startLocation = eatKeySeqToken(NEW).location.toAstLocation()
-        var endLocation: FileRelativeLocation
+        var endLocation: Location
         val type = parseIdentifier()
         val dimensions = mutableListOf<Expression>()
         do {

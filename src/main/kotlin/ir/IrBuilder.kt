@@ -1,22 +1,24 @@
 package ir
 
-import ast.FileRelativeLocation
-import ast.SourceFile
+import Location
 
 
-class IrBuilder(private val sources: List<SourceFile>) {
+class IrBuilder(private val sources: List<ast.SourceFile>) {
+
+    private val classes = mutableMapOf<String, LocatableIrNode<ClassDeclaration>>()
+    private val allClassesAst
+        get() = sources.flatMap { it.classes }
+
     fun build(): Project {
-        checkClassDeclarationClash()
-        val classes = mutableListOf<ClassDeclaration>()
-        sources.forEach { source -> source.classes.forEach { classes.add(build(it)) } }
-        return Project(classes)
+        doClassDeclarationlAnalysis()
+        doMemberDeclarationAnalysis()
+        TODO()
     }
 
-    private fun build(classDeclarationAst: ast.ClassDeclaration): ClassDeclaration {
-        val members = mutableListOf<Member>()
-        classDeclarationAst.members.forEach { member -> members.add(buildMember(member)) }
-        return ClassDeclaration(classDeclarationAst.type, members)
+    private fun doMemberDeclarationAnalysis() {
+        TODO("Not yet implemented")
     }
+
 
     private fun buildMember(memberAst: ast.MemberDeclaration): Member {
         return when (memberAst) {
@@ -35,7 +37,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
     private fun buildStatement(statement: ast.Statement): Statement {
         return when (statement) {
             is ast.Assignment -> TODO()
-            is ast.ExpressionStatement -> TODO()
+            is ast.ExpressionStatement -> buildExpressionStatement(statement)
             is ast.ForStatement -> TODO()
             is ast.IfStatement -> TODO()
             is ast.ConstructorDeclaration -> TODO()
@@ -46,6 +48,28 @@ class IrBuilder(private val sources: List<SourceFile>) {
             is ast.SuperCall -> TODO()
             is ast.VariableDeclaration -> TODO()
             is ast.WhileStatement -> TODO()
+        }
+    }
+
+    private fun buildExpressionStatement(statement: ast.ExpressionStatement): ExpressionStatement {
+        return ExpressionStatement(buildExpression(statement.expression))
+    }
+
+    private fun buildExpression(expression: ast.Expression): Expression {
+        return when (expression) {
+            is ast.ArrayAccess -> TODO()
+            is ast.ArrayCreation -> TODO()
+            is ast.BinaryOperation -> TODO()
+            is ast.ConstructorCall -> TODO()
+            is ast.FieldAccess -> TODO()
+            is ast.FloatLiteral -> TODO()
+            is ast.Identifier -> TODO()
+            is ast.IntLiteral -> TODO()
+            is ast.MethodCall -> TODO()
+            is ast.Null -> TODO()
+            is ast.StringLiteral -> TODO()
+            is ast.This -> TODO()
+            is ast.UnaryOperation -> TODO()
         }
     }
 
@@ -61,26 +85,101 @@ class IrBuilder(private val sources: List<SourceFile>) {
         TODO("Not yet implemented")
     }
 
-    private fun checkClassDeclarationClash() {
-        val fistDeclaration = mutableMapOf<String, AbsoluteLocation>()
-        sources.forEach { source : SourceFile ->
-            source.classes.forEach { clazz ->
-                val name = clazz.name.value
-                val location = AbsoluteLocation(source.file, clazz.name.location)
-                if (fistDeclaration.containsKey(name)) {
-                    throw NameDeclarationClash(name, fistDeclaration[name]!!, location)
+    private fun doClassDeclarationlAnalysis() {
+        initClassDeclarations()
+        analyzeInheritance()
+    }
+
+
+    private fun tryResolveClassRef(name: String, location: Location): ClassReference {
+        return systemClassReferences[name] ?: classes[name]?.let { UserClassReference(it.node) }
+        ?: throw UnresolvedReference(name, location)
+    }
+
+    private fun analyzeInheritance() {
+        fillSupertypesReferences()
+        checkCyclicInheritance()
+    }
+
+    private fun checkCyclicInheritance() {
+        val color = mutableMapOf<String, Boolean>()
+
+        fun dfs(node: ClassDeclaration) {
+            if (color[node.name] == true) return
+            color[node.name] = false
+            for (superRef in listOf(node.superClass, *node.interfaces.toTypedArray())) {
+                if (color[superRef.name] == false) throw CyclicInheritance(node.name)
+                if (superRef is UserClassReference) dfs(superRef.declaration)
+            }
+            color[node.name] = true
+        }
+    }
+
+    private fun fillSupertypesReferences() {
+        allClassesAst.forEach { clazz ->
+            var superClass: ClassReference? = null
+            val interfaces = mutableListOf<UserClassReference>()
+            for (supertypeIdentifier in clazz.superClasses) {
+                val superTypeRef = tryResolveClassRef(supertypeIdentifier.value, supertypeIdentifier.location)
+                if (superTypeRef in finalClassesRefs) throw FinalClassSubtyping(
+                    supertypeIdentifier.value,
+                    supertypeIdentifier.location
+                )
+                if (!superTypeRef.isInterface) {
+                    if (clazz.type == ClassKind.INTERFACE) throw InterfaceInheritsClass(supertypeIdentifier.location)
+                    superClass =
+                        if (superClass == null) superTypeRef else throw MultipleInheritance(supertypeIdentifier.location)
                 } else {
-                    fistDeclaration[name] = location
+                    interfaces.add(superTypeRef as UserClassReference)
                 }
+            }
+            val currentClassDeclaration = classes[clazz.name.value]!!.node
+            currentClassDeclaration.interfaces = interfaces.toList()
+            if (currentClassDeclaration.kind == ClassKind.CLASS) {
+                currentClassDeclaration.superClass = superClass ?: ObjectClassReference
             }
         }
     }
 
+    private val reservedClassNames = listOf("Object", "String")
+    private val finalClassesRefs = listOf(SystemClassReference, StringClassReference)
+    private val systemClassReferences = mapOf(
+        "Object" to ObjectClassReference,
+        "String" to StringClassReference,
+        "System" to SystemClassReference
+    )
+
+    private fun initClassDeclarations() {
+        allClassesAst.forEach { clazz ->
+            val name = clazz.name.value
+            val location = clazz.name.location
+            if (name in reservedClassNames) throw ReservedClassName(name, location)
+            if (classes.containsKey(name)) {
+                throw NameDeclarationClash(name, classes[name]!!.location, location)
+            } else {
+                classes[name] = ClassDeclaration(name, clazz.type).withLocation(location)
+            }
+        }
+    }
 }
 
 sealed class CompilationError : RuntimeException()
 
-data class NameDeclarationClash(val name: String, val first: AbsoluteLocation, val second: AbsoluteLocation) :
+data class NameDeclarationClash(val name: String, val first: Location, val second: Location) :
     CompilationError()
 
-data class AbsoluteLocation(val file: String, val inFileLocation: FileRelativeLocation)
+data class ReservedClassName(val name: String, val location: Location) : CompilationError()
+
+data class UnresolvedReference(val name: String, val location: Location) : CompilationError()
+
+data class FinalClassSubtyping(val name: String, val location: Location) : CompilationError()
+
+data class MultipleInheritance(val location: Location) : CompilationError()
+
+data class InterfaceInheritsClass(val location: Location) : CompilationError()
+
+data class CyclicInheritance(val name: String) : CompilationError()
+
+private data class LocatableIrNode<T : IrNode>(val node: T, val location: Location)
+
+private fun <T : IrNode> T.withLocation(location: Location) = LocatableIrNode(this, location)

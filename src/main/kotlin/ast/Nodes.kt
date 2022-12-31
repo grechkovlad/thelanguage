@@ -1,12 +1,14 @@
 package ast
 
 import ClassKind
+import EMPTY_LOCATION
+import Location
 
-sealed class AstNode(val location: FileRelativeLocation) {
+sealed class AstNode(val location: Location) {
     abstract fun <T> accept(visitor: VoidAstVisitor<T>, context: T)
 }
 
-sealed class TypeReference(location: FileRelativeLocation) : AstNode(location)
+sealed class TypeReference(location: Location) : AstNode(location)
 
 class SimpleTypeReference(val identifier: Identifier) : TypeReference(identifier.location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
@@ -14,68 +16,68 @@ class SimpleTypeReference(val identifier: Identifier) : TypeReference(identifier
     }
 }
 
-class ArrayTypeReference(val componentTypeReference: TypeReference, location: FileRelativeLocation) :
+class ArrayTypeReference(val componentTypeReference: TypeReference, location: Location) :
     TypeReference(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class StringLiteral(val value: String, location: FileRelativeLocation) : Expression(location) {
+class StringLiteral(val value: String, location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class IntLiteral(val value: Int, location: FileRelativeLocation) : Expression(location) {
+class IntLiteral(val value: Int, location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class FloatLiteral(val value: Float, location: FileRelativeLocation) : Expression(location) {
+class FloatLiteral(val value: Float, location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class Identifier(val value: String, location: FileRelativeLocation) : Expression(location) {
+class Identifier(val value: String, location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class Null(location: FileRelativeLocation) : Expression(location) {
+class Null(location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class This(location: FileRelativeLocation) : Expression(location) {
+class This(location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class ArrayAccess(val array: Expression, val index: Expression, location: FileRelativeLocation) : Expression(location) {
+class ArrayAccess(val array: Expression, val index: Expression, location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class FieldAccess(val target: Expression, val name: Identifier, location: FileRelativeLocation) : Expression(location) {
+class FieldAccess(val target: Expression, val name: Identifier, location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class Parameter(val type: TypeReference, val name: Identifier, location: FileRelativeLocation) : AstNode(location) {
+class Parameter(val type: TypeReference, val name: Identifier, location: Location) : AstNode(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-abstract class Expression(location: FileRelativeLocation) : AstNode(location)
+sealed class Expression(location: Location) : AstNode(location)
 
 enum class BinaryOperationKind {
     PLUS, MINUS, MULT, DIV, LESS, LEQ, GREATER, GEQ, AND, OR, EQ, NOT_EQ
@@ -85,7 +87,7 @@ class BinaryOperation(
     val kind: BinaryOperationKind,
     val leftOperand: Expression,
     val rightOperand: Expression,
-    location: FileRelativeLocation
+    location: Location
 ) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
@@ -96,7 +98,7 @@ enum class UnaryOperationKind {
     MINUS, NOT
 }
 
-class UnaryOperation(val kind: UnaryOperationKind, val operand: Expression, location: FileRelativeLocation) :
+class UnaryOperation(val kind: UnaryOperationKind, val operand: Expression, location: Location) :
     Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
@@ -104,7 +106,7 @@ class UnaryOperation(val kind: UnaryOperationKind, val operand: Expression, loca
 }
 
 class MethodCall(
-    val target: Expression, val name: Identifier, val arguments: ArgumentsList, location: FileRelativeLocation
+    val target: Expression, val name: Identifier, val arguments: ArgumentsList, location: Location
 ) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
@@ -112,29 +114,29 @@ class MethodCall(
 }
 
 class ConstructorCall(
-    val type: SimpleTypeReference, val arguments: ArgumentsList, location: FileRelativeLocation
+    val type: SimpleTypeReference, val arguments: ArgumentsList, location: Location
 ) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class SuperCall(val arguments: ArgumentsList, location: FileRelativeLocation) : Statement(location) {
+class SuperCall(val arguments: ArgumentsList, location: Location) : Statement(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class ArrayCreation(val type: SimpleTypeReference, val dimensions: List<Expression>, location: FileRelativeLocation) :
+class ArrayCreation(val type: SimpleTypeReference, val dimensions: List<Expression>, location: Location) :
     Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-sealed class Statement(location: FileRelativeLocation) : AstNode(location)
+sealed class Statement(location: Location) : AstNode(location)
 
-class ExpressionStatement(val expression: Expression, location: FileRelativeLocation) : Statement(location) {
+class ExpressionStatement(val expression: Expression, location: Location) : Statement(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
@@ -144,14 +146,14 @@ class IfStatement(
     val condition: Expression,
     val thenStatements: Block,
     val elseStatements: Block?,
-    location: FileRelativeLocation
+    location: Location
 ) : Statement(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class WhileStatement(val condition: Expression, val body: Block, location: FileRelativeLocation) :
+class WhileStatement(val condition: Expression, val body: Block, location: Location) :
     Statement(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
@@ -163,38 +165,38 @@ class ForStatement(
     val condition: Expression,
     val updateStatement: Statement,
     val body: Block,
-    location: FileRelativeLocation
+    location: Location
 ) : Statement(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class ReturnStatement(val value: Expression?, location: FileRelativeLocation) : Statement(location) {
+class ReturnStatement(val value: Expression?, location: Location) : Statement(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class Assignment(val lValue: Expression, val rValue: Expression, location: FileRelativeLocation) : Statement(location) {
+class Assignment(val lValue: Expression, val rValue: Expression, location: Location) : Statement(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-sealed class MemberDeclaration(val modifiers: ModifiersList, location: FileRelativeLocation) : Statement(location)
+sealed class MemberDeclaration(val modifiers: ModifiersList, location: Location) : Statement(location)
 
 enum class ModifierType {
     STATIC, PUBLIC, PRIVATE, PROTECTED, ABSTRACT
 }
 
-class Modifier(val type: ModifierType, location: FileRelativeLocation) : AstNode(location) {
+class Modifier(val type: ModifierType, location: Location) : AstNode(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class ModifiersList(val modifiers: List<Modifier>, location: FileRelativeLocation) : AstNode(location),
+class ModifiersList(val modifiers: List<Modifier>, location: Location) : AstNode(location),
     List<Modifier> by modifiers {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
@@ -203,21 +205,21 @@ class ModifiersList(val modifiers: List<Modifier>, location: FileRelativeLocatio
 
 private val EMPTY_MODIFIER_LIST = ModifiersList(emptyList(), EMPTY_LOCATION)
 
-class ParametersList(val parameters: List<Parameter>, location: FileRelativeLocation) : AstNode(location),
+class ParametersList(val parameters: List<Parameter>, location: Location) : AstNode(location),
     List<Parameter> by parameters {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class ArgumentsList(val arguments: List<Expression>, location: FileRelativeLocation) : AstNode(location),
+class ArgumentsList(val arguments: List<Expression>, location: Location) : AstNode(location),
     List<Expression> by arguments {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class Block(val statements: List<Statement>, location: FileRelativeLocation) : AstNode(location),
+class Block(val statements: List<Statement>, location: Location) : AstNode(location),
     List<Statement> by statements {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
@@ -229,7 +231,7 @@ class FieldDeclaration(
     val type: TypeReference,
     val initializer: Expression?,
     modifiers: ModifiersList,
-    location: FileRelativeLocation,
+    location: Location,
 ) : MemberDeclaration(modifiers, location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
@@ -240,7 +242,7 @@ class VariableDeclaration(
     val name: Identifier,
     val type: TypeReference,
     val initializer: Expression?,
-    location: FileRelativeLocation
+    location: Location
 ) :
     Statement(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
@@ -254,7 +256,7 @@ class MethodDeclaration(
     modifiers: ModifiersList,
     val parameters: ParametersList,
     val body: Block?,
-    location: FileRelativeLocation
+    location: Location
 ) : MemberDeclaration(modifiers, location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
@@ -265,14 +267,14 @@ class ConstructorDeclaration(
     modifiers: ModifiersList,
     val parameters: ParametersList,
     val body: Block,
-    location: FileRelativeLocation
+    location: Location
 ) : MemberDeclaration(modifiers, location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class StaticInitBlock(val body: Block, location: FileRelativeLocation) :
+class StaticInitBlock(val body: Block, location: Location) :
     MemberDeclaration(EMPTY_MODIFIER_LIST, location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
@@ -285,14 +287,14 @@ class ClassDeclaration(
     val type: ClassKind,
     val superClasses: List<Identifier>,
     val members: List<MemberDeclaration>,
-    location: FileRelativeLocation
+    location: Location
 ) : AstNode(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
 }
 
-class SourceFile(val classes: List<ClassDeclaration>, val file: String, location: FileRelativeLocation) :
+class SourceFile(val classes: List<ClassDeclaration>, location: Location) :
     AstNode(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)

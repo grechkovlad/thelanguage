@@ -2,10 +2,17 @@ package ir
 
 import ClassKind
 
+sealed class IrNode
 
 class Project(val classes: List<ClassDeclaration>)
 
-class ClassDeclaration(val kind: ClassKind, val members: List<Member>)
+class ClassDeclaration(val name: String, val kind: ClassKind) : IrNode() {
+    lateinit var fields: List<FieldDeclaration>
+    lateinit var methods: List<FieldDeclaration>
+    lateinit var staticInit: StaticInitBlock
+    lateinit var superClass: ClassReference
+    lateinit var interfaces: List<UserClassReference>
+}
 
 abstract class Member
 
@@ -16,7 +23,40 @@ object IrFloat : TypeReference()
 object IrBool : TypeReference()
 object IrString : TypeReference()
 
-class UserClassReference(val declaration: ClassDeclaration) : TypeReference()
+sealed class ClassReference() : TypeReference() {
+    abstract val isInterface: Boolean
+    abstract val name: String
+}
+
+object ObjectClassReference : ClassReference() {
+    override val isInterface
+        get() = false
+    override val name: String
+        get() = "Object"
+}
+
+object StringClassReference : ClassReference() {
+    override val isInterface
+        get() = false
+
+    override val name: String
+        get() = "String"
+}
+
+object SystemClassReference : ClassReference() {
+    override val isInterface
+        get() = false
+
+    override val name: String
+        get() = "System"
+}
+
+class UserClassReference(val declaration: ClassDeclaration) : ClassReference() {
+    override val isInterface
+        get() = declaration.kind == ClassKind.INTERFACE
+    override val name: String
+        get() = declaration.name
+}
 
 class ArrayTypeReference(val componentType: TypeReference) : TypeReference()
 
@@ -62,7 +102,7 @@ class MethodDeclaration(
     val body: List<Statement>?
 ) : Member()
 
-class StaticInitBlock(val body : List<Statement>) : Member()
+class StaticInitBlock(val body: List<Statement>) : Member()
 
 class ConstructorDeclaration(
     val declaringClass: ClassDeclaration,
