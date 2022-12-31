@@ -39,6 +39,6 @@ class ParserTests {
     private fun testOnExample(name: String) {
         val srcText = readFromResources("/examples/$name.lang")
         val expected = readFromResources("/parser_ethalons/$name.txt").trim('\n')
-        assertEquals(expected, Parser(srcText).parse().dump().trim('\n'))
+        assertEquals(expected, Parser(srcText, "test").parse().dump().trim('\n'))
     }
 }

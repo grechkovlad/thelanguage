@@ -1,11 +1,13 @@
 package ir
 
+import ClassKind
+
 
 class Project(val classes: List<ClassDeclaration>)
 
-class ClassDeclaration(val kind: ClassKind, val members: IrMember)
+class ClassDeclaration(val kind: ClassKind, val members: List<Member>)
 
-abstract class IrMember
+abstract class Member
 
 sealed class TypeReference
 
@@ -22,7 +24,7 @@ class LocalVariableDeclaration(val name: String, val type: TypeReference, val in
 
 class LocalVariableReference(val declaration: LocalVariableDeclaration)
 
-class FieldDeclaration(val name: String, val type: TypeReference, val initializer: Expression?)
+class FieldDeclaration(val name: String, val type: TypeReference, val initializer: Expression?) : Member()
 
 class FieldReference(val declaration: FieldDeclaration)
 
@@ -58,13 +60,15 @@ class MethodDeclaration(
     val parameters: List<ParameterDeclaration>,
     val returnType: TypeReference,
     val body: List<Statement>?
-)
+) : Member()
+
+class StaticInitBlock(val body : List<Statement>) : Member()
 
 class ConstructorDeclaration(
     val declaringClass: ClassDeclaration,
     val parameters: List<ParameterDeclaration>,
     val body: List<Statement>
-)
+) : Member()
 
 class IntLiteral(val value: Int) : Expression()
 class FloatLiteral(val value: Float) : Expression()
@@ -94,6 +98,10 @@ class ExpressionStatement(val expression: Expression) : Statement()
 
 sealed class Expression
 
-enum class ClassKind {
-    CLASS, INTERFACE
-}
+class If(val condition: Expression, val thenStatements: List<Statement>, val elseStatements: List<Statement>)
+
+class While(val condition: Expression, val body: List<Statement>)
+
+class For(val init: Statement, val condition: Expression, val update: Statement, val body: List<Statement>)
+
+object Null : Expression()

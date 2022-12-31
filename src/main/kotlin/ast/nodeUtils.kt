@@ -1,5 +1,7 @@
 package ast
 
+import ClassKind
+
 fun AstNode.dump(): String {
     val stringBuilder = StringBuilder()
     this.accept(StringifierVisitor(stringBuilder), 0)
@@ -319,7 +321,7 @@ private class StringifierVisitor(private val builder: StringBuilder) : VoidAstVi
 
     override fun visit(classDeclaration: ClassDeclaration, tabsCount: Int) {
         addIdent(tabsCount)
-        append("${if (classDeclaration.type == ClassType.INTERFACE) "interface" else "class"}: ${classDeclaration.name.value} ${classDeclaration.location}")
+        append("${if (classDeclaration.type == ClassKind.INTERFACE) "interface" else "class"}: ${classDeclaration.name.value} ${classDeclaration.location}")
         if (classDeclaration.modifiers.isNotEmpty()) {
             classDeclaration.modifiers.accept(this, 0)
         }
