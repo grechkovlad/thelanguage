@@ -5,9 +5,13 @@ import Location
 
 class IrBuilder(private val sources: List<ast.SourceFile>) {
 
-    private val classes = mutableMapOf<String, LocatableIrNode<ClassDeclaration>>()
+    private val classes = mutableMapOf<String, ClassDeclaration>()
+
     private val allClassesAst
         get() = sources.flatMap { it.classes }
+
+    private val ast.ClassDeclaration.fields get() = members.filterIsInstance<ast.FieldDeclaration>()
+    private val ast.ClassDeclaration.methods get() = members.filterIsInstance<ast.MethodDeclaration>()
 
     fun build(): Project {
         doClassDeclarationlAnalysis()
@@ -16,9 +20,57 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
     }
 
     private fun doMemberDeclarationAnalysis() {
-        TODO("Not yet implemented")
+        allClassesAst.forEach { classAst ->
+            val classIr = classes[classAst.name.value]!!
+            doFieldsAnalysis(classAst, classIr)
+            doMethodsAnalysis(classAst, classIr)
+        }
     }
 
+    private fun doFieldsAnalysis(classAst: ast.ClassDeclaration, classIr: ClassDeclaration) {
+        val fieldDeclByName = mutableMapOf<String, FieldDeclaration>()
+        val fields = mutableListOf<FieldDeclaration>()
+        val nameToLocation = mutableMapOf<String, Location>()
+        classAst.fields.forEach { fieldDeclarationAst ->
+            val name = fieldDeclarationAst.name.value
+            val location = fieldDeclarationAst.name.location
+            if (fieldDeclByName.containsKey(name)) {
+                throw NameDeclarationClash(name, location, nameToLocation[name]!!)
+            }
+            val type = resolveType(fieldDeclarationAst.type)
+            val fieldDeclarationIr = FieldDeclaration(name, type)
+            fields.add(fieldDeclarationIr)
+            nameToLocation[name] = location
+        }
+        classIr.fields = fields
+    }
+
+    private val stdlibTypeReferences =
+        mapOf(
+            "int" to IntTypeReference,
+            "float" to FloatTypeReference,
+            "bool" to BoolTypeReference,
+            "System" to SystemClassReference,
+            "String" to StringClassReference,
+            "Object" to ObjectClassReference
+        )
+
+    private fun resolveType(type: ast.TypeReference): TypeReference {
+        when (type) {
+            is ast.ArrayTypeReference -> return ArrayTypeReference(resolveType(type.componentTypeReference))
+            is ast.SimpleTypeReference -> {
+                if (stdlibTypeReferences.containsKey(type.identifier.value)) {
+                    return stdlibTypeReferences[type.identifier.value]!!
+                }
+                classes[type.identifier.value]?.let { return UserClassReference(it) }
+                    ?: throw UnresolvedReference(type.identifier.value, type.location)
+            }
+        }
+    }
+
+    private fun doMethodsAnalysis(classAst: ast.ClassDeclaration, classIr: ClassDeclaration) {
+        TODO("Not yet implemented")
+    }
 
     private fun buildMember(memberAst: ast.MemberDeclaration): Member {
         return when (memberAst) {
@@ -92,7 +144,7 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
 
 
     private fun tryResolveClassRef(name: String, location: Location): ClassReference {
-        return systemClassReferences[name] ?: classes[name]?.let { UserClassReference(it.node) }
+        return systemClassReferences[name] ?: classes[name]?.let { UserClassReference(it) }
         ?: throw UnresolvedReference(name, location)
     }
 
@@ -133,7 +185,7 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
                     interfaces.add(superTypeRef as UserClassReference)
                 }
             }
-            val currentClassDeclaration = classes[clazz.name.value]!!.node
+            val currentClassDeclaration = classes[clazz.name.value]!!
             currentClassDeclaration.interfaces = interfaces.toList()
             if (currentClassDeclaration.kind == ClassKind.CLASS) {
                 currentClassDeclaration.superClass = superClass ?: ObjectClassReference
@@ -150,17 +202,21 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
     )
 
     private fun initClassDeclarations() {
+        val nameToLocation = mutableMapOf<String, Location>()
         allClassesAst.forEach { clazz ->
             val name = clazz.name.value
             val location = clazz.name.location
             if (name in reservedClassNames) throw ReservedClassName(name, location)
             if (classes.containsKey(name)) {
-                throw NameDeclarationClash(name, classes[name]!!.location, location)
+                throw NameDeclarationClash(name, nameToLocation[name]!!, location)
             } else {
-                classes[name] = ClassDeclaration(name, clazz.type).withLocation(location)
+                val declaration = ClassDeclaration(name, clazz.type)
+                classes[name] = declaration
+                nameToLocation[name] = location
             }
         }
     }
+
 }
 
 sealed class CompilationError : RuntimeException()
@@ -179,7 +235,3 @@ data class MultipleInheritance(val location: Location) : CompilationError()
 data class InterfaceInheritsClass(val location: Location) : CompilationError()
 
 data class CyclicInheritance(val name: String) : CompilationError()
-
-private data class LocatableIrNode<T : IrNode>(val node: T, val location: Location)
-
-private fun <T : IrNode> T.withLocation(location: Location) = LocatableIrNode(this, location)

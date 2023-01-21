@@ -14,14 +14,20 @@ class ClassDeclaration(val name: String, val kind: ClassKind) : IrNode() {
     lateinit var interfaces: List<UserClassReference>
 }
 
-abstract class Member
+abstract class Member : IrNode()
 
 sealed class TypeReference
 
-object IrInt : TypeReference()
-object IrFloat : TypeReference()
-object IrBool : TypeReference()
-object IrString : TypeReference()
+object IntTypeReference : TypeReference()
+object FloatTypeReference : TypeReference()
+object BoolTypeReference : TypeReference()
+object StringTypeReference : ClassReference() {
+    override val isInterface: Boolean
+        get() = false
+    override val name: String
+        get() = "String"
+
+}
 
 sealed class ClassReference() : TypeReference() {
     abstract val isInterface: Boolean
@@ -64,7 +70,9 @@ class LocalVariableDeclaration(val name: String, val type: TypeReference, val in
 
 class LocalVariableReference(val declaration: LocalVariableDeclaration)
 
-class FieldDeclaration(val name: String, val type: TypeReference, val initializer: Expression?) : Member()
+class FieldDeclaration(val name: String, val type: TypeReference) : Member() {
+    var initializer: Expression? = null
+}
 
 class FieldReference(val declaration: FieldDeclaration)
 
