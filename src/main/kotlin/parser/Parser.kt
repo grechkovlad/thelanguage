@@ -3,6 +3,7 @@ package parser
 import ClassKind
 import EMPTY_LOCATION
 import Location
+import ModifierType
 import ast.*
 import ast.Identifier
 import lexer.*

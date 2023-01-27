@@ -1,12 +1,13 @@
 package ir
 
 import ClassKind
+import ModifierType
 
 sealed class IrNode
 
 class Project(val classes: List<ClassDeclaration>)
 
-class ClassDeclaration(val name: String, val kind: ClassKind) : IrNode() {
+class ClassDeclaration(val name: String, val kind: ClassKind, val modifiers: Modifiers) : IrNode() {
     lateinit var fields: List<FieldDeclaration>
     lateinit var methods: List<FieldDeclaration>
     lateinit var staticInit: StaticInitBlock
@@ -29,7 +30,7 @@ object StringTypeReference : ClassReference() {
 
 }
 
-sealed class ClassReference() : TypeReference() {
+sealed class ClassReference : TypeReference() {
     abstract val isInterface: Boolean
     abstract val name: String
 }
@@ -70,7 +71,7 @@ class LocalVariableDeclaration(val name: String, val type: TypeReference, val in
 
 class LocalVariableReference(val declaration: LocalVariableDeclaration)
 
-class FieldDeclaration(val name: String, val type: TypeReference) : Member() {
+class FieldDeclaration(val name: String, val type: TypeReference, modifiers: Modifiers) : Member() {
     var initializer: Expression? = null
 }
 
@@ -153,3 +154,5 @@ class While(val condition: Expression, val body: List<Statement>)
 class For(val init: Statement, val condition: Expression, val update: Statement, val body: List<Statement>)
 
 object Null : Expression()
+
+typealias Modifiers = Collection<ModifierType>

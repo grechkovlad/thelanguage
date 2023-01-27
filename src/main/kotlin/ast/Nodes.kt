@@ -3,6 +3,7 @@ package ast
 import ClassKind
 import EMPTY_LOCATION
 import Location
+import ModifierType
 
 sealed class AstNode(val location: Location) {
     abstract fun <T> accept(visitor: VoidAstVisitor<T>, context: T)
@@ -185,10 +186,6 @@ class Assignment(val lValue: Expression, val rValue: Expression, location: Locat
 }
 
 sealed class MemberDeclaration(val modifiers: ModifiersList, location: Location) : Statement(location)
-
-enum class ModifierType {
-    STATIC, PUBLIC, PRIVATE, PROTECTED, ABSTRACT
-}
 
 class Modifier(val type: ModifierType, location: Location) : AstNode(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
