@@ -9,7 +9,7 @@ class Project(val classes: List<ClassDeclaration>)
 
 class ClassDeclaration(val name: String, val kind: ClassKind, val modifiers: Modifiers) : IrNode() {
     lateinit var fields: List<FieldDeclaration>
-    lateinit var methods: List<FieldDeclaration>
+    lateinit var methods: List<MethodDeclaration>
     lateinit var staticInit: StaticInitBlock
     lateinit var superClass: ClassReference
     lateinit var interfaces: List<UserClassReference>
@@ -101,22 +101,22 @@ class UserConstructorReference(val declaration: ConstructorDeclaration)
 
 class UserMethodReference(val declaration: MethodDeclaration)
 
-class ParameterDeclaration(val type: TypeReference, val name: String, val index: Int)
+class ParameterDeclaration(val type: TypeReference, val name: String)
 
 class MethodDeclaration(
     val declaringClass: ClassDeclaration,
+    val modifiers: Modifiers,
     val name: String,
     val parameters: List<ParameterDeclaration>,
-    val returnType: TypeReference,
-    val body: List<Statement>?
-) : Member()
+    val returnType: TypeReference?,
+) : Member() {
+    val body: List<Statement>? = null
+}
 
 class StaticInitBlock(val body: List<Statement>) : Member()
 
 class ConstructorDeclaration(
-    val declaringClass: ClassDeclaration,
-    val parameters: List<ParameterDeclaration>,
-    val body: List<Statement>
+    val declaringClass: ClassDeclaration, val parameters: List<ParameterDeclaration>, val body: List<Statement>
 ) : Member()
 
 class IntLiteral(val value: Int) : Expression()

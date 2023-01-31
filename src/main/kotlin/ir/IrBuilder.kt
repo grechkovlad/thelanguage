@@ -5,6 +5,8 @@ import ModifierType
 import ast.ModifiersList
 import java.lang.StringBuilder
 
+import ModifierType.*
+
 
 class IrBuilder(private val sources: List<ast.SourceFile>) {
 
@@ -27,32 +29,26 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
     private fun doMemberDeclarationAnalysis() {
         allClassesAst.forEach { classAst ->
             val classIr = classIdToDeclaration[classAst.name.value]!!
-            doFieldsAnalysis(classAst, classIr)
-            doMethodsAnalysis(classAst, classIr)
+            collectFieldDeclarations(classAst, classIr)
+            collectMethodDeclarations(classAst, classIr)
         }
     }
 
     private val fieldApplicableModifiers =
-        arrayOf(ModifierType.PRIVATE, ModifierType.PUBLIC, ModifierType.STATIC, ModifierType.PROTECTED)
+        arrayOf(PRIVATE, PUBLIC, STATIC, PROTECTED)
 
-    private fun doFieldsAnalysis(classAst: ast.ClassDeclaration, classIr: ClassDeclaration) {
-        val fieldDeclByName = mutableMapOf<String, FieldDeclaration>()
+    private fun collectFieldDeclarations(classAst: ast.ClassDeclaration, classIr: ClassDeclaration) {
         val fields = mutableListOf<FieldDeclaration>()
         val nameToLocation = mutableMapOf<String, Location>()
         classAst.fields.forEach { fieldDeclarationAst ->
             val name = fieldDeclarationAst.name.value
             val location = fieldDeclarationAst.name.location
             if (classAst.type == ClassKind.INTERFACE) throw InterfaceWithFields(location)
-            if (fieldDeclByName.containsKey(name)) {
-                throw NameDeclarationClash(name, location, nameToLocation[name]!!)
-            }
+            nameToLocation[name]?.also { throw NameDeclarationClash(name, it, location) }
             val type = resolveType(fieldDeclarationAst.type)
-            val fieldDeclarationIr =
-                FieldDeclaration(
-                    name,
-                    type,
-                    checkRetrieveModifiers(fieldDeclarationAst.modifiers, *fieldApplicableModifiers)
-                )
+            val fieldDeclarationIr = FieldDeclaration(
+                name, type, checkRetrieveModifiers(fieldDeclarationAst.modifiers, *fieldApplicableModifiers)
+            )
             fieldIdToDeclaration["${classAst.name.value}:${name}"] = fieldDeclarationIr
             fields.add(fieldDeclarationIr)
             nameToLocation[name] = location
@@ -60,45 +56,62 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
         classIr.fields = fields
     }
 
-    private fun doMethodsAnalysis(classAst: ast.ClassDeclaration, classIr: ClassDeclaration) {
+    private fun collectMethodDeclarations(classAst: ast.ClassDeclaration, classIr: ClassDeclaration) {
+        val methods = mutableListOf<MethodDeclaration>()
         val signatureToLocation = mutableMapOf<String, Location>()
         classAst.methods.forEach { methodAst ->
+            val modifiers = checkRetrieveModifiers(methodAst.modifiers, *ModifierType.values())
+            if (!classIr.modifiers.contains(ABSTRACT)) {
+                methodAst.modifiers.firstOrNull { it.type == ABSTRACT }?.also {
+                    throw AbstractMethodInNonAbstractClass(it.location)
+                }
+            }
             val parameterNameToLocation = mutableMapOf<String, Location>()
-            val signature = StringBuilder().append(methodAst.name).append('(')
+            val parameters = mutableListOf<ParameterDeclaration>()
+            val signatureBuilder = StringBuilder().append(methodAst.name).append('(')
+            var isFirstParameter = true
             methodAst.parameters.forEach { parameter ->
                 val name = parameter.name.value
                 val location = parameter.location
-                if (parameterNameToLocation.containsKey(name)) {
-                    throw NameDeclarationClash(name, parameterNameToLocation[name]!!, location)
-                }
+                parameterNameToLocation[name]?.also { throw NameDeclarationClash(name, it, location) }
                 parameterNameToLocation[name] = location
                 val type = resolveType(parameter.type)
-                signature.append(type.toString())
+                if (!isFirstParameter) signatureBuilder.append(", ")
+                isFirstParameter = false
+                signatureBuilder.append(type.toString())
+                parameters.add(ParameterDeclaration(type, name))
             }
+            signatureBuilder.append(")")
+            val signature = signatureBuilder.toString()
+            signatureToLocation[signature]?.also {
+                throw SignatureDeclarationClash(signature, it, methodAst.name.location)
+            }
+            signatureToLocation[signature] = methodAst.name.location
+            val returnType = methodAst.returnType?.let { resolveType(it) }
+            val methodDeclaration = MethodDeclaration(classIr, modifiers, methodAst.name.value, parameters, returnType)
+            methods.add(methodDeclaration)
         }
+        classIr.methods = methods.toList()
     }
 
-    private val stdlibTypeReferences =
-        mapOf(
-            "int" to IntTypeReference,
-            "float" to FloatTypeReference,
-            "bool" to BoolTypeReference,
-            "System" to SystemClassReference,
-            "String" to StringClassReference,
-            "Object" to ObjectClassReference
-        )
+    private val stdlibTypeReferences = mapOf(
+        "int" to IntTypeReference,
+        "float" to FloatTypeReference,
+        "bool" to BoolTypeReference,
+        "System" to SystemClassReference,
+        "String" to StringClassReference,
+        "Object" to ObjectClassReference
+    )
 
     private fun resolveType(type: ast.TypeReference): TypeReference {
         when (type) {
             is ast.ArrayTypeReference -> return ArrayTypeReference(resolveType(type.componentTypeReference))
             is ast.SimpleTypeReference -> {
-                if (stdlibTypeReferences.containsKey(type.identifier.value)) {
-                    return stdlibTypeReferences[type.identifier.value]!!
-                }
-                classIdToDeclaration[type.identifier.value]?.let { return UserClassReference(it) }
-                    ?: throw UnresolvedReference(type.identifier.value, type.location)
+                stdlibTypeReferences[type.identifier.value]?.also { return it }
+                classIdToDeclaration[type.identifier.value]?.also { return UserClassReference(it) }
             }
         }
+        throw UnresolvedReference(type.identifier.value, type.location)
     }
 
     private fun buildMember(memberAst: ast.MemberDeclaration): Member {
@@ -203,8 +216,7 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
             for (supertypeIdentifier in clazz.superClasses) {
                 val superTypeRef = tryResolveClassRef(supertypeIdentifier.value, supertypeIdentifier.location)
                 if (superTypeRef in finalClassesRefs) throw FinalClassSubtyping(
-                    supertypeIdentifier.value,
-                    supertypeIdentifier.location
+                    supertypeIdentifier.value, supertypeIdentifier.location
                 )
                 if (!superTypeRef.isInterface) {
                     if (clazz.type == ClassKind.INTERFACE) throw InterfaceInheritsClass(supertypeIdentifier.location)
@@ -225,9 +237,7 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
     private val reservedClassNames = listOf("Object", "String")
     private val finalClassesRefs = listOf(SystemClassReference, StringClassReference)
     private val systemClassReferences = mapOf(
-        "Object" to ObjectClassReference,
-        "String" to StringClassReference,
-        "System" to SystemClassReference
+        "Object" to ObjectClassReference, "String" to StringClassReference, "System" to SystemClassReference
     )
 
 
@@ -237,31 +247,21 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
             val name = classAst.name.value
             val location = classAst.name.location
             if (name in reservedClassNames) throw ReservedClassName(name, location)
-            if (classIdToDeclaration.containsKey(name)) {
-                throw NameDeclarationClash(name, nameToLocation[name]!!, location)
-            } else {
-                val declaration = ClassDeclaration(
-                    name,
-                    classAst.type,
-                    checkRetrieveModifiers(classAst.modifiers, ModifierType.ABSTRACT)
-                )
-                classIdToDeclaration[name] = declaration
-                nameToLocation[name] = location
-            }
+            nameToLocation[name]?.also { throw NameDeclarationClash(name, it, location) }
+            val declaration = ClassDeclaration(
+                name, classAst.type, checkRetrieveModifiers(classAst.modifiers, ABSTRACT)
+            )
+            classIdToDeclaration[name] = declaration
+            nameToLocation[name] = location
         }
     }
 
     private fun checkRetrieveModifiers(
-        modifiers: ModifiersList,
-        vararg allowedTypes: ModifierType
+        modifiers: ModifiersList, vararg allowedTypes: ModifierType
     ): List<ModifierType> {
         val modifierKingToLocation = mutableMapOf<ModifierType, Location>()
         modifiers.forEach { modifier ->
-            if (modifierKingToLocation.containsKey(modifier.type)) throw RepeatedModifier(
-                modifier.type,
-                modifierKingToLocation[modifier.type]!!,
-                modifier.location
-            )
+            modifierKingToLocation[modifier.type]?.also { throw RepeatedModifier(modifier.type, it, modifier.location) }
             if (modifier.type !in allowedTypes) throw ForbiddenModifier(modifier.type, modifier.location)
         }
         return modifierKingToLocation.keys.toList()
@@ -269,9 +269,14 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
 
 }
 
+
 sealed class CompilationError : RuntimeException()
 
-data class NameDeclarationClash(val name: String, val first: Location, val second: Location) :
+class AbstractMethodInNonAbstractClass(val location: Location) : CompilationError()
+
+data class NameDeclarationClash(val name: String, val first: Location, val second: Location) : CompilationError()
+
+data class SignatureDeclarationClash(val signature: String, val first: Location, val second: Location) :
     CompilationError()
 
 data class ReservedClassName(val name: String, val location: Location) : CompilationError()
