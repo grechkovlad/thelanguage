@@ -13,6 +13,14 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
     private val classIdToDeclaration = mutableMapOf<String, ClassDeclaration>()
     private val fieldIdToDeclaration = mutableMapOf<String, FieldDeclaration>()
     private val methodIdToDeclaration = mutableMapOf<String, MethodDeclaration>()
+    private val classToMethodsInfo = mutableMapOf<ClassDeclaration, ClassMethodsInfo>()
+
+    class ClassMethodsInfo(
+        val abstracts: Collection<MethodDeclaration>,
+        val nonAbstractVirtuals: Collection<MethodDeclaration>,
+        val privates: Collection<MethodDeclaration>,
+        val statics: Collection<MethodDeclaration>
+    )
 
     private val allClassesAst
         get() = sources.flatMap { it.classes }
@@ -32,7 +40,47 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
             collectFieldDeclarations(classAst, classIr)
             collectMethodDeclarations(classAst, classIr)
         }
+        classIdToDeclaration.values.forEach { classDecl -> calculateClassToMethodsInfo(classDecl) }
     }
+
+    private fun TypeReference.isSubtypeOf(other: TypeReference): Boolean = when (this) {
+        is ArrayTypeReference -> TODO()
+        is BoolTypeReference -> this == other
+        is ObjectClassReference -> this == other
+        is StringClassReference -> this == other || other == ObjectClassReference
+        is SystemClassReference -> this == other || other == ObjectClassReference
+        is UserClassReference -> TODO()
+        is FloatTypeReference -> this == other
+        is IntTypeReference -> this == other
+    }
+
+    private fun MethodDeclaration.overridesIgnoreReturnType(other: MethodDeclaration): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    private fun MethodDeclaration.overridesWithIllegalReturnType(other: MethodDeclaration): Boolean {
+        return overridesIgnoreReturnType(other) && TODO()
+    }
+
+    private fun calculateClassToMethodsInfo(clazz: ClassDeclaration): ClassMethodsInfo {
+        if (clazz.kind == ClassKind.INTERFACE) {
+            val abstracts =
+                clazz.interfaces.flatMap { parentInterface ->
+                    val parentInterfaceMethodsInfo = calculateClassToMethodsInfo(parentInterface.declaration)
+                    require(parentInterfaceMethodsInfo.privates.isEmpty())
+                    require(parentInterfaceMethodsInfo.statics.isEmpty())
+                    require(parentInterfaceMethodsInfo.nonAbstractVirtuals.isEmpty())
+                    parentInterfaceMethodsInfo.abstracts
+                }.filter { inherited ->
+                    clazz.declaredMethods.none { declared ->
+                        val overridesIgnoreReturnType = declared.overridesIgnoreReturnType(inherited)
+                    }
+                }
+        } else {
+            TODO()
+        }
+    }
+
 
     private val fieldApplicableModifiers =
         arrayOf(PRIVATE, PUBLIC, STATIC, PROTECTED)
@@ -43,7 +91,7 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
         classAst.fields.forEach { fieldDeclarationAst ->
             val name = fieldDeclarationAst.name.value
             val location = fieldDeclarationAst.name.location
-            if (classAst.type == ClassKind.INTERFACE) throw InterfaceWithFields(location)
+            if (classAst.kind == ClassKind.INTERFACE) throw InterfaceWithFields(location)
             nameToLocation[name]?.also { throw NameDeclarationClash(name, it, location) }
             val type = resolveType(fieldDeclarationAst.type)
             val fieldDeclarationIr = FieldDeclaration(
@@ -65,6 +113,20 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
                 methodAst.modifiers.firstOrNull { it.type == ABSTRACT }?.also {
                     throw AbstractMethodInNonAbstractClass(it.location)
                 }
+            }
+            if (methodAst.body != null && classAst.kind == ClassKind.INTERFACE) {
+                throw MethodWithBodyInInterface(methodAst.location)
+            }
+            if (methodAst.body != null) {
+                methodAst.modifiers.firstOrNull { it.type == ABSTRACT }?.also {
+                    throw AbstractMethodWithBody(it.location)
+                }
+            }
+            if (classAst.kind == ClassKind.INTERFACE) {
+                methodAst.modifiers.firstOrNull { it.type == PRIVATE || it.type == PROTECTED || it.type == STATIC }
+                    ?.also {
+                        throw IllegalModifier(it.location)
+                    }
             }
             val parameterNameToLocation = mutableMapOf<String, Location>()
             val parameters = mutableListOf<ParameterDeclaration>()
@@ -91,7 +153,7 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
             val methodDeclaration = MethodDeclaration(classIr, modifiers, methodAst.name.value, parameters, returnType)
             methods.add(methodDeclaration)
         }
-        classIr.methods = methods.toList()
+        classIr.declaredMethods = methods.toList()
     }
 
     private val stdlibTypeReferences = mapOf(
@@ -219,7 +281,7 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
                     supertypeIdentifier.value, supertypeIdentifier.location
                 )
                 if (!superTypeRef.isInterface) {
-                    if (clazz.type == ClassKind.INTERFACE) throw InterfaceInheritsClass(supertypeIdentifier.location)
+                    if (clazz.kind == ClassKind.INTERFACE) throw InterfaceInheritsClass(supertypeIdentifier.location)
                     superClass =
                         if (superClass == null) superTypeRef else throw MultipleInheritance(supertypeIdentifier.location)
                 } else {
@@ -249,7 +311,7 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
             if (name in reservedClassNames) throw ReservedClassName(name, location)
             nameToLocation[name]?.also { throw NameDeclarationClash(name, it, location) }
             val declaration = ClassDeclaration(
-                name, classAst.type, checkRetrieveModifiers(classAst.modifiers, ABSTRACT)
+                name, classAst.kind, checkRetrieveModifiers(classAst.modifiers, ABSTRACT)
             )
             classIdToDeclaration[name] = declaration
             nameToLocation[name] = location
@@ -273,6 +335,12 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
 sealed class CompilationError : RuntimeException()
 
 class AbstractMethodInNonAbstractClass(val location: Location) : CompilationError()
+
+class MethodWithBodyInInterface(val location: Location) : CompilationError()
+
+class AbstractMethodWithBody(val location: Location) : CompilationError()
+
+class IllegalModifier(val location: Location) : CompilationError()
 
 data class NameDeclarationClash(val name: String, val first: Location, val second: Location) : CompilationError()
 

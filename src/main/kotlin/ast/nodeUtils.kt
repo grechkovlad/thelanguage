@@ -321,7 +321,7 @@ private class StringifierVisitor(private val builder: StringBuilder) : VoidAstVi
 
     override fun visit(classDeclaration: ClassDeclaration, tabsCount: Int) {
         addIdent(tabsCount)
-        append("${if (classDeclaration.type == ClassKind.INTERFACE) "interface" else "class"}: ${classDeclaration.name.value} ${classDeclaration.location.dumpWithoutFilename()}")
+        append("${if (classDeclaration.kind == ClassKind.INTERFACE) "interface" else "class"}: ${classDeclaration.name.value} ${classDeclaration.location.dumpWithoutFilename()}")
         if (classDeclaration.modifiers.isNotEmpty()) {
             classDeclaration.modifiers.accept(this, 0)
         }

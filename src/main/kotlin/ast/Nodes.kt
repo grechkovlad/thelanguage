@@ -281,7 +281,7 @@ class StaticInitBlock(val body: Block, location: Location) :
 class ClassDeclaration(
     val name: Identifier,
     val modifiers: ModifiersList,
-    val type: ClassKind,
+    val kind: ClassKind,
     val superClasses: List<Identifier>,
     val members: List<MemberDeclaration>,
     location: Location

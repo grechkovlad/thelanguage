@@ -9,7 +9,7 @@ class Project(val classes: List<ClassDeclaration>)
 
 class ClassDeclaration(val name: String, val kind: ClassKind, val modifiers: Modifiers) : IrNode() {
     lateinit var fields: List<FieldDeclaration>
-    lateinit var methods: List<MethodDeclaration>
+    lateinit var declaredMethods: List<MethodDeclaration>
     lateinit var staticInit: StaticInitBlock
     lateinit var superClass: ClassReference
     lateinit var interfaces: List<UserClassReference>
@@ -22,13 +22,6 @@ sealed class TypeReference
 object IntTypeReference : TypeReference()
 object FloatTypeReference : TypeReference()
 object BoolTypeReference : TypeReference()
-object StringTypeReference : ClassReference() {
-    override val isInterface: Boolean
-        get() = false
-    override val name: String
-        get() = "String"
-
-}
 
 sealed class ClassReference : TypeReference() {
     abstract val isInterface: Boolean
