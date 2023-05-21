@@ -1,5 +1,6 @@
 package ir
 
+import ClassKind
 import Location
 import ModifierType
 import ast.ModifiersList
@@ -14,12 +15,11 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
     private val fieldIdToDeclaration = mutableMapOf<String, FieldDeclaration>()
     private val methodIdToDeclaration = mutableMapOf<String, MethodDeclaration>()
     private val classToMethodsInfo = mutableMapOf<ClassDeclaration, ClassMethodsInfo>()
+    private val methodDeclarationToLocation = mutableMapOf<MethodDeclaration, Location>()
 
     class ClassMethodsInfo(
-        val abstracts: Collection<MethodDeclaration>,
-        val nonAbstractVirtuals: Collection<MethodDeclaration>,
         val privates: Collection<MethodDeclaration>,
-        val statics: Collection<MethodDeclaration>
+        val nonPrivates: Collection<MethodDeclaration>
     )
 
     private val allClassesAst
@@ -43,42 +43,85 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
         classIdToDeclaration.values.forEach { classDecl -> calculateClassToMethodsInfo(classDecl) }
     }
 
-    private fun TypeReference.isSubtypeOf(other: TypeReference): Boolean = when (this) {
-        is ArrayTypeReference -> TODO()
-        is BoolTypeReference -> this == other
-        is ObjectClassReference -> this == other
-        is StringClassReference -> this == other || other == ObjectClassReference
-        is SystemClassReference -> this == other || other == ObjectClassReference
-        is UserClassReference -> TODO()
-        is FloatTypeReference -> this == other
-        is IntTypeReference -> this == other
+    private fun TypeReference.isSubtypeOf(other: TypeReference): Boolean =
+        when (this) {
+            is ArrayTypeReference -> this == other || other == ObjectClassReference
+            is BoolTypeReference -> this == other
+            is ObjectClassReference -> this == other
+            is StringClassReference -> this == other || other == ObjectClassReference
+            is SystemClassReference -> this == other || other == ObjectClassReference
+            is UserClassReference -> declaration.superClass.isSubtypeOf(other) || declaration.interfaces.any {
+                it.isSubtypeOf(other)
+            }
+
+            is FloatTypeReference -> this == other
+            is IntTypeReference -> this == other
+        }
+
+    private fun isSameParameterLists(first: List<ParameterDeclaration>, second: List<ParameterDeclaration>) =
+        first.zip(second).all { (paramFirst, paramSecond) -> paramFirst == paramSecond }
+
+    private fun MethodDeclaration.overridesBySignatureIgnoreReturnType(other: MethodDeclaration) =
+        name == other.name && isSameParameterLists(parameters, other.parameters)
+
+    private fun MethodDeclaration.overridesBySignature(other: MethodDeclaration): Boolean {
+        if (!overridesBySignatureIgnoreReturnType(other)) return false
+        return if (returnType == null) {
+            other.returnType == null
+        } else {
+            other.returnType != null && returnType.isSubtypeOf(other.returnType)
+        }
     }
 
-    private fun MethodDeclaration.overridesIgnoreReturnType(other: MethodDeclaration): Boolean {
-        TODO("Not yet implemented")
-    }
+    private val ClassDeclaration.isAbstract: Boolean
+        get() = kind == ClassKind.CLASS && modifiers.contains(ABSTRACT)
 
-    private fun MethodDeclaration.overridesWithIllegalReturnType(other: MethodDeclaration): Boolean {
-        return overridesIgnoreReturnType(other) && TODO()
+    private fun calculateClassToMethodsInfo(clazz: ClassReference): ClassMethodsInfo {
+        return when (clazz) {
+            is ObjectClassReference -> TODO()
+            is StringClassReference -> TODO()
+            is SystemClassReference -> TODO()
+            is UserClassReference -> calculateInterfaceMethodsInfo(clazz.declaration)
+        }
     }
 
     private fun calculateClassToMethodsInfo(clazz: ClassDeclaration): ClassMethodsInfo {
         if (clazz.kind == ClassKind.INTERFACE) {
-            val abstracts =
-                clazz.interfaces.flatMap { parentInterface ->
-                    val parentInterfaceMethodsInfo = calculateClassToMethodsInfo(parentInterface.declaration)
-                    require(parentInterfaceMethodsInfo.privates.isEmpty())
-                    require(parentInterfaceMethodsInfo.statics.isEmpty())
-                    require(parentInterfaceMethodsInfo.nonAbstractVirtuals.isEmpty())
-                    parentInterfaceMethodsInfo.abstracts
-                }.filter { inherited ->
-                    clazz.declaredMethods.none { declared ->
-                        val overridesIgnoreReturnType = declared.overridesIgnoreReturnType(inherited)
-                    }
-                }
+            return calculateInterfaceMethodsInfo(clazz)
         } else {
-            TODO()
+            val allMethodsFromSuperClassesScope = buildList {
+                addAll(calculateClassToMethodsInfo(clazz.superClass).nonPrivates)
+                addAll(clazz.interfaces.flatMap { calculateClassToMethodsInfo(it).nonPrivates })
+            }
+            val overriddenMethods = mutableListOf<MethodDeclaration>()
+            clazz.declaredMethods.forEach { declaredMethod ->
+                allMethodsFromSuperClassesScope.filter { methodFromSuperClassScope ->
+                    methodFromSuperClassScope.overridesBySignatureIgnoreReturnType(declaredMethod)
+                }.forEach { potentiallyOverriddenMethod ->
+
+                }
+            }
         }
+    }
+
+    private fun calculateInterfaceMethodsInfo(clazz: ClassDeclaration): ClassMethodsInfo {
+        require(clazz.kind == ClassKind.INTERFACE)
+        val abstracts =
+            clazz.interfaces.flatMap { parentInterface ->
+                val parentInterfaceMethodsInfo = calculateClassToMethodsInfo(parentInterface.declaration)
+                require(parentInterfaceMethodsInfo.privates.isEmpty())
+                parentInterfaceMethodsInfo.nonPrivates
+            }.filter { inherited ->
+                clazz.declaredMethods.none { declared ->
+                    val overrideIgnoreReturnType = declared.overridesBySignatureIgnoreReturnType(inherited)
+                    val override = declared.overridesBySignature(inherited)
+                    if (!override && overrideIgnoreReturnType) throw IllegalReturnTypeInOverriding(
+                        methodDeclarationToLocation[declared]!!
+                    )
+                    !override
+                }
+            }
+        return ClassMethodsInfo(abstracts, emptyList())
     }
 
 
@@ -151,6 +194,7 @@ class IrBuilder(private val sources: List<ast.SourceFile>) {
             signatureToLocation[signature] = methodAst.name.location
             val returnType = methodAst.returnType?.let { resolveType(it) }
             val methodDeclaration = MethodDeclaration(classIr, modifiers, methodAst.name.value, parameters, returnType)
+            methodDeclarationToLocation[methodDeclaration] = methodAst.name.location
             methods.add(methodDeclaration)
         }
         classIr.declaredMethods = methods.toList()
@@ -365,3 +409,5 @@ data class ForbiddenModifier(val modifierType: ModifierType, val location: Locat
 
 data class RepeatedModifier(val modifierType: ModifierType, val first: Location, val second: Location) :
     CompilationError()
+
+data class IllegalReturnTypeInOverriding(val location: Location) : CompilationError()
