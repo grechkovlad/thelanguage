@@ -5,6 +5,7 @@ interface VoidAstVisitor<T> {
     fun visit(arrayTypeReference: ArrayTypeReference, context: T)
     fun visit(intLiteral: IntLiteral, context: T)
     fun visit(floatLiteral: FloatLiteral, context: T)
+    fun visit(boolLiteral: BoolLiteral, context: T)
     fun visit(identifier: Identifier, context: T)
     fun visit(arg: Null, context: T)
     fun visit(arg: This, context: T)

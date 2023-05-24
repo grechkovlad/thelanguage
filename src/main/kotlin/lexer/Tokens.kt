@@ -3,7 +3,7 @@ package lexer
 data class TokenLocation(val line: Int, val columnStart: Int, val columnEnd: Int)
 
 enum class KeySeqType(val stringValue: String) {
-    OPEN_PARENTHESIS ("("),
+    OPEN_PARENTHESIS("("),
     CLOSING_PARENTHESIS(")"),
     OPEN_CURLY_BRACKET("{"),
     CLOSING_CURLY_BRACKET("}"),
@@ -61,6 +61,8 @@ data class IntLiteral(val value: Int, override val location: TokenLocation) : To
 data class FloatLiteral(val value: Float, override val location: TokenLocation) : Token()
 
 data class StringLiteral(val value: String, override val location: TokenLocation) : Token()
+
+data class BoolLiteral(val value: Boolean, override val location: TokenLocation) : Token()
 
 object SOF : Token() {
     override val location = TokenLocation(1, 0, 0)

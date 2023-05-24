@@ -42,6 +42,12 @@ class FloatLiteral(val value: Float, location: Location) : Expression(location) 
     }
 }
 
+class BoolLiteral(val value: Boolean, location: Location): Expression(location) {
+    override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
+        visitor.visit(this, context);
+    }
+}
+
 class Identifier(val value: String, location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
@@ -185,7 +191,7 @@ class Assignment(val lValue: Expression, val rValue: Expression, location: Locat
     }
 }
 
-sealed class MemberDeclaration(val modifiers: ModifiersList, location: Location) : Statement(location)
+sealed class MemberDeclaration(val modifiers: ModifiersList, location: Location) : AstNode(location)
 
 class Modifier(val type: ModifierType, location: Location) : AstNode(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {

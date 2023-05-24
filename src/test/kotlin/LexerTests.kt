@@ -25,7 +25,7 @@ class LexerTests {
 
     @Test
     fun testArithmeticExpressions() {
-        testOnExample("arithmeticExpressions")
+        testOnExample("expressions")
     }
 
     @Test

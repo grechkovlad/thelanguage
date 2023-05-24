@@ -1,11 +1,11 @@
-class: Main (1:1 - 7:1)
-  METHOD: main[PUBLIC, STATIC] (2:5 - 6:5)
+class: Main (1:1 - 8:1)
+  METHOD: main[PUBLIC, STATIC] (2:5 - 7:5)
     RETURN TYPE: VOID
     PARAMETERS: (2:32 - 2:46)
       PARAMETER: args (2:33 - 2:45)
         type: String (2:33 - 2:38)[]
     BODY:
-      BLOCK: (2:48 - 6:5)
+      BLOCK: (2:48 - 7:5)
         VAR: x1 (3:9 - 3:35)
           TYPE: int (3:13 - 3:15)
           INIT:
@@ -64,3 +64,17 @@ class: Main (1:1 - 7:1)
                     15 (5:36 - 5:37)
                   RIGHT:
                     2 (5:41 - 5:41)
+        VAR: x4 (6:9 - 6:45)
+          TYPE: bool (6:13 - 6:16)
+          INIT:
+            BINARY OP: AND (6:23 - 6:44)
+              LEFT:
+                UNARY OP: NOT (6:23 - 6:36)
+                  OPERAND:
+                    BINARY OP: OR (6:25 - 6:36)
+                      LEFT:
+                        true (6:25 - 6:28)
+                      RIGHT:
+                        false (6:32 - 6:36)
+              RIGHT:
+                true (6:41 - 6:44)

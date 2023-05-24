@@ -22,7 +22,7 @@ class ParserTests {
 
     @Test
     fun testArithmeticExpressions() {
-        testOnExample("arithmeticExpressions")
+        testOnExample("expressions")
     }
 
     @Test

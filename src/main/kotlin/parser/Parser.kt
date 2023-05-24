@@ -33,6 +33,8 @@ class Parser(input: CharSequence, private val fileName: String) {
 
     private fun eatFloatLiteral() = eatToken("float literal") { it is lexer.FloatLiteral } as lexer.FloatLiteral
 
+    private fun eatBoolLiteral() = eatToken("bool literal") {it is lexer.BoolLiteral} as lexer.BoolLiteral
+
     private fun atKeySeq(vararg types: KeySeqType): Boolean {
         val current = lexer.current
         return current is KeySeq && current.type in types
@@ -43,6 +45,8 @@ class Parser(input: CharSequence, private val fileName: String) {
     private fun atStringLiteral() = lexer.current is lexer.StringLiteral
 
     private fun atFloatLiteral() = lexer.current is lexer.FloatLiteral
+
+    private fun atBoolLiteral() = lexer.current is lexer.BoolLiteral
 
     private fun atIdentifier() = lexer.current is lexer.Identifier
 
@@ -433,6 +437,7 @@ class Parser(input: CharSequence, private val fileName: String) {
         if (atIntLiteral()) return parseIntLiteral()
         if (atStringLiteral()) return parseStringLiteral()
         if (atFloatLiteral()) return parseFloatLiteral()
+        if (atBoolLiteral()) return parseBoolLiteral()
         if (atKeySeq(NULL)) return Null(eatKeySeqToken(NULL).location.toAstLocation())
         if (atKeySeq(NEW)) return parseNewOperator()
         if (atIdentifier() || atKeySeq(THIS)) {
@@ -502,6 +507,11 @@ class Parser(input: CharSequence, private val fileName: String) {
 
             else -> throw ParsingException(lexer.current, "'(' or '['")
         }
+    }
+
+    private fun parseBoolLiteral():Expression {
+        val token = eatBoolLiteral()
+        return ast.BoolLiteral(token.value, token.location.toAstLocation())
     }
 
     private fun parseFloatLiteral(): Expression {

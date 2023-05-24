@@ -65,6 +65,7 @@ class LL3Lexer(private val input: CharSequence) : Lexer {
     private val singleSymbolOrderMap = mapOf('<' to LESS, '>' to GREATER, '=' to ASSIGN, '!' to EXCLAMATION)
     private val singleSymbolOrderChars = singleSymbolOrderMap.keys
     private val twoSymbolOrderMap = mapOf("<=" to LEQ, ">=" to GEQ, "==" to EQUALS, "!=" to NOT_EQUALS)
+    private val boolRegex = "true|false".toRegex()
     private val wordRegex = "[a-zA-Z][_a-zA-Z0-9]*".toRegex()
     private val floatRegex = "\\d+.\\d+".toRegex()
     private val intRegex = "\\d+".toRegex()
@@ -108,34 +109,41 @@ class LL3Lexer(private val input: CharSequence) : Lexer {
             column++
             return token
         }
+        boolRegex.matchAt(input, pos)?.also {
+            val skipSymbolsCount = it.value.length - 1
+            val token = BoolLiteral(it.value.toBoolean(), TokenLocation(line, column, column + skipSymbolsCount))
+            column += skipSymbolsCount
+            pos += skipSymbolsCount
+            return token
+        }
         wordRegex.matchAt(input, pos)?.also { match ->
             val skipSymbolsCount = match.value.length - 1
             val token = keywordsMap[match.value]?.let {
-                KeySeq(it, TokenLocation(line, column, column + match.value.length - 1))
-            } ?: Identifier(match.value, TokenLocation(line, column, column + match.value.length - 1))
+                KeySeq(it, TokenLocation(line, column, column + skipSymbolsCount))
+            } ?: Identifier(match.value, TokenLocation(line, column, column + skipSymbolsCount))
             column += skipSymbolsCount
             pos += skipSymbolsCount
             return token
         }
         floatRegex.matchAt(input, pos)?.also {
-            val token = FloatLiteral(it.value.toFloat(), TokenLocation(line, column, column + it.value.length - 1))
             val skipSymbolsCount = it.value.length - 1
+            val token = FloatLiteral(it.value.toFloat(), TokenLocation(line, column, column + skipSymbolsCount))
             column += skipSymbolsCount
             pos += skipSymbolsCount
             return token
         }
         intRegex.matchAt(input, pos)?.also {
-            val token = IntLiteral(it.value.toInt(), TokenLocation(line, column, column + it.value.length - 1))
             val skipSymbolsCount = it.value.length - 1
+            val token = IntLiteral(it.value.toInt(), TokenLocation(line, column, column + skipSymbolsCount))
             column += skipSymbolsCount
             pos += skipSymbolsCount
             return token
         }
         stringRegex.matchAt(input, pos)?.also {
-            val token = StringLiteral(
-                it.value.substring(1, it.value.length - 1), TokenLocation(line, column, column + it.value.length - 1)
-            )
             val skipSymbolsCount = it.value.length - 1
+            val token = StringLiteral(
+                it.value.substring(1, it.value.length - 1), TokenLocation(line, column, column + skipSymbolsCount)
+            )
             column += skipSymbolsCount
             pos += skipSymbolsCount
             return token
