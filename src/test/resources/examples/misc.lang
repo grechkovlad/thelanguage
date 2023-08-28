@@ -8,6 +8,10 @@ interface Fluffy {
 
 class abstract CatLikeAnimal : Mammal, Fluffy {
     field static protected int pawsCount = 4;
+
+    constructor () {
+        super();
+    }
 }
 
 class Lion : CatLikeAnimal {
@@ -15,6 +19,7 @@ class Lion : CatLikeAnimal {
     field String name;
 
     constructor (String name) {
+        super();
         this.name = name;
     }
 }
@@ -26,7 +31,7 @@ class Main {
         if (args.length > 0) {
             new Lion("Banach").getPetted();
         } else {
-            System.consolePrint("No arguments");
+            System.print("No arguments");
         }
     }
 }

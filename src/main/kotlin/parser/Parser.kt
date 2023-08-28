@@ -6,18 +6,21 @@ import Location
 import ModifierType
 import ast.*
 import ast.Identifier
+import between
 import lexer.*
 import lexer.IntLiteral
 import lexer.KeySeqType.*
+import toAstLocation
 
-class Parser(input: CharSequence, private val fileName: String) {
+class Parser(input: CharSequence, private val fileName: String, ignoreDiagnosticsMarkupTokens: Boolean = false) {
 
-    private fun TokenLocation.toAstLocation() = Location(fileName, line, columnStart, line, columnEnd)
+    private fun TokenLocation.toAstLocation() = toAstLocation(fileName)
 
-    private infix fun Location.between(to: Location) =
-        Location(fileName, lineStart, columnStart, to.lineEnd, to.columnEnd)
-
-    private val lexer: LL3Lexer = LL3Lexer(input)
+    private val lexer: LL3Lexer =
+        LL3Lexer(
+            input,
+            if (ignoreDiagnosticsMarkupTokens) DiagnosticMarkupSupportMode.IGNORE else DiagnosticMarkupSupportMode.DONT_SUPPORT
+        )
 
     private fun eatKeySeqToken(vararg types: KeySeqType) =
         eatToken(types.joinToString { "'${it.stringValue}'" }) { it is KeySeq && it.type in types } as KeySeq
@@ -33,7 +36,7 @@ class Parser(input: CharSequence, private val fileName: String) {
 
     private fun eatFloatLiteral() = eatToken("float literal") { it is lexer.FloatLiteral } as lexer.FloatLiteral
 
-    private fun eatBoolLiteral() = eatToken("bool literal") {it is lexer.BoolLiteral} as lexer.BoolLiteral
+    private fun eatBoolLiteral() = eatToken("bool literal") { it is lexer.BoolLiteral } as lexer.BoolLiteral
 
     private fun atKeySeq(vararg types: KeySeqType): Boolean {
         val current = lexer.current
@@ -249,7 +252,7 @@ class Parser(input: CharSequence, private val fileName: String) {
     }
 
     private fun parseStatement(): Statement {
-        if (atKeySeq(VAR)) return parseVariableDeclaration()
+        if (atKeySeq(VAR)) return parseLocalVariableDeclaration()
         if (atKeySeq(IF)) return parseIfStatement()
         if (atKeySeq(WHILE)) return parseWhileStatement()
         if (atKeySeq(FOR)) return parseForStatement()
@@ -322,18 +325,18 @@ class Parser(input: CharSequence, private val fileName: String) {
         return IfStatement(condition, thenBlock, elseBlock, startLocation between elseBlock.location)
     }
 
-    private fun parseVariableDeclaration(): Statement {
+    private fun parseLocalVariableDeclaration(): Statement {
         val startLocation = eatKeySeqToken(VAR).location.toAstLocation()
         val type = parseTypeReference()
         val name = parseIdentifier()
         if (atKeySeq(SEMICOLON)) {
             val endLocation = eatKeySeqToken(SEMICOLON).location.toAstLocation()
-            return VariableDeclaration(name, type, initializer = null, startLocation between endLocation)
+            return LocalVariableDeclaration(name, type, initializer = null, startLocation between endLocation)
         }
         eatKeySeqToken(ASSIGN)
         val initializer = parseExpression()
         val endLocation = eatKeySeqToken(SEMICOLON).location.toAstLocation()
-        return VariableDeclaration(name, type, initializer, startLocation between endLocation)
+        return LocalVariableDeclaration(name, type, initializer, startLocation between endLocation)
     }
 
     private fun parseParameter(): Parameter {
@@ -463,7 +466,10 @@ class Parser(input: CharSequence, private val fileName: String) {
         val startLocation = eatKeySeqToken(SUPER).location.toAstLocation()
         val argumentsList = parseArgumentsList()
         val endLocation = eatKeySeqToken(SEMICOLON).location.toAstLocation()
-        return SuperCall(argumentsList, startLocation between argumentsList.location)
+        return ExpressionStatement(
+            SuperCall(argumentsList, startLocation between argumentsList.location),
+            startLocation between endLocation
+        )
     }
 
     private fun parseConstructorCall(): Expression {
@@ -509,7 +515,7 @@ class Parser(input: CharSequence, private val fileName: String) {
         }
     }
 
-    private fun parseBoolLiteral():Expression {
+    private fun parseBoolLiteral(): Expression {
         val token = eatBoolLiteral()
         return ast.BoolLiteral(token.value, token.location.toAstLocation())
     }

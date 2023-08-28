@@ -7,60 +7,68 @@ interface: Mammal (6:1 - 8:1)
   SUPERCLASSES: Animal
   METHOD: milk (7:5 - 7:20)
     RETURN TYPE: VOID
-class: Dog (10:1 - 19:1)[ABSTRACT]
+class: Dog (10:1 - 23:1)[ABSTRACT]
   SUPERCLASSES: Mammal
-  FIELD: PAWS_COUNT [PUBLIC, STATIC] (12:5 - 12:43)
-    TYPE: int (12:25 - 12:27)
+  CONSTRUCTOR: [] (12:5 - 14:5)
+    BODY:
+      BLOCK: (12:20 - 14:5)
+        EXPRESSION STATEMENT: (13:9 - 13:16)
+          SUPER CALL:
+  FIELD: PAWS_COUNT [PUBLIC, STATIC] (16:5 - 16:43)
+    TYPE: int (16:25 - 16:27)
     INIT:
-      4 (12:42 - 12:42)
-  METHOD: milk (14:5 - 14:22)
+      4 (16:42 - 16:42)
+  METHOD: milk (18:5 - 18:22)
     RETURN TYPE: VOID
     BODY:
-      BLOCK: (14:21 - 14:22)
-  METHOD: makeSound (16:5 - 18:5)
-    RETURN TYPE: String (16:9 - 16:14)
+      BLOCK: (18:21 - 18:22)
+  METHOD: makeSound (20:5 - 22:5)
+    RETURN TYPE: String (20:9 - 20:14)
     BODY:
-      BLOCK: (16:28 - 18:5)
-        RETURN (17:9 - 17:23):
+      BLOCK: (20:28 - 22:5)
+        RETURN (21:9 - 21:23):
           VALUE:
-            "Bark!" (17:16 - 17:22)
-class: NamedDog (21:1 - 38:1)
+            "Bark!" (21:16 - 21:22)
+class: NamedDog (25:1 - 42:1)
   SUPERCLASSES: Dog
-  FIELD: name [PRIVATE] (23:5 - 23:37)
-    TYPE: String (23:19 - 23:24)
+  FIELD: name [PRIVATE] (27:5 - 27:37)
+    TYPE: String (27:19 - 27:24)
     INIT:
-      NULL (23:33 - 23:36)
+      NULL (27:33 - 27:36)
   CONSTRUCTOR: [PUBLIC]
-    PARAMETERS: (25:24 - 25:36)
-      PARAMETER: name (25:25 - 25:35)
-        type: String (25:25 - 25:30) (25:5 - 28:5)
+    PARAMETERS: (29:24 - 29:36)
+      PARAMETER: name (29:25 - 29:35)
+        type: String (29:25 - 29:30) (29:5 - 32:5)
     BODY:
-      BLOCK: (25:38 - 28:5)
-        SUPER CALL:
-        ASSIGN: (27:9 - 27:25)
+      BLOCK: (29:38 - 32:5)
+        EXPRESSION STATEMENT: (30:9 - 30:16)
+          SUPER CALL:
+        ASSIGN: (31:9 - 31:25)
           LVALUE:
-            FIELD ACCESS: name (27:9 - 27:17)
+            FIELD ACCESS: name (31:9 - 31:17)
               TARGET:
-                THIS (27:9 - 27:12)
+                THIS (31:9 - 31:12)
           RVALUE:
-            name (27:21 - 27:24)
-  METHOD: makeSound (30:5 - 32:5)
-    RETURN TYPE: String (30:9 - 30:14)
+            name (31:21 - 31:24)
+  METHOD: makeSound (34:5 - 36:5)
+    RETURN TYPE: String (34:9 - 34:14)
     BODY:
-      BLOCK: (30:28 - 32:5)
-        RETURN (31:9 - 31:30):
+      BLOCK: (34:28 - 36:5)
+        RETURN (35:9 - 35:30):
           VALUE:
-            "Fluffy bark!" (31:16 - 31:29)
-  METHOD: createChild (34:5 - 36:5)
-    RETURN TYPE: Animal (34:9 - 34:14)
+            "Fluffy bark!" (35:16 - 35:29)
+  METHOD: createChild (38:5 - 40:5)
+    RETURN TYPE: Animal (38:9 - 38:14)
     BODY:
-      BLOCK: (34:30 - 36:5)
-        RETURN (35:9 - 35:47):
+      BLOCK: (38:30 - 40:5)
+        RETURN (39:9 - 39:52):
           VALUE:
-            CONSTRUCTOR CALL: NamedDog (35:16 - 35:46)
-              ARGUMENTS: (35:28 - 35:46)
-                BINARY OP: PLUS (35:29 - 35:45)
+            CONSTRUCTOR CALL: NamedDog (39:16 - 39:51)
+              ARGUMENTS: (39:28 - 39:51)
+                BINARY OP: PLUS (39:29 - 39:50)
                   LEFT:
-                    name (35:29 - 35:32)
+                    FIELD ACCESS: name (39:29 - 39:37)
+                      TARGET:
+                        THIS (39:29 - 39:32)
                   RIGHT:
-                    "'s child" (35:36 - 35:45)
+                    "'s child" (39:41 - 39:50)

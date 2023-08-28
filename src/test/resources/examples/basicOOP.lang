@@ -9,6 +9,10 @@ interface Mammal : Animal {
 
 class abstract Dog : Mammal {
 
+    constructor () {
+        super();
+    }
+
     field public static int PAWS_COUNT = 4;
 
     fun void milk() {}
@@ -32,7 +36,7 @@ class NamedDog : Dog {
     }
 
     fun Animal createChild() {
-        return new NamedDog(name + "'s child");
+        return new NamedDog(this.name + "'s child");
     }
 
 }

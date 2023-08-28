@@ -4,536 +4,668 @@ interface: Sorter (1:1 - 3:1)
     PARAMETERS: (2:18 - 2:26)
       PARAMETER: a (2:19 - 2:25)
         type: int (2:19 - 2:21)[]
-class: BubbleSort (5:1 - 19:1)
+class: BubbleSort (5:1 - 24:1)
   SUPERCLASSES: Sorter
-  METHOD: sort (6:5 - 18:5)
-    RETURN TYPE: VOID
-    PARAMETERS: (6:18 - 6:28)
-      PARAMETER: arr (6:19 - 6:27)
-        type: int (6:19 - 6:21)[]
+  CONSTRUCTOR: [] (7:5 - 9:5)
     BODY:
-      BLOCK: (6:30 - 18:5)
-        VAR: n (7:9 - 7:31)
-          TYPE: int (7:13 - 7:15)
+      BLOCK: (7:20 - 9:5)
+        EXPRESSION STATEMENT: (8:9 - 8:16)
+          SUPER CALL:
+  METHOD: sort (11:5 - 23:5)
+    RETURN TYPE: VOID
+    PARAMETERS: (11:18 - 11:28)
+      PARAMETER: arr (11:19 - 11:27)
+        type: int (11:19 - 11:21)[]
+    BODY:
+      BLOCK: (11:30 - 23:5)
+        VAR: n (12:9 - 12:31)
+          TYPE: int (12:13 - 12:15)
           INIT:
-            FIELD ACCESS: length (7:21 - 7:30)
+            FIELD ACCESS: length (12:21 - 12:30)
               TARGET:
-                arr (7:21 - 7:23)
-        FOR: (8:9 - 17:9)
+                arr (12:21 - 12:23)
+        FOR: (13:9 - 22:9)
           INIT:
-            VAR: i (8:13 - 8:26)
-              TYPE: int (8:17 - 8:19)
+            VAR: i (13:13 - 13:26)
+              TYPE: int (13:17 - 13:19)
               INIT:
-                0 (8:25 - 8:25)
+                0 (13:25 - 13:25)
           CONDITION:
-            BINARY OP: LESS (8:28 - 8:32)
+            BINARY OP: LESS (13:28 - 13:32)
               LEFT:
-                i (8:28 - 8:28)
+                i (13:28 - 13:28)
               RIGHT:
-                n (8:32 - 8:32)
+                n (13:32 - 13:32)
           UPDATE:
-            ASSIGN: (8:35 - 8:44)
+            ASSIGN: (13:35 - 13:44)
               LVALUE:
-                i (8:35 - 8:35)
+                i (13:35 - 13:35)
               RVALUE:
-                BINARY OP: PLUS (8:39 - 8:43)
+                BINARY OP: PLUS (13:39 - 13:43)
                   LEFT:
-                    i (8:39 - 8:39)
+                    i (13:39 - 13:39)
                   RIGHT:
-                    1 (8:43 - 8:43)
+                    1 (13:43 - 13:43)
           BODY:
-            BLOCK: (8:47 - 17:9)
-              VAR: j (9:13 - 9:26)
-                TYPE: int (9:17 - 9:19)
+            BLOCK: (13:47 - 22:9)
+              VAR: j (14:13 - 14:26)
+                TYPE: int (14:17 - 14:19)
                 INIT:
-                  i (9:25 - 9:25)
-              WHILE: (10:13 - 15:13)
+                  i (14:25 - 14:25)
+              WHILE: (15:13 - 20:13)
                 CONDITION:
-                  BINARY OP: AND (10:20 - 10:46)
+                  BINARY OP: AND (15:20 - 15:46)
                     LEFT:
-                      BINARY OP: GREATER (10:20 - 10:24)
+                      BINARY OP: GREATER (15:20 - 15:24)
                         LEFT:
-                          j (10:20 - 10:20)
+                          j (15:20 - 15:20)
                         RIGHT:
-                          0 (10:24 - 10:24)
+                          0 (15:24 - 15:24)
                     RIGHT:
-                      BINARY OP: GREATER (10:28 - 10:46)
+                      BINARY OP: GREATER (15:28 - 15:46)
                         LEFT:
-                          ARRAY ACCESS: (10:28 - 10:37)
+                          ARRAY ACCESS: (15:28 - 15:37)
                             ARRAY:
-                              arr (10:28 - 10:30)
+                              arr (15:28 - 15:30)
                             INDEX:
-                              BINARY OP: MINUS (10:32 - 10:36)
+                              BINARY OP: MINUS (15:32 - 15:36)
                                 LEFT:
-                                  j (10:32 - 10:32)
+                                  j (15:32 - 15:32)
                                 RIGHT:
-                                  1 (10:36 - 10:36)
+                                  1 (15:36 - 15:36)
                         RIGHT:
-                          ARRAY ACCESS: (10:41 - 10:46)
+                          ARRAY ACCESS: (15:41 - 15:46)
                             ARRAY:
-                              arr (10:41 - 10:43)
+                              arr (15:41 - 15:43)
                             INDEX:
-                              j (10:45 - 10:45)
+                              j (15:45 - 15:45)
                 BODY:
-                  BLOCK: (10:49 - 15:13)
-                    VAR: tmp (11:17 - 11:41)
-                      TYPE: int (11:21 - 11:23)
+                  BLOCK: (15:49 - 20:13)
+                    VAR: tmp (16:17 - 16:41)
+                      TYPE: int (16:21 - 16:23)
                       INIT:
-                        ARRAY ACCESS: (11:31 - 11:40)
+                        ARRAY ACCESS: (16:31 - 16:40)
                           ARRAY:
-                            arr (11:31 - 11:33)
+                            arr (16:31 - 16:33)
                           INDEX:
-                            BINARY OP: MINUS (11:35 - 11:39)
+                            BINARY OP: MINUS (16:35 - 16:39)
                               LEFT:
-                                j (11:35 - 11:35)
+                                j (16:35 - 16:35)
                               RIGHT:
-                                1 (11:39 - 11:39)
-                    ASSIGN: (12:17 - 12:36)
+                                1 (16:39 - 16:39)
+                    ASSIGN: (17:17 - 17:36)
                       LVALUE:
-                        ARRAY ACCESS: (12:17 - 12:26)
+                        ARRAY ACCESS: (17:17 - 17:26)
                           ARRAY:
-                            arr (12:17 - 12:19)
+                            arr (17:17 - 17:19)
                           INDEX:
-                            BINARY OP: MINUS (12:21 - 12:25)
+                            BINARY OP: MINUS (17:21 - 17:25)
                               LEFT:
-                                j (12:21 - 12:21)
+                                j (17:21 - 17:21)
                               RIGHT:
-                                1 (12:25 - 12:25)
+                                1 (17:25 - 17:25)
                       RVALUE:
-                        ARRAY ACCESS: (12:30 - 12:35)
+                        ARRAY ACCESS: (17:30 - 17:35)
                           ARRAY:
-                            arr (12:30 - 12:32)
+                            arr (17:30 - 17:32)
                           INDEX:
-                            j (12:34 - 12:34)
-                    ASSIGN: (13:17 - 13:29)
+                            j (17:34 - 17:34)
+                    ASSIGN: (18:17 - 18:29)
                       LVALUE:
-                        ARRAY ACCESS: (13:17 - 13:22)
+                        ARRAY ACCESS: (18:17 - 18:22)
                           ARRAY:
-                            arr (13:17 - 13:19)
+                            arr (18:17 - 18:19)
                           INDEX:
-                            j (13:21 - 13:21)
+                            j (18:21 - 18:21)
                       RVALUE:
-                        tmp (13:26 - 13:28)
-                    ASSIGN: (14:17 - 14:26)
+                        tmp (18:26 - 18:28)
+                    ASSIGN: (19:17 - 19:26)
                       LVALUE:
-                        j (14:17 - 14:17)
+                        j (19:17 - 19:17)
                       RVALUE:
-                        BINARY OP: MINUS (14:21 - 14:25)
+                        BINARY OP: MINUS (19:21 - 19:25)
                           LEFT:
-                            j (14:21 - 14:21)
+                            j (19:21 - 19:21)
                           RIGHT:
-                            1 (14:25 - 14:25)
-              ASSIGN: (16:13 - 16:22)
+                            1 (19:25 - 19:25)
+              ASSIGN: (21:13 - 21:22)
                 LVALUE:
-                  i (16:13 - 16:13)
+                  i (21:13 - 21:13)
                 RVALUE:
-                  BINARY OP: PLUS (16:17 - 16:21)
+                  BINARY OP: PLUS (21:17 - 21:21)
                     LEFT:
-                      i (16:17 - 16:17)
+                      i (21:17 - 21:17)
                     RIGHT:
-                      1 (16:21 - 16:21)
-class: CountSort (21:1 - 45:1)
-  SUPERCLASSES: Sorter
-  METHOD: sort (23:5 - 44:5)
-    RETURN TYPE: VOID
-    PARAMETERS: (23:18 - 23:28)
-      PARAMETER: arr (23:19 - 23:27)
-        type: int (23:19 - 23:21)[]
+                      1 (21:21 - 21:21)
+class: MyUtils (26:1 - 48:1)
+  METHOD: max[STATIC] (27:5 - 32:5)
+    RETURN TYPE: int (27:16 - 27:18)
+    PARAMETERS: (27:23 - 27:36)
+      PARAMETER: x (27:24 - 27:28)
+        type: int (27:24 - 27:26)
+      PARAMETER: y (27:31 - 27:35)
+        type: int (27:31 - 27:33)
     BODY:
-      BLOCK: (23:30 - 44:5)
-        VAR: n (24:9 - 24:31)
-          TYPE: int (24:13 - 24:15)
-          INIT:
-            FIELD ACCESS: length (24:21 - 24:30)
-              TARGET:
-                arr (24:21 - 24:23)
-        VAR: maxVal (25:9 - 25:39)
-          TYPE: int (25:13 - 25:15)
-          INIT:
-            FIELD ACCESS: MIN_INT (25:26 - 25:38)
-              TARGET:
-                Utils (25:26 - 25:30)
-        VAR: minVal (26:9 - 26:39)
-          TYPE: int (26:13 - 26:15)
-          INIT:
-            FIELD ACCESS: MAX_INT (26:26 - 26:38)
-              TARGET:
-                Utils (26:26 - 26:30)
-        FOR: (27:9 - 30:9)
-          INIT:
-            VAR: i (27:13 - 27:26)
-              TYPE: int (27:17 - 27:19)
-              INIT:
-                0 (27:25 - 27:25)
+      BLOCK: (27:38 - 32:5)
+        IF: (28:9 - 30:9)
           CONDITION:
-            BINARY OP: LESS (27:28 - 27:32)
+            BINARY OP: GREATER (28:13 - 28:17)
               LEFT:
-                i (27:28 - 27:28)
+                x (28:13 - 28:13)
               RIGHT:
-                n (27:32 - 27:32)
-          UPDATE:
-            ASSIGN: (27:35 - 27:44)
-              LVALUE:
-                i (27:35 - 27:35)
-              RVALUE:
-                BINARY OP: PLUS (27:39 - 27:43)
-                  LEFT:
-                    i (27:39 - 27:39)
-                  RIGHT:
-                    1 (27:43 - 27:43)
-          BODY:
-            BLOCK: (27:47 - 30:9)
-              ASSIGN: (28:13 - 28:47)
-                LVALUE:
-                  maxVal (28:13 - 28:18)
-                RVALUE:
-                  METHOD CALL: max (28:22 - 28:46)
-                    TARGET:
-                      Utils (28:22 - 28:26)
-                    ARGUMENTS: (28:31 - 28:46)
-                      maxVal (28:32 - 28:37)
-                      ARRAY ACCESS: (28:40 - 28:45)
-                        ARRAY:
-                          arr (28:40 - 28:42)
-                        INDEX:
-                          i (28:44 - 28:44)
-              ASSIGN: (29:13 - 29:47)
-                LVALUE:
-                  minVal (29:13 - 29:18)
-                RVALUE:
-                  METHOD CALL: min (29:22 - 29:46)
-                    TARGET:
-                      Utils (29:22 - 29:26)
-                    ARGUMENTS: (29:31 - 29:46)
-                      minVal (29:32 - 29:37)
-                      ARRAY ACCESS: (29:40 - 29:45)
-                        ARRAY:
-                          arr (29:40 - 29:42)
-                        INDEX:
-                          i (29:44 - 29:44)
-        VAR: size (31:9 - 31:43)
-          TYPE: int (31:13 - 31:15)
-          INIT:
-            BINARY OP: PLUS (31:24 - 31:42)
+                y (28:17 - 28:17)
+          THEN:
+            BLOCK: (28:20 - 30:9)
+              RETURN (29:13 - 29:21):
+                VALUE:
+                  x (29:20 - 29:20)
+        RETURN (31:9 - 31:17):
+          VALUE:
+            y (31:16 - 31:16)
+  METHOD: min[STATIC] (34:5 - 39:5)
+    RETURN TYPE: int (34:16 - 34:18)
+    PARAMETERS: (34:23 - 34:36)
+      PARAMETER: x (34:24 - 34:28)
+        type: int (34:24 - 34:26)
+      PARAMETER: y (34:31 - 34:35)
+        type: int (34:31 - 34:33)
+    BODY:
+      BLOCK: (34:38 - 39:5)
+        IF: (35:9 - 37:9)
+          CONDITION:
+            BINARY OP: LESS (35:13 - 35:17)
               LEFT:
-                BINARY OP: MINUS (31:24 - 31:38)
-                  LEFT:
-                    maxVal (31:24 - 31:29)
-                  RIGHT:
-                    minVal (31:33 - 31:38)
+                x (35:13 - 35:13)
               RIGHT:
-                1 (31:42 - 31:42)
-        VAR: count (32:9 - 32:38)
-          TYPE: int (32:13 - 32:15)
+                y (35:17 - 35:17)
+          THEN:
+            BLOCK: (35:20 - 37:9)
+              RETURN (36:13 - 36:21):
+                VALUE:
+                  x (36:20 - 36:20)
+        RETURN (38:9 - 38:17):
+          VALUE:
+            y (38:16 - 38:16)
+  METHOD: arrayCopy[STATIC] (41:5 - 47:5)
+    RETURN TYPE: int (41:16 - 41:18)[]
+    PARAMETERS: (41:31 - 41:41)
+      PARAMETER: arr (41:32 - 41:40)
+        type: int (41:32 - 41:34)[]
+    BODY:
+      BLOCK: (41:43 - 47:5)
+        VAR: copy (42:9 - 42:45)
+          TYPE: int (42:13 - 42:15)[]
           INIT:
-            ARRAY CREATION: (32:25 - 32:37)
+            ARRAY CREATION: (42:26 - 42:44)
               COMPONENT TYPE:
-                int (32:29 - 32:31)
+                int (42:30 - 42:32)
               DIMENSIONS:
-                size (32:33 - 32:36)
-        FOR: (33:9 - 36:9)
+                FIELD ACCESS: length (42:34 - 42:43)
+                  TARGET:
+                    arr (42:34 - 42:36)
+        FOR: (43:9 - 45:9)
           INIT:
-            VAR: i (33:13 - 33:26)
-              TYPE: int (33:17 - 33:19)
+            VAR: i (43:13 - 43:26)
+              TYPE: int (43:17 - 43:19)
               INIT:
-                0 (33:25 - 33:25)
+                0 (43:25 - 43:25)
           CONDITION:
-            BINARY OP: LESS (33:28 - 33:32)
+            BINARY OP: LESS (43:28 - 43:41)
               LEFT:
-                i (33:28 - 33:28)
+                i (43:28 - 43:28)
               RIGHT:
-                n (33:32 - 33:32)
+                FIELD ACCESS: length (43:32 - 43:41)
+                  TARGET:
+                    arr (43:32 - 43:34)
           UPDATE:
-            ASSIGN: (33:35 - 33:44)
+            ASSIGN: (43:44 - 43:53)
               LVALUE:
-                i (33:35 - 33:35)
+                i (43:44 - 43:44)
               RVALUE:
-                BINARY OP: PLUS (33:39 - 33:43)
+                BINARY OP: PLUS (43:48 - 43:52)
                   LEFT:
-                    i (33:39 - 33:39)
+                    i (43:48 - 43:48)
                   RIGHT:
-                    1 (33:43 - 33:43)
+                    1 (43:52 - 43:52)
           BODY:
-            BLOCK: (33:47 - 36:9)
-              VAR: ind (34:13 - 34:42)
-                TYPE: int (34:17 - 34:19)
-                INIT:
-                  BINARY OP: PLUS (34:27 - 34:41)
-                    LEFT:
-                      ARRAY ACCESS: (34:27 - 34:32)
-                        ARRAY:
-                          arr (34:27 - 34:29)
-                        INDEX:
-                          i (34:31 - 34:31)
-                    RIGHT:
-                      minVal (34:36 - 34:41)
-              ASSIGN: (35:13 - 35:40)
+            BLOCK: (43:55 - 45:9)
+              ASSIGN: (44:13 - 44:29)
                 LVALUE:
-                  ARRAY ACCESS: (35:13 - 35:22)
+                  ARRAY ACCESS: (44:13 - 44:19)
                     ARRAY:
-                      count (35:13 - 35:17)
+                      copy (44:13 - 44:16)
                     INDEX:
-                      ind (35:19 - 35:21)
+                      i (44:18 - 44:18)
                 RVALUE:
-                  BINARY OP: PLUS (35:26 - 35:39)
-                    LEFT:
-                      ARRAY ACCESS: (35:26 - 35:35)
-                        ARRAY:
-                          count (35:26 - 35:30)
-                        INDEX:
-                          ind (35:32 - 35:34)
-                    RIGHT:
-                      1 (35:39 - 35:39)
-        VAR: index (37:9 - 37:26)
-          TYPE: int (37:13 - 37:15)
+                  ARRAY ACCESS: (44:23 - 44:28)
+                    ARRAY:
+                      arr (44:23 - 44:25)
+                    INDEX:
+                      i (44:27 - 44:27)
+        RETURN (46:9 - 46:20):
+          VALUE:
+            copy (46:16 - 46:19)
+class: CountSort (50:1 - 78:1)
+  SUPERCLASSES: Sorter
+  CONSTRUCTOR: [] (52:5 - 54:5)
+    BODY:
+      BLOCK: (52:20 - 54:5)
+        EXPRESSION STATEMENT: (53:9 - 53:16)
+          SUPER CALL:
+  METHOD: sort (56:5 - 77:5)
+    RETURN TYPE: VOID
+    PARAMETERS: (56:18 - 56:28)
+      PARAMETER: arr (56:19 - 56:27)
+        type: int (56:19 - 56:21)[]
+    BODY:
+      BLOCK: (56:30 - 77:5)
+        VAR: n (57:9 - 57:31)
+          TYPE: int (57:13 - 57:15)
           INIT:
-            0 (37:25 - 37:25)
-        FOR: (38:9 - 43:9)
+            FIELD ACCESS: length (57:21 - 57:30)
+              TARGET:
+                arr (57:21 - 57:23)
+        VAR: maxVal (58:9 - 58:31)
+          TYPE: int (58:13 - 58:15)
           INIT:
-            VAR: i (38:13 - 38:26)
-              TYPE: int (38:17 - 38:19)
+            UNARY OP: MINUS (58:26 - 58:30)
+              OPERAND:
+                1000 (58:27 - 58:30)
+        VAR: minVal (59:9 - 59:30)
+          TYPE: int (59:13 - 59:15)
+          INIT:
+            1000 (59:26 - 59:29)
+        FOR: (60:9 - 63:9)
+          INIT:
+            VAR: i (60:13 - 60:26)
+              TYPE: int (60:17 - 60:19)
               INIT:
-                0 (38:25 - 38:25)
+                0 (60:25 - 60:25)
           CONDITION:
-            BINARY OP: LESS (38:28 - 38:35)
+            BINARY OP: LESS (60:28 - 60:32)
               LEFT:
-                i (38:28 - 38:28)
+                i (60:28 - 60:28)
               RIGHT:
-                size (38:32 - 38:35)
+                n (60:32 - 60:32)
           UPDATE:
-            ASSIGN: (38:38 - 38:47)
+            ASSIGN: (60:35 - 60:44)
               LVALUE:
-                i (38:38 - 38:38)
+                i (60:35 - 60:35)
               RVALUE:
-                BINARY OP: PLUS (38:42 - 38:46)
+                BINARY OP: PLUS (60:39 - 60:43)
                   LEFT:
-                    i (38:42 - 38:42)
+                    i (60:39 - 60:39)
                   RIGHT:
-                    1 (38:46 - 38:46)
+                    1 (60:43 - 60:43)
           BODY:
-            BLOCK: (38:50 - 43:9)
-              FOR: (39:13 - 42:13)
-                INIT:
-                  VAR: j (39:17 - 39:30)
-                    TYPE: int (39:21 - 39:23)
-                    INIT:
-                      0 (39:29 - 39:29)
-                CONDITION:
-                  BINARY OP: LESS (39:32 - 39:43)
-                    LEFT:
-                      j (39:32 - 39:32)
-                    RIGHT:
-                      ARRAY ACCESS: (39:36 - 39:43)
+            BLOCK: (60:47 - 63:9)
+              ASSIGN: (61:13 - 61:49)
+                LVALUE:
+                  maxVal (61:13 - 61:18)
+                RVALUE:
+                  METHOD CALL: max (61:22 - 61:48)
+                    TARGET:
+                      MyUtils (61:22 - 61:28)
+                    ARGUMENTS: (61:33 - 61:48)
+                      maxVal (61:34 - 61:39)
+                      ARRAY ACCESS: (61:42 - 61:47)
                         ARRAY:
-                          count (39:36 - 39:40)
+                          arr (61:42 - 61:44)
                         INDEX:
-                          i (39:42 - 39:42)
-                UPDATE:
-                  ASSIGN: (39:46 - 39:55)
-                    LVALUE:
-                      j (39:46 - 39:46)
-                    RVALUE:
-                      BINARY OP: PLUS (39:50 - 39:54)
-                        LEFT:
-                          j (39:50 - 39:50)
-                        RIGHT:
-                          1 (39:54 - 39:54)
-                BODY:
-                  BLOCK: (39:58 - 42:13)
-                    ASSIGN: (40:17 - 40:40)
-                      LVALUE:
-                        ARRAY ACCESS: (40:17 - 40:26)
-                          ARRAY:
-                            arr (40:17 - 40:19)
-                          INDEX:
-                            index (40:21 - 40:25)
-                      RVALUE:
-                        BINARY OP: MINUS (40:30 - 40:39)
-                          LEFT:
-                            i (40:30 - 40:30)
-                          RIGHT:
-                            minVal (40:34 - 40:39)
-                    ASSIGN: (41:17 - 41:34)
-                      LVALUE:
-                        index (41:17 - 41:21)
-                      RVALUE:
-                        BINARY OP: PLUS (41:25 - 41:33)
-                          LEFT:
-                            index (41:25 - 41:29)
-                          RIGHT:
-                            1 (41:33 - 41:33)
-class: TestSorts (47:1 - 77:1)
-  FIELD: testArray [STATIC] (49:5 - 49:46)
-    TYPE: int (49:18 - 49:20)[]
-    INIT:
-      ARRAY CREATION: (49:36 - 49:45)
-        COMPONENT TYPE:
-          int (49:40 - 49:42)
-        DIMENSIONS:
-          6 (49:44 - 49:44)
-  STATIC INIT: (51:5 - 58:5)
-    BLOCK: (51:12 - 58:5)
-      ASSIGN: (52:9 - 52:25)
-        LVALUE:
-          ARRAY ACCESS: (52:9 - 52:20)
-            ARRAY:
-              testArray (52:9 - 52:17)
-            INDEX:
-              0 (52:19 - 52:19)
-        RVALUE:
-          7 (52:24 - 52:24)
-      ASSIGN: (53:9 - 53:25)
-        LVALUE:
-          ARRAY ACCESS: (53:9 - 53:20)
-            ARRAY:
-              testArray (53:9 - 53:17)
-            INDEX:
-              1 (53:19 - 53:19)
-        RVALUE:
-          8 (53:24 - 53:24)
-      ASSIGN: (54:9 - 54:26)
-        LVALUE:
-          ARRAY ACCESS: (54:9 - 54:20)
-            ARRAY:
-              testArray (54:9 - 54:17)
-            INDEX:
-              2 (54:19 - 54:19)
-        RVALUE:
-          15 (54:24 - 54:25)
-      ASSIGN: (55:9 - 55:26)
-        LVALUE:
-          ARRAY ACCESS: (55:9 - 55:20)
-            ARRAY:
-              testArray (55:9 - 55:17)
-            INDEX:
-              3 (55:19 - 55:19)
-        RVALUE:
-          12 (55:24 - 55:25)
-      ASSIGN: (56:9 - 56:26)
-        LVALUE:
-          ARRAY ACCESS: (56:9 - 56:20)
-            ARRAY:
-              testArray (56:9 - 56:17)
-            INDEX:
-              4 (56:19 - 56:19)
-        RVALUE:
-          41 (56:24 - 56:25)
-      ASSIGN: (57:9 - 57:26)
-        LVALUE:
-          ARRAY ACCESS: (57:9 - 57:20)
-            ARRAY:
-              testArray (57:9 - 57:17)
-            INDEX:
-              5 (57:19 - 57:19)
-        RVALUE:
-          UNARY OP: MINUS (57:24 - 57:25)
-            OPERAND:
-              1 (57:25 - 57:25)
-  METHOD: sort[STATIC] (60:5 - 62:5)
-    RETURN TYPE: VOID
-    PARAMETERS: (60:25 - 60:48)
-      PARAMETER: a (60:26 - 60:32)
-        type: int (60:26 - 60:28)[]
-      PARAMETER: sorter (60:35 - 60:47)
-        type: Sorter (60:35 - 60:40)
-    BODY:
-      BLOCK: (60:50 - 62:5)
-        EXPRESSION STATEMENT: (61:9 - 61:23)
-          METHOD CALL: sort (61:9 - 61:22)
-            TARGET:
-              sorter (61:9 - 61:14)
-            ARGUMENTS: (61:20 - 61:22)
-              a (61:21 - 61:21)
-  METHOD: main[PUBLIC, STATIC] (64:5 - 76:5)
-    RETURN TYPE: VOID
-    PARAMETERS: (64:32 - 64:46)
-      PARAMETER: args (64:33 - 64:45)
-        type: String (64:33 - 64:38)[]
-    BODY:
-      BLOCK: (64:48 - 76:5)
-        VAR: copy1 (65:9 - 65:53)
+                          i (61:46 - 61:46)
+              ASSIGN: (62:13 - 62:49)
+                LVALUE:
+                  minVal (62:13 - 62:18)
+                RVALUE:
+                  METHOD CALL: min (62:22 - 62:48)
+                    TARGET:
+                      MyUtils (62:22 - 62:28)
+                    ARGUMENTS: (62:33 - 62:48)
+                      minVal (62:34 - 62:39)
+                      ARRAY ACCESS: (62:42 - 62:47)
+                        ARRAY:
+                          arr (62:42 - 62:44)
+                        INDEX:
+                          i (62:46 - 62:46)
+        VAR: size (64:9 - 64:43)
+          TYPE: int (64:13 - 64:15)
+          INIT:
+            BINARY OP: PLUS (64:24 - 64:42)
+              LEFT:
+                BINARY OP: MINUS (64:24 - 64:38)
+                  LEFT:
+                    maxVal (64:24 - 64:29)
+                  RIGHT:
+                    minVal (64:33 - 64:38)
+              RIGHT:
+                1 (64:42 - 64:42)
+        VAR: count (65:9 - 65:40)
           TYPE: int (65:13 - 65:15)[]
           INIT:
-            METHOD CALL: arrayCopy (65:27 - 65:52)
-              TARGET:
-                Utils (65:27 - 65:31)
-              ARGUMENTS: (65:42 - 65:52)
-                testArray (65:43 - 65:51)
-        VAR: copy2 (66:9 - 66:53)
-          TYPE: int (66:13 - 66:15)[]
+            ARRAY CREATION: (65:27 - 65:39)
+              COMPONENT TYPE:
+                int (65:31 - 65:33)
+              DIMENSIONS:
+                size (65:35 - 65:38)
+        FOR: (66:9 - 69:9)
           INIT:
-            METHOD CALL: arrayCopy (66:27 - 66:52)
-              TARGET:
-                Utils (66:27 - 66:31)
-              ARGUMENTS: (66:42 - 66:52)
-                testArray (66:43 - 66:51)
-        EXPRESSION STATEMENT: (67:9 - 67:50)
-          METHOD CALL: sort (67:9 - 67:49)
-            TARGET:
-              TestSorts (67:9 - 67:17)
-            ARGUMENTS: (67:23 - 67:49)
-              copy1 (67:24 - 67:28)
-              CONSTRUCTOR CALL: BubbleSorter (67:31 - 67:48)
-        EXPRESSION STATEMENT: (68:9 - 68:47)
-          METHOD CALL: sort (68:9 - 68:46)
-            TARGET:
-              TestSorts (68:9 - 68:17)
-            ARGUMENTS: (68:23 - 68:46)
-              copy2 (68:24 - 68:28)
-              CONSTRUCTOR CALL: CountSort (68:31 - 68:45)
-        FOR: (69:9 - 74:9)
-          INIT:
-            VAR: i (69:13 - 69:26)
-              TYPE: int (69:17 - 69:19)
+            VAR: i (66:13 - 66:26)
+              TYPE: int (66:17 - 66:19)
               INIT:
-                0 (69:25 - 69:25)
+                0 (66:25 - 66:25)
           CONDITION:
-            BINARY OP: LESS (69:28 - 69:41)
+            BINARY OP: LESS (66:28 - 66:32)
               LEFT:
-                i (69:28 - 69:28)
+                i (66:28 - 66:28)
               RIGHT:
-                FIELD ACCESS: size (69:32 - 69:41)
-                  TARGET:
-                    copy1 (69:32 - 69:36)
+                n (66:32 - 66:32)
           UPDATE:
-            ASSIGN: (69:44 - 69:53)
+            ASSIGN: (66:35 - 66:44)
               LVALUE:
-                i (69:44 - 69:44)
+                i (66:35 - 66:35)
               RVALUE:
-                BINARY OP: PLUS (69:48 - 69:52)
+                BINARY OP: PLUS (66:39 - 66:43)
                   LEFT:
-                    i (69:48 - 69:48)
+                    i (66:39 - 66:39)
                   RIGHT:
-                    1 (69:52 - 69:52)
+                    1 (66:43 - 66:43)
           BODY:
-            BLOCK: (69:56 - 74:9)
-              IF: (70:13 - 73:13)
-                CONDITION:
-                  BINARY OP: NOT_EQ (70:17 - 70:36)
+            BLOCK: (66:47 - 69:9)
+              VAR: ind (67:13 - 67:42)
+                TYPE: int (67:17 - 67:19)
+                INIT:
+                  BINARY OP: PLUS (67:27 - 67:41)
                     LEFT:
-                      ARRAY ACCESS: (70:17 - 70:24)
+                      ARRAY ACCESS: (67:27 - 67:32)
                         ARRAY:
-                          copy1 (70:17 - 70:21)
+                          arr (67:27 - 67:29)
                         INDEX:
-                          i (70:23 - 70:23)
+                          i (67:31 - 67:31)
                     RIGHT:
-                      ARRAY ACCESS: (70:29 - 70:36)
+                      minVal (67:36 - 67:41)
+              ASSIGN: (68:13 - 68:40)
+                LVALUE:
+                  ARRAY ACCESS: (68:13 - 68:22)
+                    ARRAY:
+                      count (68:13 - 68:17)
+                    INDEX:
+                      ind (68:19 - 68:21)
+                RVALUE:
+                  BINARY OP: PLUS (68:26 - 68:39)
+                    LEFT:
+                      ARRAY ACCESS: (68:26 - 68:35)
                         ARRAY:
-                          copy2 (70:29 - 70:33)
+                          count (68:26 - 68:30)
                         INDEX:
-                          i (70:35 - 70:35)
-                THEN:
-                  BLOCK: (70:39 - 73:13)
-                    EXPRESSION STATEMENT: (71:17 - 71:44)
-                      METHOD CALL: consolePrint (71:17 - 71:43)
-                        TARGET:
-                          System (71:17 - 71:22)
-                        ARGUMENTS: (71:36 - 71:43)
-                          "Fail" (71:37 - 71:42)
-                    RETURN (72:17 - 72:23)
-        EXPRESSION STATEMENT: (75:9 - 75:34)
-          METHOD CALL: consolePrint (75:9 - 75:33)
+                          ind (68:32 - 68:34)
+                    RIGHT:
+                      1 (68:39 - 68:39)
+        VAR: index (70:9 - 70:26)
+          TYPE: int (70:13 - 70:15)
+          INIT:
+            0 (70:25 - 70:25)
+        FOR: (71:9 - 76:9)
+          INIT:
+            VAR: i (71:13 - 71:26)
+              TYPE: int (71:17 - 71:19)
+              INIT:
+                0 (71:25 - 71:25)
+          CONDITION:
+            BINARY OP: LESS (71:28 - 71:35)
+              LEFT:
+                i (71:28 - 71:28)
+              RIGHT:
+                size (71:32 - 71:35)
+          UPDATE:
+            ASSIGN: (71:38 - 71:47)
+              LVALUE:
+                i (71:38 - 71:38)
+              RVALUE:
+                BINARY OP: PLUS (71:42 - 71:46)
+                  LEFT:
+                    i (71:42 - 71:42)
+                  RIGHT:
+                    1 (71:46 - 71:46)
+          BODY:
+            BLOCK: (71:50 - 76:9)
+              FOR: (72:13 - 75:13)
+                INIT:
+                  VAR: j (72:17 - 72:30)
+                    TYPE: int (72:21 - 72:23)
+                    INIT:
+                      0 (72:29 - 72:29)
+                CONDITION:
+                  BINARY OP: LESS (72:32 - 72:43)
+                    LEFT:
+                      j (72:32 - 72:32)
+                    RIGHT:
+                      ARRAY ACCESS: (72:36 - 72:43)
+                        ARRAY:
+                          count (72:36 - 72:40)
+                        INDEX:
+                          i (72:42 - 72:42)
+                UPDATE:
+                  ASSIGN: (72:46 - 72:55)
+                    LVALUE:
+                      j (72:46 - 72:46)
+                    RVALUE:
+                      BINARY OP: PLUS (72:50 - 72:54)
+                        LEFT:
+                          j (72:50 - 72:50)
+                        RIGHT:
+                          1 (72:54 - 72:54)
+                BODY:
+                  BLOCK: (72:58 - 75:13)
+                    ASSIGN: (73:17 - 73:40)
+                      LVALUE:
+                        ARRAY ACCESS: (73:17 - 73:26)
+                          ARRAY:
+                            arr (73:17 - 73:19)
+                          INDEX:
+                            index (73:21 - 73:25)
+                      RVALUE:
+                        BINARY OP: MINUS (73:30 - 73:39)
+                          LEFT:
+                            i (73:30 - 73:30)
+                          RIGHT:
+                            minVal (73:34 - 73:39)
+                    ASSIGN: (74:17 - 74:34)
+                      LVALUE:
+                        index (74:17 - 74:21)
+                      RVALUE:
+                        BINARY OP: PLUS (74:25 - 74:33)
+                          LEFT:
+                            index (74:25 - 74:29)
+                          RIGHT:
+                            1 (74:33 - 74:33)
+class: TestSorts (80:1 - 110:1)
+  FIELD: testArray [STATIC] (82:5 - 82:46)
+    TYPE: int (82:18 - 82:20)[]
+    INIT:
+      ARRAY CREATION: (82:36 - 82:45)
+        COMPONENT TYPE:
+          int (82:40 - 82:42)
+        DIMENSIONS:
+          6 (82:44 - 82:44)
+  STATIC INIT: (84:5 - 91:5)
+    BLOCK: (84:12 - 91:5)
+      ASSIGN: (85:9 - 85:35)
+        LVALUE:
+          ARRAY ACCESS: (85:9 - 85:30)
+            ARRAY:
+              FIELD ACCESS: testArray (85:9 - 85:27)
+                TARGET:
+                  TestSorts (85:9 - 85:17)
+            INDEX:
+              0 (85:29 - 85:29)
+        RVALUE:
+          7 (85:34 - 85:34)
+      ASSIGN: (86:9 - 86:35)
+        LVALUE:
+          ARRAY ACCESS: (86:9 - 86:30)
+            ARRAY:
+              FIELD ACCESS: testArray (86:9 - 86:27)
+                TARGET:
+                  TestSorts (86:9 - 86:17)
+            INDEX:
+              1 (86:29 - 86:29)
+        RVALUE:
+          8 (86:34 - 86:34)
+      ASSIGN: (87:9 - 87:36)
+        LVALUE:
+          ARRAY ACCESS: (87:9 - 87:30)
+            ARRAY:
+              FIELD ACCESS: testArray (87:9 - 87:27)
+                TARGET:
+                  TestSorts (87:9 - 87:17)
+            INDEX:
+              2 (87:29 - 87:29)
+        RVALUE:
+          15 (87:34 - 87:35)
+      ASSIGN: (88:9 - 88:36)
+        LVALUE:
+          ARRAY ACCESS: (88:9 - 88:30)
+            ARRAY:
+              FIELD ACCESS: testArray (88:9 - 88:27)
+                TARGET:
+                  TestSorts (88:9 - 88:17)
+            INDEX:
+              3 (88:29 - 88:29)
+        RVALUE:
+          12 (88:34 - 88:35)
+      ASSIGN: (89:9 - 89:36)
+        LVALUE:
+          ARRAY ACCESS: (89:9 - 89:30)
+            ARRAY:
+              FIELD ACCESS: testArray (89:9 - 89:27)
+                TARGET:
+                  TestSorts (89:9 - 89:17)
+            INDEX:
+              4 (89:29 - 89:29)
+        RVALUE:
+          41 (89:34 - 89:35)
+      ASSIGN: (90:9 - 90:36)
+        LVALUE:
+          ARRAY ACCESS: (90:9 - 90:30)
+            ARRAY:
+              FIELD ACCESS: testArray (90:9 - 90:27)
+                TARGET:
+                  TestSorts (90:9 - 90:17)
+            INDEX:
+              5 (90:29 - 90:29)
+        RVALUE:
+          UNARY OP: MINUS (90:34 - 90:35)
+            OPERAND:
+              1 (90:35 - 90:35)
+  METHOD: sort[STATIC] (93:5 - 95:5)
+    RETURN TYPE: VOID
+    PARAMETERS: (93:25 - 93:48)
+      PARAMETER: a (93:26 - 93:32)
+        type: int (93:26 - 93:28)[]
+      PARAMETER: sorter (93:35 - 93:47)
+        type: Sorter (93:35 - 93:40)
+    BODY:
+      BLOCK: (93:50 - 95:5)
+        EXPRESSION STATEMENT: (94:9 - 94:23)
+          METHOD CALL: sort (94:9 - 94:22)
             TARGET:
-              System (75:9 - 75:14)
-            ARGUMENTS: (75:28 - 75:33)
-              "OK" (75:29 - 75:32)
+              sorter (94:9 - 94:14)
+            ARGUMENTS: (94:20 - 94:22)
+              a (94:21 - 94:21)
+  METHOD: main[PUBLIC, STATIC] (97:5 - 109:5)
+    RETURN TYPE: VOID
+    PARAMETERS: (97:32 - 97:46)
+      PARAMETER: args (97:33 - 97:45)
+        type: String (97:33 - 97:38)[]
+    BODY:
+      BLOCK: (97:48 - 109:5)
+        VAR: copy1 (98:9 - 98:65)
+          TYPE: int (98:13 - 98:15)[]
+          INIT:
+            METHOD CALL: arrayCopy (98:27 - 98:64)
+              TARGET:
+                MyUtils (98:27 - 98:33)
+              ARGUMENTS: (98:44 - 98:64)
+                FIELD ACCESS: testArray (98:45 - 98:63)
+                  TARGET:
+                    TestSorts (98:45 - 98:53)
+        VAR: copy2 (99:9 - 99:65)
+          TYPE: int (99:13 - 99:15)[]
+          INIT:
+            METHOD CALL: arrayCopy (99:27 - 99:64)
+              TARGET:
+                MyUtils (99:27 - 99:33)
+              ARGUMENTS: (99:44 - 99:64)
+                FIELD ACCESS: testArray (99:45 - 99:63)
+                  TARGET:
+                    TestSorts (99:45 - 99:53)
+        EXPRESSION STATEMENT: (100:9 - 100:48)
+          METHOD CALL: sort (100:9 - 100:47)
+            TARGET:
+              TestSorts (100:9 - 100:17)
+            ARGUMENTS: (100:23 - 100:47)
+              copy1 (100:24 - 100:28)
+              CONSTRUCTOR CALL: BubbleSort (100:31 - 100:46)
+        EXPRESSION STATEMENT: (101:9 - 101:47)
+          METHOD CALL: sort (101:9 - 101:46)
+            TARGET:
+              TestSorts (101:9 - 101:17)
+            ARGUMENTS: (101:23 - 101:46)
+              copy2 (101:24 - 101:28)
+              CONSTRUCTOR CALL: CountSort (101:31 - 101:45)
+        FOR: (102:9 - 107:9)
+          INIT:
+            VAR: i (102:13 - 102:26)
+              TYPE: int (102:17 - 102:19)
+              INIT:
+                0 (102:25 - 102:25)
+          CONDITION:
+            BINARY OP: LESS (102:28 - 102:43)
+              LEFT:
+                i (102:28 - 102:28)
+              RIGHT:
+                FIELD ACCESS: length (102:32 - 102:43)
+                  TARGET:
+                    copy1 (102:32 - 102:36)
+          UPDATE:
+            ASSIGN: (102:46 - 102:55)
+              LVALUE:
+                i (102:46 - 102:46)
+              RVALUE:
+                BINARY OP: PLUS (102:50 - 102:54)
+                  LEFT:
+                    i (102:50 - 102:50)
+                  RIGHT:
+                    1 (102:54 - 102:54)
+          BODY:
+            BLOCK: (102:58 - 107:9)
+              IF: (103:13 - 106:13)
+                CONDITION:
+                  BINARY OP: NOT_EQ (103:17 - 103:36)
+                    LEFT:
+                      ARRAY ACCESS: (103:17 - 103:24)
+                        ARRAY:
+                          copy1 (103:17 - 103:21)
+                        INDEX:
+                          i (103:23 - 103:23)
+                    RIGHT:
+                      ARRAY ACCESS: (103:29 - 103:36)
+                        ARRAY:
+                          copy2 (103:29 - 103:33)
+                        INDEX:
+                          i (103:35 - 103:35)
+                THEN:
+                  BLOCK: (103:39 - 106:13)
+                    EXPRESSION STATEMENT: (104:17 - 104:37)
+                      METHOD CALL: print (104:17 - 104:36)
+                        TARGET:
+                          System (104:17 - 104:22)
+                        ARGUMENTS: (104:29 - 104:36)
+                          "Fail" (104:30 - 104:35)
+                    RETURN (105:17 - 105:23)
+        EXPRESSION STATEMENT: (108:9 - 108:27)
+          METHOD CALL: print (108:9 - 108:26)
+            TARGET:
+              System (108:9 - 108:14)
+            ARGUMENTS: (108:21 - 108:26)
+              "OK" (108:22 - 108:25)

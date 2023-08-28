@@ -28,7 +28,7 @@ interface VoidAstVisitor<T> {
     fun visit(argumentsList: ArgumentsList, context: T)
     fun visit(block: Block, context: T)
     fun visit(fieldDeclaration: FieldDeclaration, context: T)
-    fun visit(variableDeclaration: VariableDeclaration, context: T)
+    fun visit(localVariableDeclaration: LocalVariableDeclaration, context: T)
     fun visit(methodDeclaration: MethodDeclaration, context: T)
     fun visit(constructorDeclaration: ConstructorDeclaration, context: T)
     fun visit(staticInitBlock: StaticInitBlock, context: T)

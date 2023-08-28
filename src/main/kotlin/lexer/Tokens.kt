@@ -47,7 +47,9 @@ enum class KeySeqType(val stringValue: String) {
     CONSTRUCTOR("constructor"),
     THIS("this"),
     NULL("null"),
-    SUPER("super")
+    SUPER("super"),
+    AT("@"),
+    SHARP("#")
 }
 
 sealed class Token {

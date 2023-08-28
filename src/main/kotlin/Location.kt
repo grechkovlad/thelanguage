@@ -1,3 +1,5 @@
+import lexer.TokenLocation
+
 data class Location(
     val fileName: String,
     val lineStart: Int,
@@ -10,3 +12,7 @@ data class Location(
 }
 
 val EMPTY_LOCATION = Location("file", 0, 0, 0, -1)
+infix fun Location.between(to: Location) =
+    Location(fileName, lineStart, columnStart, to.lineEnd, to.columnEnd)
+
+fun TokenLocation.toAstLocation(fileName: String) = Location(fileName, line, columnStart, line, columnEnd)

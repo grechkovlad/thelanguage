@@ -1,7 +1,4 @@
-import lexer.EOF
-import lexer.IllegalRollbackException
-import lexer.LL3Lexer
-import lexer.SOF
+import lexer.*
 import java.lang.StringBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -41,7 +38,7 @@ class LexerTests {
 
     @Test
     fun testRollback() {
-        val lexer = LL3Lexer("class A { }")
+        val lexer = LL3Lexer("class A { }", DiagnosticMarkupSupportMode.DONT_SUPPORT)
         assertTrue(assertThrows<IllegalRollbackException> { lexer.rollback() })
         lexer.advance()
         val classToken = lexer.current
@@ -69,7 +66,7 @@ class LexerTests {
         val srcText = readFromResources("/examples/$name.lang")
         val expected = readFromResources("/lexer_ethalons/$name.txt").trim('\n')
         val actual = StringBuilder()
-        val lexer = LL3Lexer(srcText)
+        val lexer = LL3Lexer(srcText, DiagnosticMarkupSupportMode.DONT_SUPPORT)
         do {
             actual.append(lexer.current).append("\n")
             lexer.advance()

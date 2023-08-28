@@ -4,66 +4,73 @@ interface: Mammal (1:1 - 3:1)
 interface: Fluffy (5:1 - 7:1)
   METHOD: getPetted (6:5 - 6:25)
     RETURN TYPE: VOID
-class: CatLikeAnimal (9:1 - 11:1)[ABSTRACT]
+class: CatLikeAnimal (9:1 - 15:1)[ABSTRACT]
   SUPERCLASSES: Mammal, Fluffy
   FIELD: pawsCount [STATIC, PROTECTED] (10:5 - 10:45)
     TYPE: int (10:28 - 10:30)
     INIT:
       4 (10:44 - 10:44)
-class: Lion (13:1 - 20:1)
+  CONSTRUCTOR: [] (12:5 - 14:5)
+    BODY:
+      BLOCK: (12:20 - 14:5)
+        EXPRESSION STATEMENT: (13:9 - 13:16)
+          SUPER CALL:
+class: Lion (17:1 - 25:1)
   SUPERCLASSES: CatLikeAnimal
-  FIELD: name  (15:5 - 15:22)
-    TYPE: String (15:11 - 15:16)
+  FIELD: name  (19:5 - 19:22)
+    TYPE: String (19:11 - 19:16)
   CONSTRUCTOR: []
-    PARAMETERS: (17:17 - 17:29)
-      PARAMETER: name (17:18 - 17:28)
-        type: String (17:18 - 17:23) (17:5 - 19:5)
+    PARAMETERS: (21:17 - 21:29)
+      PARAMETER: name (21:18 - 21:28)
+        type: String (21:18 - 21:23) (21:5 - 24:5)
     BODY:
-      BLOCK: (17:31 - 19:5)
-        ASSIGN: (18:9 - 18:25)
+      BLOCK: (21:31 - 24:5)
+        EXPRESSION STATEMENT: (22:9 - 22:16)
+          SUPER CALL:
+        ASSIGN: (23:9 - 23:25)
           LVALUE:
-            FIELD ACCESS: name (18:9 - 18:17)
+            FIELD ACCESS: name (23:9 - 23:17)
               TARGET:
-                THIS (18:9 - 18:12)
+                THIS (23:9 - 23:12)
           RVALUE:
-            name (18:21 - 18:24)
-class: Main (22:1 - 32:1)
-  METHOD: main[PUBLIC, STATIC] (23:5 - 31:5)
+            name (23:21 - 23:24)
+class: Main (27:1 - 37:1)
+  METHOD: main[PUBLIC, STATIC] (28:5 - 36:5)
     RETURN TYPE: VOID
-    PARAMETERS: (23:32 - 23:46)
-      PARAMETER: args (23:33 - 23:45)
-        type: String (23:33 - 23:38)[]
+    PARAMETERS: (28:32 - 28:46)
+      PARAMETER: args (28:33 - 28:45)
+        type: String (28:33 - 28:38)[]
     BODY:
-      BLOCK: (23:48 - 31:5)
-        VAR: x (24:9 - 24:18)
-          TYPE: int (24:13 - 24:15)
-        ASSIGN: (25:9 - 25:14)
+      BLOCK: (28:48 - 36:5)
+        VAR: x (29:9 - 29:18)
+          TYPE: int (29:13 - 29:15)
+        ASSIGN: (30:9 - 30:14)
           LVALUE:
-            x (25:9 - 25:9)
+            x (30:9 - 30:9)
           RVALUE:
-            1 (25:13 - 25:13)
-        IF: (26:9 - 30:9)
+            1 (30:13 - 30:13)
+        IF: (31:9 - 35:9)
           CONDITION:
-            BINARY OP: GREATER (26:13 - 26:27)
+            BINARY OP: GREATER (31:13 - 31:27)
               LEFT:
-                FIELD ACCESS: length (26:13 - 26:23)
+                FIELD ACCESS: length (31:13 - 31:23)
                   TARGET:
-                    args (26:13 - 26:16)
+                    args (31:13 - 31:16)
               RIGHT:
-                0 (26:27 - 26:27)
+                0 (31:27 - 31:27)
           THEN:
-            BLOCK: (26:30 - 28:9)
-              EXPRESSION STATEMENT: (27:13 - 27:43)
-                METHOD CALL: getPetted (27:13 - 27:42)
+            BLOCK: (31:30 - 33:9)
+              EXPRESSION STATEMENT: (32:13 - 32:43)
+                METHOD CALL: getPetted (32:13 - 32:42)
                   TARGET:
-                    CONSTRUCTOR CALL: Lion (27:13 - 27:30)
-                      ARGUMENTS: (27:21 - 27:30)
-                        "Banach" (27:22 - 27:29)
+                    CONSTRUCTOR CALL: Lion (32:13 - 32:30)
+                      ARGUMENTS: (32:21 - 32:30)
+                        "Banach" (32:22 - 32:29)
           ELSE:
-            BLOCK: (28:16 - 30:9)
-              EXPRESSION STATEMENT: (29:13 - 29:48)
-                METHOD CALL: consolePrint (29:13 - 29:47)
+            BLOCK: (33:16 - 35:9)
+              EXPRESSION STATEMENT: (34:13 - 34:41)
+                METHOD CALL: print (34:13 - 34:40)
                   TARGET:
-                    System (29:13 - 29:18)
-                  ARGUMENTS: (29:32 - 29:47)
-                    "No arguments" (29:33 - 29:46)
+                    System (34:13 - 34:18)
+                  ARGUMENTS: (34:25 - 34:40)
+                    "No arguments" (34:26 - 34:39)

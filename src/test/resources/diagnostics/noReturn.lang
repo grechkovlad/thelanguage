@@ -1,0 +1,5 @@
+class Main {
+    fun int @MissingReturnStatement foo # (bool x) {
+        if (x) {return 1;}
+    }
+}

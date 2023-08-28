@@ -14,7 +14,14 @@ class IllegalRollbackException : RuntimeException()
 
 val WHITESPACES = arrayOf(' ', '\n', '\t')
 
-class LL3Lexer(private val input: CharSequence) : Lexer {
+enum class DiagnosticMarkupSupportMode {
+    SUPPORT, IGNORE, DONT_SUPPORT
+}
+
+class LL3Lexer(
+    private val input: CharSequence,
+    private val diagnosticMarkupSupportMode: DiagnosticMarkupSupportMode
+) : Lexer {
 
     private var line = 1
     private var column = 0
@@ -33,7 +40,17 @@ class LL3Lexer(private val input: CharSequence) : Lexer {
         if (current is EOF) throw EOFException()
         pos++
         column++
-        val nextToken = readNextToken()
+        var nextToken = readNextToken()
+        if (diagnosticMarkupSupportMode == DiagnosticMarkupSupportMode.IGNORE) {
+            if (nextToken is KeySeq && nextToken.type == AT) {
+                advance()
+                advance()
+                return
+            } else if (nextToken is KeySeq && nextToken.type == SHARP) {
+                advance()
+                return
+            }
+        }
         if (currentIndex < currents.size - 1) {
             currents[++currentIndex] = nextToken
         } else {
@@ -67,7 +84,7 @@ class LL3Lexer(private val input: CharSequence) : Lexer {
     private val twoSymbolOrderMap = mapOf("<=" to LEQ, ">=" to GEQ, "==" to EQUALS, "!=" to NOT_EQUALS)
     private val boolRegex = "true|false".toRegex()
     private val wordRegex = "[a-zA-Z][_a-zA-Z0-9]*".toRegex()
-    private val floatRegex = "\\d+.\\d+".toRegex()
+    private val floatRegex = "\\d+\\.\\d+".toRegex()
     private val intRegex = "\\d+".toRegex()
     private val stringRegex = "\"[^\"]*\"".toRegex()
 
@@ -99,6 +116,12 @@ class LL3Lexer(private val input: CharSequence) : Lexer {
         eatWhitespaces()
         if (pos == input.length) return EOF(TokenLocation(line, column, column))
         singleSymbolTokensMap[input[pos]]?.also { return KeySeq(it, TokenLocation(line, column, column)) }
+        if (diagnosticMarkupSupportMode != DiagnosticMarkupSupportMode.DONT_SUPPORT && input[pos] == '@') {
+            return KeySeq(AT, TokenLocation(line, column, column))
+        }
+        if (diagnosticMarkupSupportMode != DiagnosticMarkupSupportMode.DONT_SUPPORT && input[pos] == '#') {
+            return KeySeq(SHARP, TokenLocation(line, column, column))
+        }
         if (input[pos] in singleSymbolOrderChars) {
             if (!charAtIs(pos + 1, '=')) {
                 return KeySeq(singleSymbolOrderMap[input[pos]]!!, TokenLocation(line, column, column))

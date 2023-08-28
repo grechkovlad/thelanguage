@@ -106,21 +106,21 @@ class: Fib (1:1 - 18:1)
         type: String (15:33 - 15:38)[]
     BODY:
       BLOCK: (15:48 - 17:5)
-        EXPRESSION STATEMENT: (16:9 - 16:62)
-          METHOD CALL: consolePrint (16:9 - 16:61)
+        EXPRESSION STATEMENT: (16:9 - 16:55)
+          METHOD CALL: print (16:9 - 16:54)
             TARGET:
               System (16:9 - 16:14)
-            ARGUMENTS: (16:28 - 16:61)
-              METHOD CALL: fib (16:29 - 16:60)
+            ARGUMENTS: (16:21 - 16:54)
+              METHOD CALL: fib (16:22 - 16:53)
                 TARGET:
-                  Fib (16:29 - 16:31)
-                ARGUMENTS: (16:36 - 16:60)
-                  METHOD CALL: parseInt (16:37 - 16:59)
+                  Fib (16:22 - 16:24)
+                ARGUMENTS: (16:29 - 16:53)
+                  METHOD CALL: parseInt (16:30 - 16:52)
                     TARGET:
-                      Utils (16:37 - 16:41)
-                    ARGUMENTS: (16:51 - 16:59)
-                      ARRAY ACCESS: (16:52 - 16:58)
+                      Utils (16:30 - 16:34)
+                    ARGUMENTS: (16:44 - 16:52)
+                      ARRAY ACCESS: (16:45 - 16:51)
                         ARRAY:
-                          args (16:52 - 16:55)
+                          args (16:45 - 16:48)
                         INDEX:
-                          0 (16:57 - 16:57)
+                          0 (16:50 - 16:50)

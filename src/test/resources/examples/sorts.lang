@@ -3,6 +3,11 @@ interface Sorter {
 }
 
 class BubbleSort : Sorter {
+
+    constructor () {
+        super();
+    }
+
     fun void sort(int[] arr) {
         var int n = arr.length;
         for(var int i = 0; i < n; i = i + 1;) {
@@ -18,18 +23,46 @@ class BubbleSort : Sorter {
     }
 }
 
+class MyUtils {
+    fun static int max(int x, int y) {
+        if (x > y) {
+            return x;
+        }
+        return y;
+    }
+
+    fun static int min(int x, int y) {
+        if (x < y) {
+            return x;
+        }
+        return y;
+    }
+
+    fun static int[] arrayCopy(int[] arr) {
+        var int[] copy = new int[arr.length];
+        for(var int i = 0; i < arr.length; i = i + 1;){
+            copy[i] = arr[i];
+        }
+        return copy;
+    }
+}
+
 class CountSort : Sorter {
+
+    constructor () {
+        super();
+    }
 
     fun void sort(int[] arr) {
         var int n = arr.length;
-        var int maxVal = Utils.MIN_INT;
-        var int minVal = Utils.MAX_INT;
+        var int maxVal = -1000;
+        var int minVal = 1000;
         for(var int i = 0; i < n; i = i + 1;) {
-            maxVal = Utils.max(maxVal, arr[i]);
-            minVal = Utils.min(minVal, arr[i]);
+            maxVal = MyUtils.max(maxVal, arr[i]);
+            minVal = MyUtils.min(minVal, arr[i]);
         }
         var int size = maxVal - minVal + 1;
-        var int count = new int[size];
+        var int[] count = new int[size];
         for(var int i = 0; i < n; i = i + 1;) {
             var int ind = arr[i] + minVal;
             count[ind] = count[ind] + 1;
@@ -49,12 +82,12 @@ class TestSorts {
     field static int[] testArray = new int[6];
 
     static {
-        testArray[0] = 7;
-        testArray[1] = 8;
-        testArray[2] = 15;
-        testArray[3] = 12;
-        testArray[4] = 41;
-        testArray[5] = -1;
+        TestSorts.testArray[0] = 7;
+        TestSorts.testArray[1] = 8;
+        TestSorts.testArray[2] = 15;
+        TestSorts.testArray[3] = 12;
+        TestSorts.testArray[4] = 41;
+        TestSorts.testArray[5] = -1;
     }
 
     fun static void sort(int[] a, Sorter sorter) {
@@ -62,16 +95,16 @@ class TestSorts {
     }
 
     fun public static void main(String[] args) {
-        var int[] copy1 = Utils.arrayCopy(testArray);
-        var int[] copy2 = Utils.arrayCopy(testArray);
-        TestSorts.sort(copy1, new BubbleSorter());
+        var int[] copy1 = MyUtils.arrayCopy(TestSorts.testArray);
+        var int[] copy2 = MyUtils.arrayCopy(TestSorts.testArray);
+        TestSorts.sort(copy1, new BubbleSort());
         TestSorts.sort(copy2, new CountSort());
-        for(var int i = 0; i < copy1.size; i = i + 1;) {
+        for(var int i = 0; i < copy1.length; i = i + 1;) {
             if (copy1[i] != copy2[i]) {
-                System.consolePrint("Fail");
+                System.print("Fail");
                 return;
             }
         }
-        System.consolePrint("OK");
+        System.print("OK");
     }
 }

@@ -1,0 +1,5 @@
+class Main {
+    fun int foo() {
+        return @TypeMismatch 1.0 + 2.0 #;
+    }
+}

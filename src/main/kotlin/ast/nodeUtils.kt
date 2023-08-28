@@ -35,6 +35,11 @@ private class StringifierVisitor(private val builder: StringBuilder) : VoidAstVi
         append("${floatLiteral.value} ${floatLiteral.location.dumpWithoutFilename()}")
     }
 
+    override fun visit(boolLiteral: BoolLiteral, tabsCount: Int) {
+        addIdent(tabsCount)
+        append("${boolLiteral.value} ${boolLiteral.location.dumpWithoutFilename()}")
+    }
+
     override fun visit(identifier: Identifier, tabsCount: Int) {
         addIdent(tabsCount)
         append("${identifier.value} ${identifier.location.dumpWithoutFilename()}")
@@ -257,17 +262,17 @@ private class StringifierVisitor(private val builder: StringBuilder) : VoidAstVi
         }
     }
 
-    override fun visit(variableDeclaration: VariableDeclaration, tabsCount: Int) {
+    override fun visit(localVariableDeclaration: LocalVariableDeclaration, tabsCount: Int) {
         addIdent(tabsCount)
-        append("VAR: ${variableDeclaration.name.value} ${variableDeclaration.location.dumpWithoutFilename()}\n")
+        append("VAR: ${localVariableDeclaration.name.value} ${localVariableDeclaration.location.dumpWithoutFilename()}\n")
         addIdent(tabsCount + 1)
         append("TYPE: ")
-        variableDeclaration.type.accept(this, 0)
-        if (variableDeclaration.initializer != null) {
+        localVariableDeclaration.type.accept(this, 0)
+        if (localVariableDeclaration.initializer != null) {
             append('\n')
             addIdent(tabsCount + 1)
             append("INIT:\n")
-            variableDeclaration.initializer.accept(this, tabsCount + 2)
+            localVariableDeclaration.initializer.accept(this, tabsCount + 2)
         }
     }
 

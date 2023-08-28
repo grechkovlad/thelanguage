@@ -7,6 +7,7 @@ class Point {
     }
 
     constructor public (float x, float y) {
+        super();
         this.x = x;
         this.y = y;
     }
@@ -26,12 +27,13 @@ class Segment {
 
     fun Point[] asArray() {
         var Point[] res = new Point[2];
-        res[0] = from;
-        res[1] = to;
+        res[0] = Segment.from;
+        res[1] = Segment.to;
         return res;
     }
 
     constructor public (Point from, Point to) {
+        super();
         this.from = from;
         this.to = to;
     }
@@ -43,6 +45,6 @@ class Main {
 
         (segmentMatrix[0][1]).from.x = 1;
         segmentMatrix[(0 / 1)][0 + 1].asArray()[0].stringify();
-        segmentMatrix[1 / 1 + 1 - 1][0 + 1].asArray().x = 5;
+        segmentMatrix[1 / 1 + 1 - 1][0 + 1].asArray()[0].x = 5;
     }
 }

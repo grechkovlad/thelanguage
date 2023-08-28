@@ -128,7 +128,7 @@ class ConstructorCall(
     }
 }
 
-class SuperCall(val arguments: ArgumentsList, location: Location) : Statement(location) {
+class SuperCall(val arguments: ArgumentsList, location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
@@ -241,7 +241,7 @@ class FieldDeclaration(
     }
 }
 
-class VariableDeclaration(
+class LocalVariableDeclaration(
     val name: Identifier,
     val type: TypeReference,
     val initializer: Expression?,

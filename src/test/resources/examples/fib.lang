@@ -13,6 +13,6 @@ class Fib {
     }
 
     fun public static void main(String[] args) {
-        System.consolePrint(Fib.fib(Utils.parseInt(args[0])));
+        System.print(Fib.fib(Utils.parseInt(args[0])));
     }
 }
