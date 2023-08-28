@@ -2,7 +2,6 @@ package ir
 
 import ClassKind
 import ModifierType
-import java.lang.reflect.Type
 
 sealed class IrNode
 

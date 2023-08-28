@@ -40,7 +40,7 @@ class LL3Lexer(
         if (current is EOF) throw EOFException()
         pos++
         column++
-        var nextToken = readNextToken()
+        val nextToken = readNextToken()
         if (diagnosticMarkupSupportMode == DiagnosticMarkupSupportMode.IGNORE) {
             if (nextToken is KeySeq && nextToken.type == AT) {
                 advance()

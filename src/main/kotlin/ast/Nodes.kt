@@ -44,7 +44,7 @@ class FloatLiteral(val value: Float, location: Location) : Expression(location) 
 
 class BoolLiteral(val value: Boolean, location: Location): Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
-        visitor.visit(this, context);
+        visitor.visit(this, context)
     }
 }
 
@@ -199,7 +199,7 @@ class Modifier(val type: ModifierType, location: Location) : AstNode(location) {
     }
 }
 
-class ModifiersList(val modifiers: List<Modifier>, location: Location) : AstNode(location),
+class ModifiersList(private val modifiers: List<Modifier>, location: Location) : AstNode(location),
     List<Modifier> by modifiers {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)

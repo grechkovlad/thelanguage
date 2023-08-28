@@ -3,7 +3,6 @@ import parser.Parser
 import kotlin.reflect.cast
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class DiagnosticTests {
 
