@@ -929,12 +929,14 @@ class IrBuilder(private val sources: List<SourceFile>) {
             for (superRef in listOf(node.superClass, *node.interfaces.toTypedArray())) {
                 if (color[superRef.name] == false) throw CyclicInheritance(
                     node.name,
-                    classIdToAst[node.name]!!.location
+                    classIdToAst[node.name]!!.name.location
                 )
                 if (superRef is UserClassReference) dfs(superRef.declaration)
             }
             color[node.name] = true
         }
+
+        classIdToDeclaration.values.forEach { dfs(it) }
     }
 
     private fun fillSupertypesReferences() {

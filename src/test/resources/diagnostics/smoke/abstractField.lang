@@ -1,0 +1,3 @@
+class A {
+    field @ForbiddenModifier abstract # int x = 1;
+}

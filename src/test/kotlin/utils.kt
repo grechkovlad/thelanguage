@@ -14,7 +14,8 @@ private fun retrieveExpectedDiagnostic(srcText: String, fileName: String): Expec
     fun Token.isSharpToken() = this is KeySeq && type == KeySeqType.SHARP
 
     val lexer = LL3Lexer(srcText, DiagnosticMarkupSupportMode.SUPPORT)
-    while (!lexer.current.isAtToken()) lexer.advance()
+    while (!lexer.current.isAtToken() && lexer.current !is EOF) lexer.advance()
+    if (lexer.current is EOF) throw NoDiagnosticInTest
     lexer.advance()
     val errorIdent = lexer.current
     require(errorIdent is Identifier)
@@ -31,6 +32,7 @@ private fun retrieveExpectedDiagnostic(srcText: String, fileName: String): Expec
 
 data class UnknownDiagnostic(val name: String) : RuntimeException()
 object EmptyDiagnostic : RuntimeException()
+object NoDiagnosticInTest : RuntimeException()
 data class ExpectedCompilationError(val type: KClass<out CompilationError>, val location: Location)
 
 fun runDiagnosticTest(path: String) {

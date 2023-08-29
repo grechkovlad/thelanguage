@@ -1,0 +1,7 @@
+class A {
+    fun int foo() { return 1; }
+}
+
+class B : A {
+    fun String @IllegalReturnTypeInOverriding foo #() { return "a"; }
+}

@@ -1,0 +1,2 @@
+class StringChild : @FinalClassSubtyping String # {
+}

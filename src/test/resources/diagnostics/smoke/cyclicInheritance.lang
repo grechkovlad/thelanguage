@@ -1,0 +1,5 @@
+class A : B {}
+
+class B : C {}
+
+class @CyclicInheritance C # : A {}
