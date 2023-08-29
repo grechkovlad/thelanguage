@@ -22,7 +22,7 @@ fun main() {
             .onEnter {
                 if (depth > 0) {
                     out.println("${tabs(depth)}@Nested")
-                    out.println("${tabs(depth)}inner class ${it.name.capitalize()}{")
+                    out.println("${tabs(depth)}inner class ${it.name.capitalize()} {")
                 }
                 depth++
                 true

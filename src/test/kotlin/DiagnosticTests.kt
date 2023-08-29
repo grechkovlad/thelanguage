@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Nested
 class DiagnosticTests {
 
     @Nested
-    inner class Smoke{
+    inner class Smoke {
         @Test
         fun testReturnFromVoid() {
             runDiagnosticTest("/smoke/returnFromVoid")
