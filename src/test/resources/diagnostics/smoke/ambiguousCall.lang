@@ -1,0 +1,19 @@
+class A {
+    constructor () {
+        super();
+    }
+}
+
+class B : A {
+    constructor () {
+        super();
+    }
+}
+
+class X {
+    fun void foo(A a, B b) {}
+    fun void foo(B b, A a) {}
+    fun void bar() {
+        @AmbiguousCall this.foo(new B(), new B()) #;
+    }
+}

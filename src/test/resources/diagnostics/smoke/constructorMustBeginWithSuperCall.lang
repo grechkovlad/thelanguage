@@ -1,0 +1,7 @@
+class A {
+    constructor () {
+        @ConstructorMustBeginWithSuperCall
+        var int x = 1;
+        #
+    }
+}

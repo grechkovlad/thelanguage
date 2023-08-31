@@ -63,8 +63,6 @@ class MethodWithBodyInInterface(location: Location) : CompilationError(location)
 
 class AbstractMethodWithBody(location: Location) : CompilationError(location)
 
-class IllegalModifier(location: Location) : CompilationError(location)
-
 class NameDeclarationClash(val name: String, location: Location) : CompilationError(location)
 
 class ConflictingAccessModifiers(location: Location) : CompilationError(location)
@@ -88,8 +86,6 @@ class IllegalSuperCall(location: Location) : CompilationError(location)
 class AmbiguousCall(
     location: Location, val candidateOne: ExecutableReference, val candidateTwo: ExecutableReference
 ) : CompilationError(location)
-
-class VariableRedeclaration(val name: String, location: Location) : CompilationError(location)
 
 class ConstructorMustBeginWithSuperCall(
     location: Location,

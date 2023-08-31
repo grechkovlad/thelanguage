@@ -1,0 +1,3 @@
+class A {
+    field String x = - @NumericTypeExpected "b" #;
+}

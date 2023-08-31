@@ -1,0 +1,15 @@
+class A {
+
+    constructor () {
+        super();
+    }
+
+    field private int x = 1;
+}
+
+class B {
+    static {
+        var A a = new A();
+        a.@CanNotAccessPrivateMember x # = 4;
+    }
+}

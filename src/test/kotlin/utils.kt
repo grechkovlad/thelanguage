@@ -42,7 +42,7 @@ fun runDiagnosticTest(path: String) {
     var exceptionThrown = false
     try {
         IrBuilder(listOf(ast)).build()
-    } catch (t: Throwable) {
+    } catch (t: CompilationError) {
         exceptionThrown = true
         assert(expectedCompilationError.type.isInstance(t)) {
             "Expected ${expectedCompilationError.type.simpleName}, got ${t::class.simpleName}"

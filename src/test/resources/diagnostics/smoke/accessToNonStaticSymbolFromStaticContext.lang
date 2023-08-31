@@ -1,0 +1,7 @@
+class A {
+    field int x = 1;
+
+    static {
+        @AccessToNonStaticSymbolFromStaticContext A.x # = 2;
+    }
+}

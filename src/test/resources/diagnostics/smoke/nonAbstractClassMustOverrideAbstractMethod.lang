@@ -1,0 +1,7 @@
+class abstract A {
+    fun abstract void foo();
+}
+
+class @NonAbstractClassMustOverrideAbstractMethod B # : A {
+
+}

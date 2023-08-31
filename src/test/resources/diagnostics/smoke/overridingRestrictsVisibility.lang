@@ -1,0 +1,7 @@
+class A {
+    fun void foo() {}
+}
+
+class B : A {
+    fun protected void @OverridingRestrictsVisibility foo # () {}
+}

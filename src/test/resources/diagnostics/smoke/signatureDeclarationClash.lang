@@ -1,0 +1,4 @@
+class A {
+    fun int foo() { return 1;}
+    fun void @SignatureDeclarationClash foo #() {}
+}

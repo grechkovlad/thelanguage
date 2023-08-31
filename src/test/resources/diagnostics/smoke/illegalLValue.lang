@@ -1,0 +1,7 @@
+class A {
+    static {
+        var int a = 1;
+        var int b = 2;
+        @IllegalLValue a + b # = 3;
+    }
+}

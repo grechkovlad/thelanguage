@@ -1,0 +1,3 @@
+class abstract A {
+    fun @AbstractMethodWithBody abstract # void foo() {}
+}

@@ -1,0 +1,6 @@
+class A {
+    static {
+    }
+    @MultipleDeclarationOfStaticInitBlock static {
+    } #
+}

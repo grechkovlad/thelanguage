@@ -18,6 +18,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
     private val fieldIdToDeclaration = mutableMapOf<String, FieldDeclaration>()
     private val classToMethodsInfo = mutableMapOf<ClassReference, MethodsOfClassScope>()
     private val methodDeclarationToAst = mutableMapOf<MethodDeclaration, ast.MethodDeclaration>()
+    private val fieldDeclarationToAst = mutableMapOf<FieldDeclaration, ast.FieldDeclaration>()
     private val constructorDeclarationToAst = mutableMapOf<ConstructorDeclaration, ast.ConstructorDeclaration>()
     private val staticInitBlockToAst = mutableMapOf<StaticInitBlock, ast.StaticInitBlock>()
 
@@ -99,15 +100,21 @@ class IrBuilder(private val sources: List<SourceFile>) {
                     staticInitBlockToAst[classIr.staticInit]!!.body
                 )
             }
+            classIr.fields.forEach { fieldIr ->
+                val fieldAst = fieldDeclarationToAst[fieldIr]!!
+                if (fieldAst.initializer != null) {
+                    fieldIr.initializer =
+                        compileExpression(fieldAst.initializer, CompilationContext(classIr, VoidTypeReference))
+                }
+            }
         }
     }
 
     class CompilationContext(
         val classIr: ClassDeclaration,
-        val isStatic: Boolean,
         val returnTypeExpected: TypeReference
     ) {
-        private val scopes = mutableListOf<Scope>(Scope())
+        private val scopes = mutableListOf(Scope())
 
         fun addName(name: String, variable: VariableDeclaration) {
             scopes.last()[name] = variable
@@ -142,7 +149,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
     private fun compileMethodOrStaticInitBlockBody(
         classIr: ClassDeclaration, methodIr: ExecutableMember, bodyAst: Block
     ) {
-        val context = CompilationContext(classIr, methodIr.isStatic, methodIr.returnType)
+        val context = CompilationContext(classIr, methodIr.returnType)
         methodIr.parameters.forEach { context.addName(it.name, it) }
         val statements = bodyAst.statements.map { compileNotSuperCallStatement(it, context) }
         context.popScope()
@@ -166,7 +173,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
         constructorIr: ConstructorDeclaration,
         bodyAst: Block
     ) {
-        val context = CompilationContext(classIr, false, classIr.reference)
+        val context = CompilationContext(classIr, classIr.reference)
         constructorIr.parameters.forEach { context.addName(it.name, it) }
         if (bodyAst.statements.isEmpty()) {
             throw ConstructorMustBeginWithSuperCall(bodyAst.location, constructorIr.reference)
@@ -248,7 +255,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
         context: CompilationContext
     ): Statement {
         if (context.declaredInTopScope(localVariableDeclaration.name.value)) {
-            throw VariableRedeclaration(localVariableDeclaration.name.value, localVariableDeclaration.name.location)
+            throw NameDeclarationClash(localVariableDeclaration.name.value, localVariableDeclaration.name.location)
         }
         val initializer = localVariableDeclaration.initializer?.let { compileExpression(it, context) }
         val type = resolveType(localVariableDeclaration.type)
@@ -321,8 +328,15 @@ class IrBuilder(private val sources: List<SourceFile>) {
             if (target is TypeAccess && !field.isStatic) {
                 throw AccessToNonStaticSymbolFromStaticContext(assignment.lValue.location)
             }
-            if (field.isPrivate && field.declaringClass != context.classIr.reference) {
-                throw CanNotAccessPrivateMember(assignment.lValue.name.value, assignment.lValue.name.location)
+            if (field.declaringClass != context.classIr.reference) {
+                if (field.isPrivate) throw CanNotAccessPrivateMember(
+                    assignment.lValue.name.value,
+                    assignment.lValue.name.location
+                )
+                if (field.isProtected) throw CanNotAccessProtectedMember(
+                    assignment.lValue.name.value,
+                    assignment.lValue.name.location
+                )
             }
             return SetField(field, target, rValue)
         }
@@ -457,7 +471,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
             if (one.isMoreSpecific(another)) {
                 it.remove()
             } else {
-                remainedCandidates.iterator().remove()
+                remainedCandidates.removeFirst()
             }
         }
         val survivor = remainedCandidates.single()
@@ -494,8 +508,9 @@ class IrBuilder(private val sources: List<SourceFile>) {
         }
         val field = target.type.tryToResolveField(fieldAccess.name.value, true)
             ?: throw UnresolvedReference(fieldAccess.name.value, fieldAccess.name.location)
-        if (field.isPrivate && field.declaringClass != context.classIr.reference) {
-            throw CanNotAccessPrivateMember(fieldAccess.name.value, fieldAccess.name.location)
+        if (field.declaringClass != context.classIr.reference) {
+            if (field.isPrivate) throw CanNotAccessPrivateMember(fieldAccess.name.value, fieldAccess.name.location)
+            if (field.isProtected) throw CanNotAccessProtectedMember(fieldAccess.name.value, fieldAccess.name.location)
         }
         return GetField(field, target)
     }
@@ -733,7 +748,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
                     if (!potentiallyOverriddenMethod.isStatic && declaredMethod.isStatic) {
                         throw StaticMethodCanNotOverrideInstanceMethod(declaredMethod.nameLocationOrFail)
                     }
-                    if (potentiallyOverriddenMethod.isLessVisible(declaredMethod.reference)) {
+                    if (declaredMethod.reference.isLessVisible(potentiallyOverriddenMethod)) {
                         throw OverridingRestrictsVisibility(declaredMethod.nameLocationOrFail)
                     }
                 }
@@ -742,7 +757,12 @@ class IrBuilder(private val sources: List<SourceFile>) {
 
             if (!clazz.isAbstractClass) {
                 nonPrivates.firstOrNull { it.isAbstract }
-                    ?.also { throw NonAbstractClassMustOverrideAbstractMethod(classIdToAst[clazz.name]!!.location, it) }
+                    ?.also {
+                        throw NonAbstractClassMustOverrideAbstractMethod(
+                            classIdToAst[clazz.name]!!.name.location,
+                            it
+                        )
+                    }
             }
 
             val privates = mutableListOf<MethodReference>()
@@ -778,6 +798,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
             fieldIdToDeclaration["${classAst.name.value}:${name}"] = fieldDeclarationIr
             fields.add(fieldDeclarationIr)
             nameToLocation[name] = location
+            fieldDeclarationToAst[fieldDeclarationIr] = fieldDeclarationAst
         }
         classIr.fields = fields
     }
@@ -830,18 +851,12 @@ class IrBuilder(private val sources: List<SourceFile>) {
             }
             checkAccessModifiers(methodAst)
             if (methodAst.body != null && classAst.kind == ClassKind.INTERFACE) {
-                throw MethodWithBodyInInterface(methodAst.location)
+                throw MethodWithBodyInInterface(methodAst.name.location)
             }
             if (methodAst.body != null) {
                 methodAst.modifiers.firstOrNull { it.type == ABSTRACT }?.also {
                     throw AbstractMethodWithBody(it.location)
                 }
-            }
-            if (classAst.kind == ClassKind.INTERFACE) {
-                methodAst.modifiers.firstOrNull { it.type == PRIVATE || it.type == PROTECTED || it.type == STATIC }
-                    ?.also {
-                        throw IllegalModifier(it.location)
-                    }
             }
             val parameters = compileParameterList(methodAst.parameters)
             val stringId = "${methodAst.name.value}${parameters.stringify()}"
@@ -978,8 +993,10 @@ class IrBuilder(private val sources: List<SourceFile>) {
             val location = classAst.name.location
             if (name in reservedClassNames) throw ReservedClassName(name, location)
             nameToLocation[name]?.also { throw NameDeclarationClash(name, location) }
+            val allowedModifiers =
+                if (classAst.kind == ClassKind.INTERFACE) listOf() else listOf(ABSTRACT)
             val declaration = ClassDeclaration(
-                name, classAst.kind, checkRetrieveModifiers(classAst.modifiers, ABSTRACT)
+                name, classAst.kind, checkRetrieveModifiers(classAst.modifiers, *allowedModifiers.toTypedArray())
             )
             classIdToDeclaration[name] = declaration
             nameToLocation[name] = location

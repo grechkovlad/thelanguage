@@ -1,0 +1,7 @@
+class A {
+    fun static void foo() {}
+}
+
+class B : A {
+    fun void @StaticMethodCanNotBeOverridden foo #() {}
+}
