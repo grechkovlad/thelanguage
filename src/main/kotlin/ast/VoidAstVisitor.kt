@@ -37,4 +37,6 @@ interface VoidAstVisitor<T> {
     fun visit(methodCall: MethodCall, context: T)
     fun visit(stringLiteral: StringLiteral, context: T)
     fun visit(superCall: SuperCall, context: T)
+    fun visit(breakStatement: Break, context: T)
+    fun visit(continueStatement: Continue, context: T)
 }

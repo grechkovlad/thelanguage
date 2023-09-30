@@ -258,6 +258,8 @@ class Parser(input: CharSequence, private val fileName: String, ignoreDiagnostic
         if (atKeySeq(FOR)) return parseForStatement()
         if (atKeySeq(RETURN)) return parseReturnStatement()
         if (atKeySeq(SUPER)) return parseSuperCall()
+        if (atKeySeq(BREAK)) return parseBreak()
+        if (atKeySeq(CONTINUE)) return parseContinue()
         if (atIdentifier() || atKeySeq(THIS, OPEN_PARENTHESIS, NEW)) {
             val expr = parseExpression()
             return when {
@@ -277,6 +279,18 @@ class Parser(input: CharSequence, private val fileName: String, ignoreDiagnostic
             }
         }
         throw ParsingException(lexer.current, "statement")
+    }
+
+    private fun parseContinue(): Statement {
+        val startLocation = eatKeySeqToken(CONTINUE).location.toAstLocation()
+        val endLocation = eatKeySeqToken(SEMICOLON).location.toAstLocation()
+        return Break(startLocation between endLocation)
+    }
+
+    private fun parseBreak(): Statement {
+        val startLocation = eatKeySeqToken(BREAK).location.toAstLocation()
+        val endLocation = eatKeySeqToken(SEMICOLON).location.toAstLocation()
+        return Break(startLocation between endLocation)
     }
 
     private fun parseReturnStatement(): Statement {

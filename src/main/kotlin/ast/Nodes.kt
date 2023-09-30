@@ -185,6 +185,20 @@ class ReturnStatement(val value: Expression?, location: Location) : Statement(lo
     }
 }
 
+class Break(location: Location) : Statement(location) {
+    override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
+        visitor.visit(this, context)
+    }
+
+}
+
+class Continue(location: Location) : Statement(location) {
+    override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
+        visitor.visit(this, context)
+    }
+
+}
+
 class Assignment(val lValue: Expression, val rValue: Expression, location: Location) : Statement(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)

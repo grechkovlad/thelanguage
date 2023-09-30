@@ -9,6 +9,7 @@ import ir.IrBuilder.CompilationContext.Companion.tryToResolveField
 import isAccessModifier
 import kotlin.reflect.KFunction2
 import ast.BinaryOperationKind.*
+import ast.LocalVariableDeclaration
 
 
 class IrBuilder(private val sources: List<SourceFile>) {
@@ -93,12 +94,23 @@ class IrBuilder(private val sources: List<SourceFile>) {
         val returnTypeExpected: TypeReference
     ) {
         private val scopes = mutableListOf(Scope())
+        private var outerLoops = 0
 
         fun addName(name: String, variable: VariableDeclaration) {
             scopes.last()[name] = variable
         }
 
         fun declaredInTopScope(name: String) = scopes.last().get(name) != null
+
+        fun enterLoop() {
+            outerLoops++
+        }
+
+        fun exitLoop() {
+            outerLoops--
+        }
+
+        val isInLoop: Boolean get() = outerLoops > 0
 
         fun pushScope(scope: Scope) = scopes.add(scope)
 
@@ -180,14 +192,26 @@ class IrBuilder(private val sources: List<SourceFile>) {
 
     private fun compileStatement(statementAst: ast.Statement, context: CompilationContext): Statement {
         return when (statementAst) {
-            is ast.Assignment -> compileAssignment(statementAst, context)
+            is Assignment -> compileAssignment(statementAst, context)
             is ast.ExpressionStatement -> compileExpressionStatement(statementAst, context)
-            is ast.ForStatement -> compileForStatement(statementAst, context)
-            is ast.IfStatement -> compileIfStatement(statementAst, context)
-            is ast.ReturnStatement -> compileReturnStatement(statementAst, context)
-            is ast.LocalVariableDeclaration -> compileLocalVariableDeclaration(statementAst, context)
-            is ast.WhileStatement -> compileWhileStatement(statementAst, context)
+            is ForStatement -> compileForStatement(statementAst, context)
+            is IfStatement -> compileIfStatement(statementAst, context)
+            is ReturnStatement -> compileReturnStatement(statementAst, context)
+            is LocalVariableDeclaration -> compileLocalVariableDeclaration(statementAst, context)
+            is WhileStatement -> compileWhileStatement(statementAst, context)
+            is ast.Break -> compileBreak(statementAst, context)
+            is ast.Continue -> compileContinue(statementAst, context)
         }
+    }
+
+    private fun compileContinue(continueStatement: ast.Continue, context: CompilationContext): Statement {
+        if (!context.isInLoop) throw BreakOutsideOfLoop(continueStatement.location)
+        return Continue
+    }
+
+    private fun compileBreak(breakStatement: ast.Break, context: CompilationContext): Statement {
+        if (!context.isInLoop) throw BreakOutsideOfLoop(breakStatement.location)
+        return Break
     }
 
     private fun compileSuperCall(superCallAst: ast.SuperCall, context: CompilationContext): ir.SuperCall {
@@ -248,7 +272,9 @@ class IrBuilder(private val sources: List<SourceFile>) {
     private fun compileWhileStatement(whileStatement: WhileStatement, context: CompilationContext): While {
         val condition = compileBoolExpression(whileStatement.condition, context)
         context.pushScope(Scope())
+        context.enterLoop()
         val statements = whileStatement.body.map { compileNotSuperCallStatement(it, context) }
+        context.exitLoop()
         context.popScope()
         return While(condition, statements)
     }
@@ -270,7 +296,9 @@ class IrBuilder(private val sources: List<SourceFile>) {
         val init = compileNotSuperCallStatement(forStatementAst.initStatement, context)
         val condition = compileBoolExpression(forStatementAst.condition, context)
         val update = compileNotSuperCallStatement(forStatementAst.updateStatement, context)
+        context.enterLoop()
         val body = forStatementAst.body.map { compileNotSuperCallStatement(it, context) }
+        context.exitLoop()
         context.popScope()
         return For(init, condition, update, body)
     }

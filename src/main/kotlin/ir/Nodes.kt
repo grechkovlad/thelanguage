@@ -308,6 +308,10 @@ sealed class Call(returnType: TypeReference, val arguments: List<Expression>) : 
 
 class Return(val expression: Expression?) : Statement
 
+object Break : Statement
+
+object Continue: Statement
+
 class SuperCall(val constructor: ConstructorReference, arguments: List<Expression>) :
     Call(VoidTypeReference, arguments)
 

@@ -109,7 +109,9 @@ class LL3Lexer(
         CONSTRUCTOR,
         THIS,
         NULL,
-        SUPER
+        SUPER,
+        BREAK,
+        CONTINUE
     ).associateBy { it.stringValue }
 
     private fun readNextToken(): Token {

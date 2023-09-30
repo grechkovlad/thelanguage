@@ -96,56 +96,63 @@ class Interpreter(private val out: PrintStream) {
     private fun interpretStatements(
         statements: List<Statement>,
         stackFrame: StackFrame
-    ): ReturnStatus {
+    ): Interruption {
         for (statement in statements) {
             val returnStatus = interpretStatement(statement, stackFrame)
-            if (returnStatus !is NoReturn) return returnStatus
+            if (returnStatus !is NoInterruption) return returnStatus
         }
-        return NoReturn
+        return NoInterruption
     }
 
-    private fun interpretStatement(statement: Statement, stackFrame: StackFrame): ReturnStatus =
+    private fun interpretStatement(statement: Statement, stackFrame: StackFrame): Interruption =
         when (statement) {
             is ExpressionStatement -> {
                 interpretExpression(statement.expression, stackFrame)
-                NoReturn
+                NoInterruption
             }
 
             is For -> interpretFor(statement, stackFrame)
             is If -> interpretIf(statement, stackFrame)
             is LocalVariableDeclaration -> {
                 interpretLocalVariableDeclaration(statement, stackFrame)
-                NoReturn
+                NoInterruption
             }
 
             is Return -> interpretReturn(statement, stackFrame)
             is SetArrayElement -> {
                 interpretSetArrayElement(statement, stackFrame)
-                NoReturn
+                NoInterruption
             }
 
             is SetField -> {
                 interpretSetField(statement, stackFrame)
-                NoReturn
+                NoInterruption
             }
 
             is SetVariable -> {
                 interpretSetVariable(statement, stackFrame)
-                NoReturn
+                NoInterruption
             }
 
             is While -> interpretWhile(statement, stackFrame)
+            ir.Break -> Break
+            ir.Continue -> Continue
         }
 
-    private fun interpretWhile(whileStatement: While, stackFrame: StackFrame): ReturnStatus {
+    private fun interpretWhile(whileStatement: While, stackFrame: StackFrame): Interruption {
         while (true) {
             val cond = interpretExpression(whileStatement.condition, stackFrame)
             require(cond is BooleanValue)
             if (cond == False) break
-            val returnStatus = interpretStatements(whileStatement.body, stackFrame)
-            if (returnStatus != NoReturn) return returnStatus
+            return when (val interruption = interpretStatements(whileStatement.body, stackFrame)) {
+                Break -> break
+                Continue -> continue
+                NoInterruption -> continue
+                is ReturnValue -> interruption
+                ReturnVoid -> interruption
+            }
         }
-        return NoReturn
+        return NoInterruption
     }
 
     private fun interpretSetVariable(setVariable: SetVariable, stackFrame: StackFrame) {
@@ -183,25 +190,37 @@ class Interpreter(private val out: PrintStream) {
         stackFrame.locals[variable] = value
     }
 
-    private fun interpretFor(forStatement: For, stackFrame: StackFrame): ReturnStatus {
+    private fun interpretFor(forStatement: For, stackFrame: StackFrame): Interruption {
         interpretStatement(forStatement.init, stackFrame)
         while (true) {
             val cond = interpretExpression(forStatement.condition, stackFrame)
             require(cond is BooleanValue)
             if (cond == False) break
-            val returnStatus = interpretStatements(forStatement.body, stackFrame)
-            if (returnStatus != NoReturn) return returnStatus
-            interpretStatement(forStatement.update, stackFrame)
+            return when (val interruption = interpretStatements(forStatement.body, stackFrame)) {
+                Break -> break
+                Continue -> {
+                    interpretStatement(forStatement.update, stackFrame)
+                    continue
+                }
+
+                NoInterruption -> {
+                    interpretStatement(forStatement.update, stackFrame)
+                    continue
+                }
+
+                is ReturnValue -> interruption
+                ReturnVoid -> interruption
+            }
         }
-        return NoReturn
+        return NoInterruption
     }
 
-    private fun interpretReturn(returnStatement: Return, stackFrame: StackFrame): ReturnStatus {
+    private fun interpretReturn(returnStatement: Return, stackFrame: StackFrame): Interruption {
         if (returnStatement.expression == null) return ReturnVoid
         return ReturnValue(interpretExpression(returnStatement.expression, stackFrame))
     }
 
-    private fun interpretIf(ifStatement: If, stackFrame: StackFrame): ReturnStatus {
+    private fun interpretIf(ifStatement: If, stackFrame: StackFrame): Interruption {
         val condition = interpretExpression(ifStatement.condition, stackFrame)
         require(condition is BooleanValue)
         return if (condition.value) {
@@ -404,10 +423,12 @@ class Interpreter(private val out: PrintStream) {
         return IntValue(array.array.size)
     }
 
-    sealed interface ReturnStatus
-    object NoReturn : ReturnStatus
-    object ReturnVoid : ReturnStatus
-    class ReturnValue(val value: Value) : ReturnStatus
+    sealed interface Interruption
+    object NoInterruption : Interruption
+    object ReturnVoid : Interruption
+    class ReturnValue(val value: Value) : Interruption
+    object Break : Interruption
+    object Continue : Interruption
 
     class StackFrame(val receiver: Value?, val locals: MutableMap<VariableDeclaration, Value>)
 }

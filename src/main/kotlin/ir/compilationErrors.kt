@@ -47,6 +47,10 @@ class CanNotAccessProtectedMember(val name: String, location: Location) : Compil
 
 class ConstructorInInterface(location: Location) : CompilationError(location)
 
+class BreakOutsideOfLoop(location: Location) : CompilationError(location)
+
+class ContinueOutsideLoop(location: Location) : CompilationError(location)
+
 class TypeMismatch(val expected: TypeReference, val actual: TypeReference, location: Location) :
     CompilationError(location)
 
