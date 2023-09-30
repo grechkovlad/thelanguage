@@ -225,5 +225,10 @@ class DiagnosticTests {
             runDiagnosticTest("/smoke/illegalLValue")
         }
 
+        @Test
+        fun testThisAccessToStaticField() {
+            runDiagnosticTest("/smoke/thisAccessToStaticField")
+        }
+
     }
 }

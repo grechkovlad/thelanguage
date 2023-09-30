@@ -1,0 +1,6 @@
+class Main {
+    fun static String box() {
+        var String x = "OK";
+        return x;
+    }
+}

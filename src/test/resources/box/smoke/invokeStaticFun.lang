@@ -1,0 +1,10 @@
+class Main {
+
+    fun static String getOK() {
+        return "OK";
+    }
+
+    fun static String box() {
+        return Main.getOK();
+    }
+}

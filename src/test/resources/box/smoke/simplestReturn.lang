@@ -1,0 +1,5 @@
+class Main {
+    fun static String box() {
+        return "OK";
+    }
+}

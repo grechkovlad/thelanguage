@@ -1,0 +1,14 @@
+class Main {
+    fun static String box() {
+        var String str = "";
+        for(var int i = 0; i < 2; i = i + 1;) {
+            if (i == 0) {
+                str = str + "O";
+            }
+            if (i == 1) {
+                str = str + "K";
+            }
+        }
+        return str;
+    }
+}

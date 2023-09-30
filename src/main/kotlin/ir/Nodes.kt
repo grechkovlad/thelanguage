@@ -43,6 +43,30 @@ object ObjectClassReference : ClassReference() {
     override val constructors: List<ConstructorReference> = listOf(ObjectConstructorReference)
 }
 
+object PrintStringMethod : BuiltinMethodReference(
+    listOf(ModifierType.STATIC),
+    SystemClassReference,
+    VoidTypeReference,
+    listOf(StringClassReference),
+    "print"
+)
+
+object ParseIntMethod : BuiltinMethodReference(
+    listOf(ModifierType.STATIC),
+    UtilsClassReference,
+    IntTypeReference,
+    listOf(StringClassReference),
+    "parseInt"
+)
+
+object PrintIntMethod : BuiltinMethodReference(
+    listOf(ModifierType.STATIC),
+    SystemClassReference,
+    VoidTypeReference,
+    listOf(IntTypeReference),
+    "print"
+)
+
 object StringClassReference : ClassReference() {
     override val isInterface
         get() = false
@@ -117,19 +141,15 @@ sealed class FieldReference :
     abstract val declaringClass: ClassReference
 }
 
-class SetField(fieldReference: FieldReference, target: Expression, val value: Expression) : Statement
+class SetField(val fieldReference: FieldReference, val target: Expression, val value: Expression) : Statement
 
-class GetField(fieldReference: FieldReference, target: Expression) : Expression(fieldReference.fieldType)
+class GetField(val fieldReference: FieldReference, val target: Expression) : Expression(fieldReference.fieldType)
 
 class ArrayLength(val target: Expression) : Expression(IntTypeReference)
 
-class ParameterRead(val parameterReference: ParameterReference) : Expression(parameterReference.type)
-
-class ParameterWrite(val parameterReference: ParameterReference) : Expression(parameterReference.type)
-
 abstract class ArrayElementAccess(val target: Expression, val index: Expression)
 
-class GetArrayElement(array: Expression, index: Expression, type: TypeReference) : Expression(type)
+class GetArrayElement(val array: Expression, val index: Expression, type: TypeReference) : Expression(type)
 
 class SetArrayElement(array: Expression, index: Expression, val value: Expression) : ArrayElementAccess(array, index),
     Statement
@@ -141,7 +161,7 @@ class CreateArray(val elementType: TypeReference, val dimensions: List<Expressio
 sealed class ExecutableReference(val declaringClass: ClassReference, val parameterTypes: List<TypeReference>) :
     ModifiersBearer
 
-abstract class MethodReference(
+sealed class MethodReference(
     declaringClass: ClassReference,
     val returnType: TypeReference,
     parameterTypes: List<TypeReference>,
@@ -168,7 +188,7 @@ class UserConstructorReference(val declaration: ConstructorDeclaration) :
         get() = declaration.modifiers
 }
 
-class BuiltinMethodReference(
+sealed class BuiltinMethodReference(
     override val modifiers: Modifiers, declaringClass: ClassReference,
     returnType: TypeReference, parameterTypes: List<TypeReference>, name: String
 ) : MethodReference(
@@ -219,7 +239,7 @@ class IntLiteral(val value: Int) : Expression(IntTypeReference)
 class FloatLiteral(val value: Float) : Expression(FloatTypeReference)
 class StringLiteral(val value: String) : Expression(StringClassReference)
 
-abstract class BinaryOperation(val leftOperand: Expression, val rightOperand: Expression, type: TypeReference) :
+sealed class BinaryOperation(val leftOperand: Expression, val rightOperand: Expression, type: TypeReference) :
     Expression(type)
 
 class Concat(leftOperand: Expression, rightOperand: Expression) :
@@ -231,9 +251,9 @@ class Add(leftOperand: Expression, rightOperand: Expression) :
 class Subtract(leftOperand: Expression, rightOperand: Expression) :
     BinaryOperation(leftOperand, rightOperand, binaryNumericPromote(leftOperand.type, rightOperand.type))
 
-class Minus(operand: Expression) : Expression(operand.type)
+class Minus(val operand: Expression) : Expression(operand.type)
 
-class Not(operand: Expression) : Expression(BoolTypeReference)
+class Not(val operand: Expression) : Expression(BoolTypeReference)
 
 class Divide(leftOperand: Expression, rightOperand: Expression) :
     BinaryOperation(leftOperand, rightOperand, binaryNumericPromote(leftOperand.type, rightOperand.type))
@@ -242,12 +262,6 @@ class Less(leftOperand: Expression, rightOperand: Expression) :
     BinaryOperation(leftOperand, rightOperand, BoolTypeReference)
 
 class Leq(leftOperand: Expression, rightOperand: Expression) :
-    BinaryOperation(leftOperand, rightOperand, BoolTypeReference)
-
-class Equals(leftOperand: Expression, rightOperand: Expression) :
-    BinaryOperation(leftOperand, rightOperand, BoolTypeReference)
-
-class NotEquals(leftOperand: Expression, rightOperand: Expression) :
     BinaryOperation(leftOperand, rightOperand, BoolTypeReference)
 
 class Geq(leftOperand: Expression, rightOperand: Expression) :
@@ -290,12 +304,12 @@ object FalseLiteral : BoolLiteral() {
 
 class ThisAccess(type: UserClassReference) : Expression(type)
 
-abstract class Call(returnType: TypeReference, val arguments: List<Expression>) : Expression(returnType)
+sealed class Call(returnType: TypeReference, val arguments: List<Expression>) : Expression(returnType)
 
 class Return(val expression: Expression?) : Statement
 
 class SuperCall(val constructor: ConstructorReference, arguments: List<Expression>) :
-    Call(VoidTypeReference, arguments), Statement
+    Call(VoidTypeReference, arguments)
 
 class ConstructorCall(val constructor: ConstructorReference, arguments: List<Expression>) :
     Call(constructor.declaringClass, arguments)

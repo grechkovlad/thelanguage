@@ -1,0 +1,7 @@
+class Main {
+    field static String myField = "OK";
+
+    fun static String box() {
+        return @StaticFieldAccessViaInstance this #.myField;
+    }
+}

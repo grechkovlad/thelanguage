@@ -1,0 +1,19 @@
+class Main {
+    fun static String box() {
+        var int index = 0;
+        var String res = "";
+        while (true) {
+            index = index + 1;
+            if (index == 5) {
+                res = res + "O";
+            }
+            if (index == 10) {
+                res = res + "K";
+            }
+            if (index == 15) {
+                break;
+            }
+        }
+        return res;
+    }
+}

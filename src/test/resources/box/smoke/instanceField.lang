@@ -1,0 +1,13 @@
+class A {
+    field String myField = "OK";
+
+    constructor () {
+        super();
+    }
+}
+
+class Main {
+    fun static String box() {
+        return new A().myField;
+    }
+}

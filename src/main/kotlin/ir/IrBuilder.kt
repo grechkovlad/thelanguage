@@ -50,34 +50,12 @@ class IrBuilder(private val sources: List<SourceFile>) {
         initSystemClassInfo()
         classToMethodsInfo[ObjectClassReference] = MethodsOfClassScope(emptyList(), emptyList())
         classToMethodsInfo[StringClassReference] = MethodsOfClassScope(emptyList(), emptyList())
-        val parseIntMethod =
-            BuiltinMethodReference(
-                listOf(STATIC),
-                UtilsClassReference,
-                IntTypeReference,
-                listOf(StringClassReference),
-                "parseInt"
-            )
-        classToMethodsInfo[UtilsClassReference] = MethodsOfClassScope(emptyList(), listOf(parseIntMethod))
+        classToMethodsInfo[UtilsClassReference] = MethodsOfClassScope(emptyList(), listOf(ParseIntMethod))
     }
 
     private fun initSystemClassInfo() {
-        val printStringMethod = BuiltinMethodReference(
-            listOf(STATIC),
-            SystemClassReference,
-            VoidTypeReference,
-            listOf(StringClassReference),
-            "print"
-        )
-        val printIntMethod = BuiltinMethodReference(
-            listOf(STATIC),
-            SystemClassReference,
-            VoidTypeReference,
-            listOf(IntTypeReference),
-            "print"
-        )
         classToMethodsInfo[SystemClassReference] =
-            MethodsOfClassScope(emptyList(), listOf(printIntMethod, printStringMethod))
+            MethodsOfClassScope(emptyList(), listOf(PrintIntMethod, PrintStringMethod))
     }
 
     private fun doBodyLevelCompilation() {
@@ -512,6 +490,9 @@ class IrBuilder(private val sources: List<SourceFile>) {
             if (field.isPrivate) throw CanNotAccessPrivateMember(fieldAccess.name.value, fieldAccess.name.location)
             if (field.isProtected) throw CanNotAccessProtectedMember(fieldAccess.name.value, fieldAccess.name.location)
         }
+        if (field.isStatic && target !is TypeAccess) {
+            throw StaticFieldAccessViaInstance(fieldAccess.target.location)
+        }
         return GetField(field, target)
     }
 
@@ -614,11 +595,11 @@ class IrBuilder(private val sources: List<SourceFile>) {
     private fun processBinaryNumericOperation(
         operationAst: ast.BinaryOperation,
         context: CompilationContext,
-        irOperationFactory: KFunction2<Expression, Expression, BinaryOperation>
+        irOperationFactory: (Expression, Expression) -> BinaryOperation
     ): Expression {
         val leftOperand = compileExpression(operationAst.leftOperand, context)
         val rightOperand = compileExpression(operationAst.rightOperand, context)
-        if (leftOperand.type.isNumeric && rightOperand.type.isNumeric) {
+        if (leftOperand.type.isNumeric && rightOperand.type.isNumeric && leftOperand.type == rightOperand.type) {
             return irOperationFactory(leftOperand, rightOperand)
         }
         throw BinaryOperatorInapplicable(leftOperand.type, rightOperand.type, operationAst.location)
