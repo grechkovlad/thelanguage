@@ -6,6 +6,8 @@ val MethodReference.isStatic: Boolean get() = modifiers.contains(ModifierType.ST
 
 val FieldDeclaration.isStatic: Boolean get() = modifiers.contains(ModifierType.STATIC)
 
+val FieldReference.isStatic: Boolean get() = modifiers.contains(ModifierType.STATIC)
+
 fun UserClassReference.allFields(): Set<FieldReference> = buildSet {
     addAll(this@allFields.declaration.fields.map { it.reference })
     val superClass = declaration.superClass as? UserClassReference ?: return@buildSet

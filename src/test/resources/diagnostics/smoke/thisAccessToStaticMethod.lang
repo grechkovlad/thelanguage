@@ -1,0 +1,8 @@
+class Main {
+    fun static void foo() {
+    }
+
+    fun void bar() {
+        @StaticMemberAccessViaInstance this # .foo();
+    }
+}

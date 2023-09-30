@@ -1,0 +1,11 @@
+class Main {
+    field static String myField;
+
+    static {
+        Main.myField = "OK";
+    }
+
+    fun static String box() {
+        return Main.myField;
+    }
+}

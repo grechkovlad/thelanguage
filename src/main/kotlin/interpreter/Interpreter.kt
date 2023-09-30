@@ -37,7 +37,10 @@ class Interpreter(private val out: PrintStream) {
         ensureClassLoaded(constructor.declaringClass)
         val obj = ObjectValue(constructor.declaringClass)
         if (constructor is UserConstructorReference) {
-            val stackFrame = StackFrame(obj, mutableMapOf())
+            val argumentsMap = mutableMapOf<VariableDeclaration, Value>().apply {
+                constructor.declaration.parameters.zip(arguments).forEach { put(it.first, it.second) }
+            }
+            val stackFrame = StackFrame(obj, argumentsMap)
             val userClass = constructor.declaringClass as UserClassReference
             val superCall = constructor.declaration.body.first() as ExpressionStatement
             require(superCall.expression is SuperCall)
@@ -161,6 +164,11 @@ class Interpreter(private val out: PrintStream) {
     }
 
     private fun interpretSetField(setField: SetField, stackFrame: StackFrame) {
+        if (setField.fieldReference.isStatic) {
+            val value = interpretExpression(setField.value, stackFrame)
+            statics[setField.fieldReference] = value
+            return
+        }
         val target = interpretExpression(setField.target, stackFrame)
         require(target is ObjectValue)
         val value = interpretExpression(setField.value, stackFrame)
@@ -393,7 +401,7 @@ class Interpreter(private val out: PrintStream) {
                 else -> Null
             }
         })
-        for (index in dimensionValues.size - 2..0) {
+        for (index in dimensionValues.size - 2 downTo 0) {
             currentArray = ArrayValue(Array(dimensionValues[index].value) { currentArray })
         }
         return currentArray

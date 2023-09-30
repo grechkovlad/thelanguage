@@ -284,7 +284,7 @@ class Parser(input: CharSequence, private val fileName: String, ignoreDiagnostic
     private fun parseContinue(): Statement {
         val startLocation = eatKeySeqToken(CONTINUE).location.toAstLocation()
         val endLocation = eatKeySeqToken(SEMICOLON).location.toAstLocation()
-        return Break(startLocation between endLocation)
+        return Continue(startLocation between endLocation)
     }
 
     private fun parseBreak(): Statement {

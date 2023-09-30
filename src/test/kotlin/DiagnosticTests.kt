@@ -16,6 +16,16 @@ class DiagnosticTests {
         }
 
         @Test
+        fun testThisAccessToStaticMethod() {
+            runDiagnosticTest("/smoke/thisAccessToStaticMethod")
+        }
+
+        @Test
+        fun testContinueOutsideLoop() {
+            runDiagnosticTest("/smoke/continueOutsideLoop")
+        }
+
+        @Test
         fun testSignatureDeclarationClash() {
             runDiagnosticTest("/smoke/signatureDeclarationClash")
         }
@@ -68,6 +78,11 @@ class DiagnosticTests {
         @Test
         fun testConstructorMustBeginWithSuperCall() {
             runDiagnosticTest("/smoke/constructorMustBeginWithSuperCall")
+        }
+
+        @Test
+        fun testBreakOutsideLoop() {
+            runDiagnosticTest("/smoke/breakOutsideLoop")
         }
 
         @Test

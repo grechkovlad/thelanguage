@@ -1,0 +1,13 @@
+class Main {
+    fun static String getStr(bool cond) {
+        if (!cond) {
+            return "OK";
+        } else {
+            return "Fail";
+        }
+    }
+
+    fun static String box() {
+        return Main.getStr(false);
+    }
+}

@@ -41,7 +41,7 @@ class AccessToNonStaticSymbolFromStaticContext(location: Location) : Compilation
 
 class CanNotAccessPrivateMember(val name: String, location: Location) : CompilationError(location)
 
-class StaticFieldAccessViaInstance(location: Location) : CompilationError(location)
+class StaticMemberAccessViaInstance(location: Location) : CompilationError(location)
 
 class CanNotAccessProtectedMember(val name: String, location: Location) : CompilationError(location)
 

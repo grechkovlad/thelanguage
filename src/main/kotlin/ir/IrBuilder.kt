@@ -205,7 +205,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
     }
 
     private fun compileContinue(continueStatement: ast.Continue, context: CompilationContext): Statement {
-        if (!context.isInLoop) throw BreakOutsideOfLoop(continueStatement.location)
+        if (!context.isInLoop) throw ContinueOutsideLoop(continueStatement.location)
         return Continue
     }
 
@@ -424,6 +424,9 @@ class IrBuilder(private val sources: List<SourceFile>) {
                 if (!resolution.reference.isStatic && target is TypeAccess) {
                     throw AccessToNonStaticSymbolFromStaticContext(methodCallAst.location)
                 }
+                if (resolution.reference.isStatic && target !is TypeAccess) {
+                    throw StaticMemberAccessViaInstance(methodCallAst.target.location)
+                }
                 return MethodCall(resolution.reference, target, arguments)
             }
         }
@@ -519,7 +522,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
             if (field.isProtected) throw CanNotAccessProtectedMember(fieldAccess.name.value, fieldAccess.name.location)
         }
         if (field.isStatic && target !is TypeAccess) {
-            throw StaticFieldAccessViaInstance(fieldAccess.target.location)
+            throw StaticMemberAccessViaInstance(fieldAccess.target.location)
         }
         return GetField(field, target)
     }

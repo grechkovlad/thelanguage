@@ -1,0 +1,8 @@
+class Main {
+    fun static String box() {
+        var String[] arr = new String[2];
+        arr[0] = "O";
+        arr[1] = "K";
+        return arr[0] + arr[1];
+    }
+}

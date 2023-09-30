@@ -6,6 +6,11 @@ class BoxTests {
     @Nested
     inner class Smoke {
         @Test
+        fun testIf() {
+            runBoxTest("/smoke/if")
+        }
+
+        @Test
         fun testInstanceField() {
             runBoxTest("/smoke/instanceField")
         }
@@ -16,8 +21,18 @@ class BoxTests {
         }
 
         @Test
+        fun testInvokeInstanceFunc() {
+            runBoxTest("/smoke/invokeInstanceFunc")
+        }
+
+        @Test
         fun testInvokeStaticFun() {
             runBoxTest("/smoke/invokeStaticFun")
+        }
+
+        @Test
+        fun testArray() {
+            runBoxTest("/smoke/array")
         }
 
         @Test
@@ -28,6 +43,16 @@ class BoxTests {
         @Test
         fun testStaticFieldInit() {
             runBoxTest("/smoke/staticFieldInit")
+        }
+
+        @Test
+        fun testParameterInConstructor() {
+            runBoxTest("/smoke/parameterInConstructor")
+        }
+
+        @Test
+        fun testStaticInit() {
+            runBoxTest("/smoke/staticInit")
         }
 
         @Test

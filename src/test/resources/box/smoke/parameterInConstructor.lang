@@ -1,0 +1,14 @@
+class A {
+    field String myField;
+
+    constructor(String p) {
+        super();
+        this.myField = p;
+    }
+}
+
+class Main {
+    fun static String box() {
+        return (new A("OK")).myField;
+    }
+}
