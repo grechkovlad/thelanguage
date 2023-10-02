@@ -1,0 +1,25 @@
+class Main {
+
+    fun static int foo(bool c1, int val) {
+        var int res = 0;
+        for(var int i = 0; i < 10; i = i + 1;) {
+            var int j = 0;
+            while (j < 5) {
+                if (c1) { return 42; }
+                if (j == val) { j = j + 1; continue; }
+                res = res + 1;
+                j = j + 1;
+            }
+            if (i == 5) { break; }
+        }
+        return res;
+    }
+
+    fun static String box() {
+        if (Main.foo(true, 10) != 42) { return "Fail 1"; }
+        if (Main.foo(false, 1) != 24) { return "Fail 2"; }
+        if (Main.foo(false, 10) != 30) { return "Fail 3"; }
+
+        return "OK";
+    }
+}

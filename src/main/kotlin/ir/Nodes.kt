@@ -273,13 +273,13 @@ class Greater(leftOperand: Expression, rightOperand: Expression) :
 class Multiply(leftOperand: Expression, rightOperand: Expression) :
     BinaryOperation(leftOperand, rightOperand, binaryNumericPromote(leftOperand.type, rightOperand.type))
 
-class BoolEq(leftOperand: Expression, rightOperand: Expression, val inverted: Boolean) :
+class BoolEq(leftOperand: Expression, rightOperand: Expression) :
     BinaryOperation(leftOperand, rightOperand, BoolTypeReference)
 
-class NumericEq(leftOperand: Expression, rightOperand: Expression, val inverted: Boolean) :
+class NumericEq(leftOperand: Expression, rightOperand: Expression) :
     BinaryOperation(leftOperand, rightOperand, BoolTypeReference)
 
-class RefEq(leftOperand: Expression, rightOperand: Expression, val inverted: Boolean) :
+class RefEq(leftOperand: Expression, rightOperand: Expression) :
     BinaryOperation(leftOperand, rightOperand, BoolTypeReference)
 
 class And(leftOperand: Expression, rightOperand: Expression) :
@@ -353,8 +353,6 @@ class UserClassFieldReference(val declaration: FieldDeclaration) : FieldReferenc
 }
 
 class TypeAccess(val typeReference: TypeReference) : Expression(typeReference)
-
-fun FieldDeclaration.createReference() = UserClassFieldReference(this)
 
 interface ModifiersBearer {
     val modifiers: Modifiers

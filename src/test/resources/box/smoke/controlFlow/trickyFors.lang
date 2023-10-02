@@ -1,0 +1,41 @@
+class IntHolder {
+    field int value = 0;
+
+    fun int incAndGet() {
+        this.value = this.value + 1;
+        return this.value;
+    }
+
+    constructor() { super(); }
+}
+
+class Main {
+
+    fun static int foo1() {
+        var int x = 1;
+        var int res = 0;
+
+        for(x = x + 1; x < 10; x = x + 2;) {
+            x = x + 1;
+            res = res + x;
+        }
+
+        return res;
+    }
+
+    fun static int foo2() {
+        var int res = 0;
+        for(var IntHolder x = new IntHolder(); x.incAndGet() < 5; x.incAndGet();) {
+            res = res + x.incAndGet();
+        }
+        return res;
+    }
+
+
+    fun static String box() {
+        if (Main.foo1() != 18) { return "Fail 1"; }
+        if (Main.foo2() != 7) { return "Fail 2"; }
+
+        return "OK";
+    }
+}

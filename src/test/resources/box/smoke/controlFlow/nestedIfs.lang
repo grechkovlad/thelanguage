@@ -1,0 +1,32 @@
+class Main {
+
+    fun static int foo(bool c1, bool c2) {
+        var int res = 0;
+
+        if (c1) {
+            res = res + 1;
+            if (c2) {
+                res = res + 10;
+            }
+        }
+
+        if (c1) {
+            res = res + 100;
+        } else {
+            if (c2) {
+                res = res + 1000;
+            }
+        }
+
+        return res;
+    }
+
+    fun static String box() {
+        if (Main.foo(false, false) != 0) { return "Fail 1"; }
+        if (Main.foo(false, true) != 1000) { return "Fail 2"; }
+        if (Main.foo(true, false) != 101) { return "Fail 3"; }
+        if (Main.foo(true, true) != 111) { return "Fail 4"; }
+
+        return "OK";
+    }
+}

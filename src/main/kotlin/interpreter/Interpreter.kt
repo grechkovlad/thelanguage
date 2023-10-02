@@ -295,6 +295,19 @@ class Interpreter(private val out: PrintStream) {
 
     private fun interpretBinaryOperation(expression: BinaryOperation, stackFrame: StackFrame): Value {
         val leftOperand = interpretExpression(expression.leftOperand, stackFrame)
+        when (expression) {
+            is And -> {
+                require(leftOperand is BooleanValue)
+                if (leftOperand == False) return False
+            }
+
+            is Or -> {
+                require(leftOperand is BooleanValue)
+                if (leftOperand == True) return True
+            }
+
+            else -> {}
+        }
         val rightOperand = interpretExpression(expression.rightOperand, stackFrame)
         return when (expression) {
             is Add -> interpretArithmeticOperation(leftOperand, rightOperand, Int::plus, Float::plus)

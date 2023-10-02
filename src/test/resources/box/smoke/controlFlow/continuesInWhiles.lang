@@ -1,0 +1,22 @@
+class Main {
+    fun static String box() {
+
+        var int res = 0;
+
+        var int i = 0;
+        while (i < 4) {
+            if (i >= 3) { i = i + 1; continue; }
+            var int j = 0;
+            while (j < 3) {
+                if (i + j >= 3) { j = j + 1; continue; }
+                res = res + i + j;
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+
+        if (res != 8) { return "Fail"; }
+
+        return "OK";
+    }
+}

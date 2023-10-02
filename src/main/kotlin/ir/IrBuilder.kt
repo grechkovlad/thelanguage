@@ -294,6 +294,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
     private fun compileForStatement(forStatementAst: ForStatement, context: CompilationContext): For {
         context.pushScope(Scope())
         val init = compileNotSuperCallStatement(forStatementAst.initStatement, context)
+        require(init is ir.LocalVariableDeclaration || init is SetVariable || init is ExpressionStatement)
         val condition = compileBoolExpression(forStatementAst.condition, context)
         val update = compileNotSuperCallStatement(forStatementAst.updateStatement, context)
         context.enterLoop()
@@ -576,7 +577,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
             AND -> processBinaryLogicalOperation(binaryOperation, context, ::And)
             OR -> processBinaryLogicalOperation(binaryOperation, context, ::Or)
             EQ -> compileEq(binaryOperation, context, false)
-            NOT_EQ -> compileEq(binaryOperation, context, true)
+            NOT_EQ -> Not(compileEq(binaryOperation, context, true))
         }
     }
 
@@ -586,13 +587,13 @@ class IrBuilder(private val sources: List<SourceFile>) {
         val leftOperand = compileExpression(operationAst.leftOperand, context)
         val rightOperand = compileExpression(operationAst.rightOperand, context)
         if (!leftOperand.type.isPrimitive && !rightOperand.type.isPrimitive) {
-            return RefEq(leftOperand, rightOperand, inverted)
+            return RefEq(leftOperand, rightOperand)
         }
         if (leftOperand.type.isNumeric && rightOperand.type.isNumeric) {
-            return NumericEq(leftOperand, rightOperand, inverted)
+            return NumericEq(leftOperand, rightOperand)
         }
         if (leftOperand.type == BoolTypeReference && rightOperand.type == BoolTypeReference) {
-            return BoolEq(leftOperand, rightOperand, inverted)
+            return BoolEq(leftOperand, rightOperand)
         }
         throw BinaryOperatorInapplicable(leftOperand.type, rightOperand.type, operationAst.location)
     }

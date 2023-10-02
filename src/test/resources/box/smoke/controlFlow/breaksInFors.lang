@@ -1,0 +1,18 @@
+class Main {
+    fun static String box() {
+
+        var int res = 0;
+
+        for(var int i = 0; i < 4; i = i + 1;) {
+            if (i == 3) { break; }
+            for(var int j = 0; j < 3; j = j + 1;) {
+                if (i + j >= 3) { break; }
+                res = res + i + j;
+            }
+        }
+
+        if (res != 8) {return "Fail";}
+
+        return "OK";
+    }
+}

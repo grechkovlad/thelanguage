@@ -251,15 +251,8 @@ class Parser(input: CharSequence, private val fileName: String, ignoreDiagnostic
         return parseTypeReference()
     }
 
-    private fun parseStatement(): Statement {
+    private fun tryParseStatementSuitableInsideForContext(): Statement? {
         if (atKeySeq(VAR)) return parseLocalVariableDeclaration()
-        if (atKeySeq(IF)) return parseIfStatement()
-        if (atKeySeq(WHILE)) return parseWhileStatement()
-        if (atKeySeq(FOR)) return parseForStatement()
-        if (atKeySeq(RETURN)) return parseReturnStatement()
-        if (atKeySeq(SUPER)) return parseSuperCall()
-        if (atKeySeq(BREAK)) return parseBreak()
-        if (atKeySeq(CONTINUE)) return parseContinue()
         if (atIdentifier() || atKeySeq(THIS, OPEN_PARENTHESIS, NEW)) {
             val expr = parseExpression()
             return when {
@@ -278,6 +271,18 @@ class Parser(input: CharSequence, private val fileName: String, ignoreDiagnostic
                 else -> throw ParsingException(lexer.current, "'=' or ';'")
             }
         }
+        return null
+    }
+
+    private fun parseStatement(): Statement {
+        tryParseStatementSuitableInsideForContext()?.let { return it }
+        if (atKeySeq(IF)) return parseIfStatement()
+        if (atKeySeq(WHILE)) return parseWhileStatement()
+        if (atKeySeq(FOR)) return parseForStatement()
+        if (atKeySeq(RETURN)) return parseReturnStatement()
+        if (atKeySeq(SUPER)) return parseSuperCall()
+        if (atKeySeq(BREAK)) return parseBreak()
+        if (atKeySeq(CONTINUE)) return parseContinue()
         throw ParsingException(lexer.current, "statement")
     }
 
@@ -307,10 +312,15 @@ class Parser(input: CharSequence, private val fileName: String, ignoreDiagnostic
     private fun parseForStatement(): Statement {
         val startLocation = eatKeySeqToken(FOR).location.toAstLocation()
         eatKeySeqToken(OPEN_PARENTHESIS)
-        val initStatement = parseStatement()
+        val initStatement =
+            tryParseStatementSuitableInsideForContext() ?: throw ParsingException(
+                lexer.current,
+                "for loop init statement"
+            )
         val condition = parseExpression()
         eatKeySeqToken(SEMICOLON)
-        val updateStatement = parseStatement()
+        val updateStatement =
+            tryParseStatementSuitableInsideForContext() ?: throw ParsingException(lexer.current, "for update statement")
         eatKeySeqToken(CLOSING_PARENTHESIS)
         val body = parseBlock()
         return ForStatement(initStatement, condition, updateStatement, body, startLocation between body.location)

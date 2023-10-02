@@ -1,0 +1,18 @@
+class Main {
+    fun static int foo() {
+        var int sum = 0;
+
+        for(var int i = 0; i < 5; i = i + 1;) {
+            for(var int j = 0; j < 10; j = j + 1;) {
+                sum = sum + 1;
+            }
+        }
+
+        return sum;
+    }
+
+    fun static String box() {
+        if (Main.foo() != 50) { return "Fail 1"; }
+        return "OK";
+    }
+}

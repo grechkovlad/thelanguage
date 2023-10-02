@@ -1,0 +1,35 @@
+class Main {
+    fun static String box() {
+        if (Main.evalAnd() != 2) { return "Fail 1"; }
+        if (Main.evalOr() != 2) { return "Fail 1"; }
+
+        return "OK";
+    }
+
+    fun static int evalAnd() {
+        var A a = new A();
+        if (a.incAndGet() >= 0 & a.incAndGet() < 0 & a.incAndGet() >= 0) {
+            return -1;
+        }
+        return a.value;
+    }
+
+    fun static int evalOr() {
+        var A a = new A();
+        if (a.incAndGet() < 0 | a.incAndGet() >= 0 | a.incAndGet() < 0) {
+            return a.value;
+        }
+        return -1;
+    }
+}
+
+class A {
+    field int value = 0;
+
+    fun int incAndGet() {
+       this.value = this.value + 1;
+       return this.value;
+    }
+
+    constructor() { super(); }
+}
