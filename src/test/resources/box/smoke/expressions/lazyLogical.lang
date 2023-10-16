@@ -1,7 +1,7 @@
 class Main {
     fun static String box() {
         if (Main.evalAnd() != 2) { return "Fail 1"; }
-        if (Main.evalOr() != 2) { return "Fail 1"; }
+        if (Main.evalOr() != 2) { return "Fail 2"; }
 
         return "OK";
     }

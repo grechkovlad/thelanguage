@@ -10,12 +10,13 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 }
 
 dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.ow2.asm:asm:9.6")
+    implementation("org.jetbrains.intellij.deps:asm-all:9.1")
 }
 
 tasks.test {

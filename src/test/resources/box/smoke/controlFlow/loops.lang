@@ -1,0 +1,24 @@
+class Main {
+
+    fun public static int method(int x, int y, bool cond1, bool cond2) {
+        var int res = 0;
+        for (var int i = x; i < y; i = i + 1;) {
+            if (cond1) {
+                break;
+            }
+            res = res + i;
+            if (cond2) {
+                res = res * 10;
+            }
+        }
+        return res + 1;
+    }
+
+    fun public static String box() {
+        if (Main.method(0, 3, false, false) != 4) { return "Fail 1"; }
+        if (Main.method(0, 3, false, true) != 121) { return "Fail 2"; }
+        if (Main.method(0, 3, true, false) != 1) { return "Fail 3"; }
+        if (Main.method(0, 3, true, true) != 1) { return "Fail 4"; }
+        return "OK";
+    }
+}

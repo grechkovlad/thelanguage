@@ -1,0 +1,1 @@
+fun main() = generateTestsSet("src/test/resources/box", "InterpreterBoxTests", "runInterpreterBoxTest")

@@ -1,0 +1,75 @@
+class Main {
+
+    fun public static int method(int x, bool cond1, bool cond2) {
+        var A1 a;
+        if (cond1) {
+            a = new A2(x);
+        } else {
+            if (cond2) {
+                a = new A3(x);
+            } else {
+                a = new A4(x);
+            }
+        }
+        var int val1 = a.f();
+        var int val2 = new A1(x).f();
+        var int val3 = new A2(x).f();
+        var int val4 = new A3(x).f();
+        var int val5 = new A4(x).f();
+        return val1 + 10 * val2 + 100 * val3 + 1000 * val4 + 10000 * val5;
+    }
+
+    fun static String box() {
+        if (Main.method(2, false, false) != 43324) { return "Fail 1"; }
+        if (Main.method(3, false, true) != 54434) { return "Fail 2"; }
+        if (Main.method(4, true, false) != 65545) { return "Fail 3"; }
+        if (Main.method(5, true, true) != 76656) { return "Fail 4"; }
+
+        return "OK";
+    }
+}
+
+class A1 {
+
+    constructor public (int x) {
+        super();
+        this.x = x;
+    }
+
+    field protected int x;
+
+    fun int f() {
+        return this.x;
+    }
+}
+
+class A2 : A1 {
+
+
+    constructor public (int x) {
+        super(x);
+    }
+
+    fun int f() {
+        return this.x + 1;
+    }
+}
+
+class A3 : A2 {
+
+    constructor public (int x) {
+        super(x);
+    }
+}
+
+class A4 : A2 {
+    constructor public (int x) {
+        super(x);
+    }
+
+    fun int f() {
+        return this.x + 2;
+    }
+}
+
+

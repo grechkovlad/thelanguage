@@ -1,0 +1,11 @@
+class Main {
+    fun public static int method() {
+        var int[][] defaultArray = new int[2][3];
+        return defaultArray[1][2];
+    }
+
+    fun static String box() {
+        if (Main.method() != 0) { return "Fail"; }
+        return "OK";
+    }
+}

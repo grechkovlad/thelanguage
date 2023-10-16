@@ -1,0 +1,29 @@
+class Main {
+    fun public static int method(bool cond, int x, int y, String str) {
+        var A a;
+        if (cond) {
+            a = new A(x, str);
+        }
+        else {
+            a = new A(y, str);
+        }
+        return a.x;
+    }
+
+    fun static String box() {
+        if (Main.method(false, 1, 2, "abacaba") != 2) { return "Fail 1"; }
+        if (Main.method(true, 1, 2, "abacaba") != 1) { return "Fail 2"; }
+        return "OK";
+    }
+}
+
+class A {
+    field public int x;
+    field public String str;
+
+    constructor public (int x, String str) {
+        super();
+        this.x = x;
+        this.str = str;
+    }
+}

@@ -1,0 +1,61 @@
+class Main {
+
+    fun public static int method(int x, int y, int z) {
+        var A3 obj = new A3(x, y, z);
+        return obj.a +
+                10 * obj.b +
+                100 * obj.c +
+                1000 * obj.d;
+    }
+
+    fun static String box() {
+        if (Main.method(0, 0, 0) != 5301) { return "Fail 1"; }
+        if (Main.method(0, 0, 1) != 5311) { return "Fail 2"; }
+        if (Main.method(0, 1, 0) != 5301) { return "Fail 3"; }
+        if (Main.method(1, 0, 0) != 5302) { return "Fail 4"; }
+        if (Main.method(1, 1, 1) != 5312) { return "Fail 5"; }
+        return "OK";
+    }
+}
+
+class A1 {
+    field public int a = 0;
+    field public int b = 1;
+
+    constructor protected () {
+        super();
+        this.a = this.a + 1;
+        this.b = this.b + 2;
+    }
+
+    constructor protected (int val) {
+        super();
+        this.a = this.a + 1;
+        this.b = this.b + 2;
+        this.a = val + 1;
+    }
+}
+
+class A2 : A1 {
+    field public int b = 2;
+    field public int c = 3;
+
+    constructor public (int x, int y) {
+        super(x);
+        this.b = this.b + y;
+    }
+}
+
+class A3 : A2 {
+    field public int d = 5;
+
+    constructor public (int x, int y, int z) {
+        super(x, y);
+        this.b = z;
+    }
+
+    constructor protected (int x, int y) {
+        super(x, y);
+        this.b = y;
+    }
+}

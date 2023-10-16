@@ -76,6 +76,11 @@ class DiagnosticTests {
         }
 
         @Test
+        fun testAbstactModifierWithInterfaceMethod() {
+            runDiagnosticTest("/smoke/abstactModifierWithInterfaceMethod")
+        }
+
+        @Test
         fun testConstructorMustBeginWithSuperCall() {
             runDiagnosticTest("/smoke/constructorMustBeginWithSuperCall")
         }

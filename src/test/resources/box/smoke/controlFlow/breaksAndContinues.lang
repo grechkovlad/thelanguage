@@ -1,0 +1,30 @@
+class Main {
+    fun public static int method(int x, int y, bool cond1, bool cond2) {
+        var int res = 0;
+        var int i = x;
+        while (i < y) {
+            res = res + i;
+            if (cond2) {
+                break;
+            }
+            for (var int j = 0; j < 3; j = j + 1;) {
+                res = res + j;
+                if (cond1) {
+                    continue;
+                }
+                res = res * 10;
+            }
+            i = i + 1;
+        }
+        return res + 1;
+    }
+
+    fun static String box() {
+        if (Main.method(0, 3, false, false) != 121122121) { return "Fail 1"; }
+        if (Main.method(0, 3, false, true) != 1) { return "Fail 2"; }
+        if (Main.method(0, 3, true, false) != 13) { return "Fail 3"; }
+        if (Main.method(0, 3, true, true) != 1) { return "Fail 4"; }
+
+        return "OK";
+    }
+}

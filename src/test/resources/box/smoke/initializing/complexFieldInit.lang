@@ -1,0 +1,52 @@
+class Main {
+    field private static int CONSTANT = 42;
+    field private static int STATIC_FIELD;
+
+    static {
+        Main.STATIC_FIELD = Main.CONSTANT * 2 + 16;
+    }
+
+    field private int defaultValue = 32;
+    field private int complexValue;
+
+    field private int myField;
+
+    constructor public (int x) {
+        super();
+        if(Main.STATIC_FIELD > 150) {
+            this.complexValue = Main.STATIC_FIELD;
+        } else {
+            this.complexValue = Main.STATIC_FIELD / 2;
+        }
+        this.myField = x;
+    }
+
+    constructor public () {
+        super();
+        if(Main.STATIC_FIELD > 150) {
+            this.complexValue = Main.STATIC_FIELD;
+        } else {
+            this.complexValue = Main.STATIC_FIELD / 2;
+        }
+    }
+
+    fun public int getValue() {
+        return this.defaultValue + this.complexValue + this.myField;
+    }
+
+    fun public static int method(bool cond, int value) {
+        var Main obj;
+        if(cond) {
+            obj = new Main(value);
+        } else {
+            obj = new Main();
+        }
+        return obj.getValue();
+    }
+
+    fun static String box() {
+        if (Main.method(true, 18) != 100) { return "Fail 1"; }
+        if (Main.method(false, 5) != 82) { return "Fail 2"; }
+        return "OK";
+    }
+}

@@ -1,0 +1,137 @@
+class Main {
+
+    fun public static int method(int x, bool c1, bool c2, bool c3) {
+        var BaseType obj;
+        if (c1) {
+            if (c2) {
+                if (c3) {
+                    obj = new Incrementer();
+                } else {
+                    obj = new Decrementer();
+                }
+            } else {
+                if (c3) {
+                    obj = new IncrementerFrom(x);
+                } else {
+                    obj = new DecrementerFrom(x);
+                }
+            }
+        } else {
+            if (c2) {
+                if (c3) {
+                    obj = new DoubleIncrementerFrom(x);
+                } else {
+                    obj = new DoubleDecrementerFrom(x);
+                }
+            } else {
+                if (c3) {
+                    obj = new UselessIncrementer(x);
+                } else {
+                    obj = new UselessDecrementer(x);
+                }
+            }
+        }
+        obj.operation();
+        return obj.getVal();
+    }
+
+    fun static String box() {
+        if (Main.method(1, false, false, false) != 2) { return "Fail 1"; }
+        if (Main.method(2, false, false, true) != 3) { return "Fail 2"; }
+        if (Main.method(3, false, true, false) != 1) { return "Fail 3"; }
+        if (Main.method(4, false, true, true) != 6) { return "Fail 4"; }
+        if (Main.method(5, true, false, false) != 4) { return "Fail 5"; }
+        if (Main.method(6, true, false, true) != 7) { return "Fail 6"; }
+        if (Main.method(7, true, true, false) != -1) { return "Fail 7"; }
+        if (Main.method(8, true, true, true) != 1) { return "Fail 8"; }
+
+        return "OK";
+    }
+}
+
+class abstract BaseType {
+    field protected int a = 0;
+
+    fun public abstract void operation();
+
+    fun public int getVal() {
+        return this.a;
+    }
+
+    constructor() { super(); }
+}
+
+class Incrementer : BaseType {
+
+    fun public void operation() {
+        this.a = this.a + 1;
+    }
+
+    constructor() { super(); }
+}
+
+class Decrementer : BaseType {
+
+    fun public void operation() {
+        this.a = this.a - 1;
+    }
+
+    constructor() { super(); }
+}
+
+class IncrementerFrom : Incrementer {
+    constructor public (int from) {
+        super();
+        this.a = from;
+    }
+}
+
+class DecrementerFrom : Decrementer {
+    constructor public (int from) {
+        super();
+        this.a = from;
+    }
+}
+
+class DoubleIncrementerFrom : IncrementerFrom {
+    constructor public (int from) {
+        super(from);
+    }
+
+    fun public void operation() {
+        this.a = this.a + 2;
+    }
+}
+
+class DoubleDecrementerFrom : DecrementerFrom {
+
+    constructor public (int from) {
+        super(from);
+    }
+
+    fun public void operation() {
+        this.a = this.a - 2;
+    }
+}
+
+class UselessDecrementer : DoubleDecrementerFrom {
+
+    constructor public (int from) {
+        super(from);
+    }
+
+    fun public int getVal() {
+        return 2;
+    }
+}
+
+class UselessIncrementer : DoubleIncrementerFrom {
+
+    constructor public (int from) {
+        super(from);
+    }
+
+    fun public int getVal() {
+        return 3;
+    }
+}

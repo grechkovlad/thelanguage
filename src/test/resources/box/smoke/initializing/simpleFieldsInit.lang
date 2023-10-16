@@ -1,0 +1,55 @@
+class Main {
+    fun public static A method(bool x, int y, float z, bool cond1, bool cond2, bool cond3) {
+        var A a = new A();
+
+        if (cond1) {
+            a.abool = x;
+        }
+        if (cond2) {
+            a.aInt = y;
+        }
+        if (cond3) {
+            a.aFloat = z;
+        }
+
+        return a;
+    }
+
+    fun public static String box() {
+        var A a1 = Main.method(true, 1, 2.0, false, false, false);
+        if (!Main.check(a1, false, 0, 0.0)) {
+            return "Fail 1";
+        }
+
+        var A a2 = Main.method(true, 1, 2.0, true, false, false);
+        if (!Main.check(a2, true, 0, 0.0)) {
+            return "Fail 2";
+        }
+
+        var A a3 = Main.method(true, 1, 2.0, true, true, false);
+        if (!Main.check(a3, true, 1, 0.0)) {
+            return "Fail 3";
+        }
+
+        var A a4 = Main.method(true, 1, 2.0, true, true, true);
+        if (!Main.check(a4, true, 1, 2.0)) {
+            return "Fail 3";
+        }
+
+        return "OK";
+    }
+
+    fun private static bool check(A a, bool b, int i, float f) {
+        return a.abool == b & a.aInt == i & a.aFloat == f;
+    }
+}
+
+class A {
+    field bool abool;
+    field int aInt;
+    field float aFloat;
+
+    constructor() {
+        super();
+    }
+}

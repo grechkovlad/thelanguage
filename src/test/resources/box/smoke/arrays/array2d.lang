@@ -1,0 +1,15 @@
+class Main {
+    fun public static int method(int x) {
+        var int[][] array = new int[2][2];
+        array[0][0] = 1;
+        array[0][1] = 2;
+        array[1][0] = 3;
+        array[1][1] = x;
+        return array[0][0] + array[1][1];
+    }
+
+    fun static String box() {
+        if (Main.method(42) != 43) { return "Fail"; }
+        return "OK";
+    }
+}

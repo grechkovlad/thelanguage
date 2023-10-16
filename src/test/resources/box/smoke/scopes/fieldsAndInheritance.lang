@@ -1,0 +1,41 @@
+class A {
+    field private int x = 1;
+    field protected int y = 2;
+    field int z = 3;
+    field int t = 4;
+
+    constructor() {
+        super();
+    }
+
+    fun bool testInAContext() {
+        return (this.x == 1) & (this.y == 2) & (this.z == 3) & (this.t == 4);
+    }
+}
+
+class B : A {
+    field private int x = 5;
+    field protected int y = 6;
+    field int z = 7;
+
+    constructor() {
+        super();
+    }
+
+    fun bool testInBContext() {
+        return (this.x == 5) & (this.y == 6) & (this.z == 7);
+    }
+}
+
+class Main {
+    fun static String box() {
+        var B b = new B();
+
+        if (!b.testInAContext()) { return "Fail 1"; }
+        if (!b.testInBContext()) { return "Fail 2"; }
+
+        if (b.z != 7) { return "Fail 3"; }
+
+        return "OK";
+    }
+}

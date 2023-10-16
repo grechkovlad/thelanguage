@@ -135,7 +135,7 @@ class FieldDeclaration(
     val reference = UserClassFieldReference(this)
 }
 
-sealed class FieldReference :
+sealed class FieldReference(val name: String) :
     ModifiersBearer {
     abstract val fieldType: TypeReference
     abstract val declaringClass: ClassReference
@@ -209,6 +209,7 @@ class UserMethodReference(val declaration: MethodDeclaration) :
 class ParameterDeclaration(name: String, type: TypeReference) : VariableDeclaration(name, type)
 
 abstract class ExecutableMember(
+    val declaringClass: ClassDeclaration,
     val parameters: List<ParameterDeclaration>,
     modifiers: Modifiers,
     val returnType: TypeReference
@@ -217,21 +218,22 @@ abstract class ExecutableMember(
 }
 
 class MethodDeclaration(
-    val declaringClass: ClassDeclaration,
+    declaringClass: ClassDeclaration,
     modifiers: Modifiers,
     val name: String,
     parameters: List<ParameterDeclaration>,
     returnType: TypeReference,
-) : ExecutableMember(parameters, modifiers, returnType), ModifiersBearer {
+) : ExecutableMember(declaringClass, parameters, modifiers, returnType), ModifiersBearer {
 
     val reference = UserMethodReference(this)
 }
 
-class StaticInitBlock : ExecutableMember(emptyList(), emptyList(), VoidTypeReference)
+class StaticInitBlock(declaringClass: ClassDeclaration) :
+    ExecutableMember(declaringClass, emptyList(), emptyList(), VoidTypeReference)
 
 class ConstructorDeclaration(
-    val declaringClass: ClassDeclaration, parameters: List<ParameterDeclaration>, modifiers: Modifiers
-) : ExecutableMember(parameters, modifiers, declaringClass.reference) {
+    declaringClass: ClassDeclaration, parameters: List<ParameterDeclaration>, modifiers: Modifiers
+) : ExecutableMember(declaringClass, parameters, modifiers, declaringClass.reference) {
     val reference = UserConstructorReference(this)
 }
 
@@ -310,7 +312,7 @@ class Return(val expression: Expression?) : Statement
 
 object Break : Statement
 
-object Continue: Statement
+object Continue : Statement
 
 class SuperCall(val constructor: ConstructorReference, arguments: List<Expression>) :
     Call(VoidTypeReference, arguments)
@@ -343,7 +345,7 @@ object Null : Expression(NullTypeReference)
 
 typealias Modifiers = Collection<ModifierType>
 
-class UserClassFieldReference(val declaration: FieldDeclaration) : FieldReference() {
+class UserClassFieldReference(val declaration: FieldDeclaration) : FieldReference(declaration.name) {
     override val fieldType: TypeReference
         get() = declaration.type
     override val modifiers: Modifiers

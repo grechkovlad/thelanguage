@@ -1,11 +1,19 @@
+import codegen.CodeGenerator
 import interpreter.Interpreter
 import interpreter.StringValue
 import ir.*
 import lexer.*
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_FRAMES
+import org.jetbrains.org.objectweb.asm.ClassWriter
+import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
 import parser.Parser
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.io.PrintWriter
+import java.lang.reflect.Modifier
+import java.net.URLClassLoader
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
@@ -40,7 +48,7 @@ object EmptyDiagnostic : RuntimeException()
 object NoDiagnosticInTest : RuntimeException()
 data class ExpectedCompilationError(val type: KClass<out CompilationError>, val location: Location)
 
-fun runBoxTest(path: String) {
+fun runInterpreterBoxTest(path: String) {
     val srcText = readFromResources("/box/$path.lang")
     val project = IrBuilder(listOf(Parser(srcText, path, false).parse())).build()
     val out = ByteArrayOutputStream()
@@ -48,6 +56,47 @@ fun runBoxTest(path: String) {
     assert(result is StringValue)
     require(result is StringValue)
     assertEquals("OK", result.value)
+}
+
+fun runCodegenBoxTest(path: String) {
+    val srcText = readFromResources("/box/$path.lang")
+    val classes = CodeGenerator(IrBuilder(listOf(Parser(srcText, path, false).parse())).build()).generate()
+    println(classes.stringify())
+    val classloader = object : URLClassLoader(emptyArray()) {
+        override fun findClass(name: String?): Class<*> {
+            require(name != null)
+            classes[name]?.let {
+                val bytecode = it.toByteArray()
+                try {
+                    return defineClass(name, bytecode, 0, bytecode.size)
+                } catch (t: Throwable) {
+                    println(bytecode.stringify())
+                    throw t
+                }
+            }
+            return super.findClass(name)
+        }
+    }
+    val mainClass = classloader.loadClass("Main")
+    try {
+        val boxMethod = mainClass.getMethod("box")
+        require(Modifier.isStatic(boxMethod.modifiers))
+        assertEquals("OK", boxMethod.invoke(null))
+    } catch (t: Throwable) {
+        println(classes.stringify())
+        throw t
+    }
+}
+
+private fun Map<String, ClassWriter>.stringify() = values.joinToString("\n") { it.toByteArray().stringify() }
+
+private fun ByteArray.stringify(): String {
+    val out = ByteArrayOutputStream()
+    val printWriter = PrintWriter(out)
+    val traceClassVisitor = TraceClassVisitor(printWriter)
+    val classReader = ClassReader(this)
+    classReader.accept(traceClassVisitor, SKIP_FRAMES)
+    return out.toString()
 }
 
 private val Project.boxMethod: MethodReference

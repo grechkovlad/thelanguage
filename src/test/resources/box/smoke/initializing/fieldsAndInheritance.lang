@@ -1,0 +1,49 @@
+class Main {
+
+    fun public static int method() {
+        return (new Child()).childField;
+    }
+
+    fun static String box() {
+        if (Main.method() != 5) { return "Fail"; }
+        return "OK";
+    }
+}
+
+class Base {
+
+    field static int baseStaticField = 0;
+
+    static {
+        Base.baseStaticField = Base.baseStaticField - 1;
+    }
+
+    field int baseField = Base.baseStaticField - 2;
+
+    constructor public (int baseFieldInitializer) {
+        super();
+        this.baseField = this.baseField - baseFieldInitializer;
+    }
+}
+
+
+class Child : Base {
+
+    static {
+        Child.childStaticField = 3;
+    }
+
+    field static int childStaticField = Base.baseStaticField - 4;
+
+    field int childField;
+
+    constructor public (int childFieldInitializer) {
+        super(5);
+        this.childField = Child.childStaticField - this.baseField - childFieldInitializer;
+    }
+
+    constructor public () {
+        super(5);
+        this.childField = Child.childStaticField - this.baseField - 6;
+    }
+}

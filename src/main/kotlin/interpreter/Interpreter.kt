@@ -33,9 +33,12 @@ class Interpreter(private val out: PrintStream) {
         interpretStatements(staticInit.body, stackFrame)
     }
 
-    private fun interpretConstructor(constructor: ConstructorReference, arguments: List<Value>): ObjectValue {
+    private fun interpretConstructor(
+        constructor: ConstructorReference,
+        obj: ObjectValue,
+        arguments: List<Value>
+    ): ObjectValue {
         ensureClassLoaded(constructor.declaringClass)
-        val obj = ObjectValue(constructor.declaringClass)
         if (constructor is UserConstructorReference) {
             val argumentsMap = mutableMapOf<VariableDeclaration, Value>().apply {
                 constructor.declaration.parameters.zip(arguments).forEach { put(it.first, it.second) }
@@ -54,7 +57,7 @@ class Interpreter(private val out: PrintStream) {
         return obj
     }
 
-    fun interpretMethod(method: MethodReference, receiver: Value?, arguments: List<Value>): Value =
+    fun interpretMethod(method: MethodReference, receiver: ObjectValue?, arguments: List<Value>): Value =
         when (method) {
             is UserMethodReference -> interpretUserMethod(method, receiver, arguments)
             ParseIntMethod -> interpretParseInt(arguments.single())
@@ -84,7 +87,11 @@ class Interpreter(private val out: PrintStream) {
         return IntValue(Integer.parseInt(argument.value))
     }
 
-    private fun interpretUserMethod(method: UserMethodReference, receiver: Value?, arguments: List<Value>): Value {
+    private fun interpretUserMethod(
+        method: UserMethodReference,
+        receiver: ObjectValue?,
+        arguments: List<Value>
+    ): Value {
         require(method.parameterTypes.size == arguments.size)
         if (method.isStatic) ensureClassLoaded(method.declaringClass)
         val methodDeclaration = method.declaration
@@ -278,18 +285,19 @@ class Interpreter(private val out: PrintStream) {
     private fun interpretCall(expression: Call, stackFrame: StackFrame): Value = when (expression) {
         is ConstructorCall -> {
             val arguments = expression.arguments.map { interpretExpression(it, stackFrame) }
-            interpretConstructor(expression.constructor, arguments)
+            interpretConstructor(expression.constructor, ObjectValue(expression.constructor.declaringClass), arguments)
         }
 
         is MethodCall -> {
             val target = if (expression.method.isStatic) null else interpretExpression(expression.target, stackFrame)
+            require(target is ObjectValue?)
             val arguments = expression.arguments.map { interpretExpression(it, stackFrame) }
             interpretMethod(expression.method, target, arguments)
         }
 
         is SuperCall -> {
             val arguments = expression.arguments.map { interpretExpression(it, stackFrame) }
-            interpretConstructor(expression.constructor, arguments)
+            interpretConstructor(expression.constructor, stackFrame.receiver!!, arguments)
         }
     }
 
@@ -404,20 +412,26 @@ class Interpreter(private val out: PrintStream) {
         return FloatValue(floatOperation(leftOperand.value, rightOperand.value))
     }
 
-    private fun interpretCreateArray(createArray: CreateArray, stackFrame: StackFrame): Value {
-        val dimensionValues = createArray.dimensions.map { interpretExpression(it, stackFrame) as IntValue }
-        var currentArray = ArrayValue(Array(dimensionValues.last().value) {
-            when (createArray.type) {
-                BoolTypeReference -> False
-                FloatTypeReference -> FloatValue(0f)
-                IntTypeReference -> IntValue(0)
-                else -> Null
-            }
-        })
-        for (index in dimensionValues.size - 2 downTo 0) {
-            currentArray = ArrayValue(Array(dimensionValues[index].value) { currentArray })
+    private fun createArrayValue(dimensions: List<Int>, componentType: TypeReference): ArrayValue {
+        return if (dimensions.size == 1) {
+            val dimension = dimensions.single()
+            ArrayValue(Array(dimension) {
+                when (componentType) {
+                    BoolTypeReference -> False
+                    FloatTypeReference -> FloatValue(0f)
+                    IntTypeReference -> IntValue(0)
+                    else -> Null
+                }
+            })
+        } else {
+            val topDimension = dimensions.first()
+            ArrayValue(Array(topDimension) { createArrayValue(dimensions.drop(1), componentType) })
         }
-        return currentArray
+    }
+
+    private fun interpretCreateArray(createArray: CreateArray, stackFrame: StackFrame): Value {
+        val dimensionValues = createArray.dimensions.map { (interpretExpression(it, stackFrame) as IntValue).value }
+        return createArrayValue(dimensionValues, createArray.elementType)
     }
 
     private fun interpretGetField(getField: GetField, stackFrame: StackFrame): Value {
@@ -451,7 +465,7 @@ class Interpreter(private val out: PrintStream) {
     object Break : Interruption
     object Continue : Interruption
 
-    class StackFrame(val receiver: Value?, val locals: MutableMap<VariableDeclaration, Value>)
+    class StackFrame(val receiver: ObjectValue?, val locals: MutableMap<VariableDeclaration, Value>)
 }
 
 private val EMPTY_STACK_FRAME = Interpreter.StackFrame(null, mutableMapOf())

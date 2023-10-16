@@ -1,0 +1,16 @@
+class Main {
+    fun public static int method(int a, int b, int c) {
+        return Main.sqr(b) - 4 * a * c;
+    }
+
+    fun private static int sqr(int x) {
+        return x * x;
+    }
+
+    fun static String box() {
+        if (Main.method(0, 0, 0) != 0) { return "Fail 1"; }
+        if (Main.method(1, 2, 3) != -8) { return "Fail 2"; }
+        if (Main.method(3, 5, 2) != 1) { return "Fail 3"; }
+        return "OK";
+    }
+}

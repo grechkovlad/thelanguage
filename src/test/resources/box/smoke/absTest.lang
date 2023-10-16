@@ -1,0 +1,23 @@
+class Main {
+    fun public static int method(int x, int y, bool cond) {
+        if (cond) {
+            return y;
+        }
+        return x + Main.abs(y);
+    }
+
+    fun private static int abs(int y) {
+        if (y < 0) {
+            return -y;
+        }
+        return y;
+    }
+
+    fun static String box() {
+        if (Main.method(1, -2, false) != 3) { return "Fail 1"; }
+        if (Main.method(1, 2, false) != 3) { return "Fail 2"; }
+        if (Main.method(1, -2, true) != -2) { return "Fail 3"; }
+
+        return "OK";
+    }
+}

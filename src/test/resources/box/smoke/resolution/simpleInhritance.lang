@@ -1,0 +1,63 @@
+class Main {
+
+    fun public static int method(int x, bool cond1, bool cond2) {
+        var A1 a;
+        if (cond1) {
+            a = new A2(x);
+        } else {
+            if (cond2) {
+                a = new A3(x);
+            } else {
+                a = new A4(x);
+            }
+        }
+        return a.getX();
+    }
+
+    fun static String box() {
+        if (Main.method(1, false, false) != 4) { return "Fail 1"; }
+        if (Main.method(1, false, true) != 3) { return "Fail 2"; }
+        if (Main.method(1, true, false) != 2) { return "Fail 3"; }
+        if (Main.method(1, true, true) != 2) { return "Fail 4"; }
+
+        return "OK";
+    }
+}
+
+class A1 {
+
+    field protected int x;
+
+    constructor public (int x) {
+        super();
+        this.x = x;
+    }
+
+    fun int getX() {
+        return this.x;
+    }
+}
+
+class A2 : A1 {
+
+    constructor public (int x) {
+        super(x);
+        this.x = x + 1;
+    }
+
+}
+
+class A3 : A2 {
+
+    constructor public (int x) {
+        super(x);
+        this.x = x + 2;
+    }
+}
+
+class A4 : A2 {
+    constructor public (int x) {
+        super(x);
+        this.x = x + 3;
+    }
+}

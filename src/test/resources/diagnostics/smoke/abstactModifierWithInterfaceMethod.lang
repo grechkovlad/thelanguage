@@ -1,0 +1,3 @@
+interface I {
+    fun @ForbiddenModifier abstract # void foo();
+}

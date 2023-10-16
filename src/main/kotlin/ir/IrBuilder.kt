@@ -311,7 +311,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
     }
 
     private fun assertAssignability(assigneeType: TypeReference, assignedType: TypeReference, location: Location) {
-        if (!assigneeType.isSubtypeOf(assignedType)) throw TypeMismatch(assigneeType, assignedType, location)
+        if (!assignedType.isSubtypeOf(assigneeType)) throw TypeMismatch(assigneeType, assignedType, location)
     }
 
     private fun compileAssignment(assignment: Assignment, context: CompilationContext): Statement {
@@ -340,10 +340,12 @@ class IrBuilder(private val sources: List<SourceFile>) {
                     assignment.lValue.name.value,
                     assignment.lValue.name.location
                 )
-                if (field.isProtected) throw CanNotAccessProtectedMember(
-                    assignment.lValue.name.value,
-                    assignment.lValue.name.location
-                )
+                if (field.isProtected && !context.classIr.reference.isSubtypeOf(field.declaringClass)) {
+                    throw CanNotAccessProtectedMember(
+                        assignment.lValue.name.value,
+                        assignment.lValue.name.location
+                    )
+                }
             }
             return SetField(field, target, rValue)
         }
@@ -520,7 +522,9 @@ class IrBuilder(private val sources: List<SourceFile>) {
             ?: throw UnresolvedReference(fieldAccess.name.value, fieldAccess.name.location)
         if (field.declaringClass != context.classIr.reference) {
             if (field.isPrivate) throw CanNotAccessPrivateMember(fieldAccess.name.value, fieldAccess.name.location)
-            if (field.isProtected) throw CanNotAccessProtectedMember(fieldAccess.name.value, fieldAccess.name.location)
+            if (field.isProtected && !context.classIr.reference.isSubtypeOf(field.declaringClass)) {
+                throw CanNotAccessProtectedMember(fieldAccess.name.value, fieldAccess.name.location)
+            }
         }
         if (field.isStatic && target !is TypeAccess) {
             throw StaticMemberAccessViaInstance(fieldAccess.target.location)
@@ -678,23 +682,6 @@ class IrBuilder(private val sources: List<SourceFile>) {
         classIdToDeclaration.values.forEach { classDecl -> calculateMethodsOfClassScope(classDecl) }
     }
 
-    private fun TypeReference.isSubtypeOf(other: TypeReference): Boolean = when (this) {
-        is ArrayTypeReference -> this == other || other == ObjectClassReference
-        BoolTypeReference -> this == other
-        ObjectClassReference -> this == other
-        StringClassReference -> this == other || other == ObjectClassReference
-        SystemClassReference -> this == other || other == ObjectClassReference
-        is UserClassReference -> this == other || declaration.superClass.isSubtypeOf(other) || declaration.interfaces.any {
-            it.isSubtypeOf(other)
-        }
-
-        FloatTypeReference -> this == other
-        IntTypeReference -> this == other
-        NullTypeReference -> other.isSubtypeOf(ObjectClassReference)
-        VoidTypeReference -> this == other
-        UtilsClassReference -> this == other
-    }
-
     private fun MethodReference.overridesBySignature(other: MethodReference) =
         name == other.name && this.parameterTypes == other.parameterTypes
 
@@ -750,7 +737,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
             val overriddenMethods = mutableListOf<MethodReference>()
             clazz.declaredMethods.forEach { declaredMethod ->
                 nonPrivates.filter { methodFromSuperClassScope ->
-                    methodFromSuperClassScope.overridesBySignature(declaredMethod.reference)
+                    declaredMethod.reference.overridesBySignature(methodFromSuperClassScope)
                 }.forEach { potentiallyOverriddenMethod ->
                     if (!declaredMethod.returnType.isSubtypeOf(potentiallyOverriddenMethod.returnType)) {
                         throw IllegalReturnTypeInOverriding(declaredMethod.nameLocationOrFail)
@@ -764,6 +751,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
                     if (declaredMethod.reference.isLessVisible(potentiallyOverriddenMethod)) {
                         throw OverridingRestrictsVisibility(declaredMethod.nameLocationOrFail)
                     }
+                    overriddenMethods.add(potentiallyOverriddenMethod)
                 }
             }
             nonPrivates.removeAll(overriddenMethods)
@@ -856,7 +844,16 @@ class IrBuilder(private val sources: List<SourceFile>) {
     private fun collectMethods(classAst: ast.ClassDeclaration, classIr: ClassDeclaration) {
         val methodSignatureToLocation = mutableMapOf<String, Location>()
         classIr.declaredMethods = classAst.methods.map { methodAst ->
-            val modifiers = checkRetrieveModifiers(methodAst.modifiers, *ModifierType.values())
+            val allowedModifiers = buildList {
+                addAll(listOf(STATIC, PUBLIC, PRIVATE, PROTECTED))
+                if (classIr.kind != ClassKind.INTERFACE) add(ABSTRACT)
+            }
+            val modifiers = buildList {
+                addAll(checkRetrieveModifiers(methodAst.modifiers, *allowedModifiers.toTypedArray()))
+                if (classIr.kind == ClassKind.INTERFACE) {
+                    add(ABSTRACT)
+                }
+            }
             if (!classIr.modifiers.contains(ABSTRACT)) {
                 methodAst.modifiers.firstOrNull { it.type == ABSTRACT }?.also {
                     throw AbstractMethodInNonAbstractClass(it.location)
@@ -890,14 +887,14 @@ class IrBuilder(private val sources: List<SourceFile>) {
             throw MultipleDeclarationOfStaticInitBlock(staticInitBlocks[1].location)
         }
         if (staticInitBlocks.isEmpty()) {
-            classIr.staticInit = StaticInitBlock().apply { body = emptyList() }
+            classIr.staticInit = StaticInitBlock(classIr).apply { body = emptyList() }
             return
         }
         val staticInitBlockAst = staticInitBlocks.single()
         if (classIr.kind == ClassKind.INTERFACE) {
             throw InterfaceHasStaticInitBlock(staticInitBlockAst.location)
         }
-        classIr.staticInit = StaticInitBlock()
+        classIr.staticInit = StaticInitBlock(classIr)
         staticInitBlockToAst[classIr.staticInit] = staticInitBlockAst
     }
 
@@ -1033,14 +1030,14 @@ class IrBuilder(private val sources: List<SourceFile>) {
 
 private val ModifiersBearer.isStatic get() = this.modifiers.contains(STATIC)
 
-private val ModifiersBearer.effectiveAccessModifier
+val ModifiersBearer.effectiveAccessModifier
     get() = modifiers.firstOrNull { it.isAccessModifier } ?: PUBLIC
 
 private val ModifiersBearer.isPrivate get() = modifiers.contains(PRIVATE)
 
 private val ModifiersBearer.isProtected get() = modifiers.contains(PROTECTED)
 
-private val ModifiersBearer.isAbstract get() = modifiers.contains(ABSTRACT)
+public val ModifiersBearer.isAbstract get() = modifiers.contains(ABSTRACT)
 
 private val TypeReference.isNumeric get() = this == IntTypeReference || this == FloatTypeReference
 

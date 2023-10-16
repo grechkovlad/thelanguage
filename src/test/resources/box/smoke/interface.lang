@@ -1,0 +1,23 @@
+interface I {
+    fun String getStr();
+}
+
+class A : I {
+    fun String getStr() {
+        return "OK";
+    }
+
+    constructor () {
+        super();
+    }
+}
+
+class Main {
+    fun static String useInterface(I obj) {
+        return obj.getStr();
+    }
+
+    fun static String box() {
+        return Main.useInterface(new A());
+    }
+}

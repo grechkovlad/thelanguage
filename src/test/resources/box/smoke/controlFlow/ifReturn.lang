@@ -1,0 +1,25 @@
+class Main {
+    fun public static int method(bool cond, int x) {
+        if (cond) {
+            return x;
+        }
+        if (x == 0) {
+            return 0;
+        }
+        if (x < 0) {
+            return -x;
+        } else {
+            return x;
+        }
+    }
+
+    fun static String box() {
+        if (Main.method(true, 5) != 5) { return "Fail 1"; }
+        if (Main.method(true, -5) != -5) { return "Fail 2"; }
+        if (Main.method(false, 7) != 7) { return "Fail 3"; }
+        if (Main.method(false, 0) != 0) { return "Fail 4"; }
+        if (Main.method(false, -8) != 8) { return "Fail 5"; }
+
+        return "OK";
+    }
+}
