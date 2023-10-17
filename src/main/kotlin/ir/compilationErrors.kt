@@ -3,97 +3,97 @@ package ir
 import Location
 import ModifierType
 
-class FinalClassSubtyping(val name: String, location: Location) : CompilationError(location)
+data class FinalClassSubtyping(val name: String, override val location: Location) : CompilationError(location)
 
-class MultipleInheritance(location: Location) : CompilationError(location)
+data class MultipleInheritance(override val location: Location) : CompilationError(location)
 
-class InterfaceInheritsClass(location: Location) : CompilationError(location)
+data class InterfaceInheritsClass(override val location: Location) : CompilationError(location)
 
-class CyclicInheritance(val name: String, location: Location) : CompilationError(location)
+data class CyclicInheritance(val name: String, override val location: Location) : CompilationError(location)
 
-class InterfaceHasFields(location: Location) : CompilationError(location)
+data class InterfaceHasFields(override val location: Location) : CompilationError(location)
 
-class InterfaceHasStaticInitBlock(location: Location) : CompilationError(location)
+data class InterfaceHasStaticInitBlock(override val location: Location) : CompilationError(location)
 
-class ForbiddenModifier(val modifierType: ModifierType, location: Location) : CompilationError(location)
+data class ForbiddenModifier(val modifierType: ModifierType, override val location: Location) : CompilationError(location)
 
-class RepeatedModifier(val modifierType: ModifierType, location: Location) : CompilationError(location)
+data class RepeatedModifier(val modifierType: ModifierType, override val location: Location) : CompilationError(location)
 
-class IllegalReturnTypeInOverriding(location: Location) : CompilationError(location)
+data class IllegalReturnTypeInOverriding(override val location: Location) : CompilationError(location)
 
-class MissingReturnStatement(location: Location) : CompilationError(location)
+data class MissingReturnStatement(override val location: Location) : CompilationError(location)
 
-class StaticMethodCanNotBeOverridden(location: Location) : CompilationError(location)
+data class StaticMethodCanNotBeOverridden(override val location: Location) : CompilationError(location)
 
-class StaticMethodCanNotOverrideInstanceMethod(location: Location) : CompilationError(location)
+data class StaticMethodCanNotOverrideInstanceMethod(override val location: Location) : CompilationError(location)
 
-class OverridingRestrictsVisibility(location: Location) : CompilationError(location)
+data class OverridingRestrictsVisibility(override val location: Location) : CompilationError(location)
 
-class NonAbstractClassMustOverrideAbstractMethod(
-    location: Location, val abstractMethod: MethodReference
+data class NonAbstractClassMustOverrideAbstractMethod(
+    override val location: Location, val abstractMethod: MethodReference
 ) : CompilationError(location)
 
-class MultipleDeclarationOfStaticInitBlock(location: Location) : CompilationError(location)
+data class MultipleDeclarationOfStaticInitBlock(override val location: Location) : CompilationError(location)
 
-class IllegalLValue(location: Location) : CompilationError(location)
+data class IllegalLValue(override val location: Location) : CompilationError(location)
 
-class AccessToNonStaticSymbolFromStaticContext(location: Location) : CompilationError(location)
+data class AccessToNonStaticSymbolFromStaticContext(override val location: Location) : CompilationError(location)
 
-class CanNotAccessPrivateMember(val name: String, location: Location) : CompilationError(location)
+data class CanNotAccessPrivateMember(val name: String, override val location: Location) : CompilationError(location)
 
-class StaticMemberAccessViaInstance(location: Location) : CompilationError(location)
+data class StaticMemberAccessViaInstance(override val location: Location) : CompilationError(location)
 
-class CanNotAccessProtectedMember(val name: String, location: Location) : CompilationError(location)
+data class CanNotAccessProtectedMember(val name: String, override val location: Location) : CompilationError(location)
 
-class ConstructorInInterface(location: Location) : CompilationError(location)
+data class ConstructorInInterface(override val location: Location) : CompilationError(location)
 
-class BreakOutsideOfLoop(location: Location) : CompilationError(location)
+data class BreakOutsideOfLoop(override val location: Location) : CompilationError(location)
 
-class ContinueOutsideLoop(location: Location) : CompilationError(location)
+data class ContinueOutsideLoop(override val location: Location) : CompilationError(location)
 
-class TypeMismatch(val expected: TypeReference, val actual: TypeReference, location: Location) :
+data class TypeMismatch(val expected: TypeReference, val actual: TypeReference, override val location: Location) :
     CompilationError(location)
 
-class NumericTypeExpected(location: Location) : CompilationError(location)
+data class NumericTypeExpected(override val location: Location) : CompilationError(location)
 
-class BinaryOperatorInapplicable(val leftType: TypeReference, val rightType: TypeReference, location: Location) :
+data class BinaryOperatorInapplicable(val leftType: TypeReference, val rightType: TypeReference, override val location: Location) :
     CompilationError(location)
 
-class ArrayExpected(location: Location) : CompilationError(location)
+data class ArrayExpected(override val location: Location) : CompilationError(location)
 
-sealed class CompilationError(val location: Location) : RuntimeException()
+sealed class CompilationError(open val location: Location) : RuntimeException()
 
-class AbstractMethodInNonAbstractClass(location: Location) : CompilationError(location)
+data class AbstractMethodInNonAbstractClass(override val location: Location) : CompilationError(location)
 
-class MethodWithBodyInInterface(location: Location) : CompilationError(location)
+data class MethodWithBodyInInterface(override val location: Location) : CompilationError(location)
 
-class AbstractMethodWithBody(location: Location) : CompilationError(location)
+data class AbstractMethodWithBody(override val location: Location) : CompilationError(location)
 
-class NameDeclarationClash(val name: String, location: Location) : CompilationError(location)
+data class NameDeclarationClash(val name: String, override val location: Location) : CompilationError(location)
 
-class ConflictingAccessModifiers(location: Location) : CompilationError(location)
+data class ConflictingAccessModifiers(override val location: Location) : CompilationError(location)
 
-class SignatureDeclarationClash(val signature: String, location: Location) :
+data class SignatureDeclarationClash(val signature: String, override val location: Location) :
     CompilationError(location)
 
-class ReservedClassName(val name: String, location: Location) : CompilationError(location)
+data class ReservedClassName(val name: String, override val location: Location) : CompilationError(location)
 
-class UnresolvedReference(val name: String, location: Location) : CompilationError(location)
+data class UnresolvedReference(val name: String, override val location: Location) : CompilationError(location)
 
-class UnresolvedConstructorCall(
-    location: Location,
+data class UnresolvedConstructorCall(
+    override val location: Location,
     val classReference: ClassReference,
     val argTypes: List<TypeReference>
 ) :
     CompilationError(location)
 
-class IllegalSuperCall(location: Location) : CompilationError(location)
+data class IllegalSuperCall(override val location: Location) : CompilationError(location)
 
-class AmbiguousCall(
-    location: Location, val candidateOne: ExecutableReference, val candidateTwo: ExecutableReference
+data class AmbiguousCall(
+    override val location: Location, val candidateOne: ExecutableReference, val candidateTwo: ExecutableReference
 ) : CompilationError(location)
 
-class ConstructorMustBeginWithSuperCall(
-    location: Location,
+data class ConstructorMustBeginWithSuperCall(
+    override val location: Location,
     val constructorReference: UserConstructorReference
 ) : CompilationError(location)
