@@ -1,0 +1,18 @@
+class A {
+    fun int hashCode() {
+        return 42;
+    }
+
+    constructor () { super(); }
+}
+
+class Main {
+    fun static int getHash(Object p) {
+        return p.hashCode();
+    }
+
+    fun static String box() {
+        if (Main.getHash(new A()) != 42) { return "Fail"; }
+        return "OK";
+    }
+}

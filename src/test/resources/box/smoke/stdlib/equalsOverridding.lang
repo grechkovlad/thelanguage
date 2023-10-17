@@ -1,0 +1,30 @@
+class A {
+    field int myField;
+
+    constructor (int p) {
+        super();
+        this.myField = p;
+    }
+
+    fun bool equals(Object p) {
+        return true;
+    }
+}
+
+class Main {
+
+    fun static bool refEq(Object p1, Object p2) {
+        return p1 == p2;
+    }
+
+    fun static bool eq(Object p1, Object p2) {
+        return p1.equals(p2);
+    }
+
+    fun static String box() {
+        if (Main.refEq(new A(4), new A(4))) { return "Fail 1"; }
+        if (!Main.eq(new A(4), new A(5))) { return "Fail 2"; }
+        return "OK";
+    }
+
+}

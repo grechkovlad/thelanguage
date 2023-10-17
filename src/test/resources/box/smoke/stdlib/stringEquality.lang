@@ -1,0 +1,13 @@
+class Main {
+
+    fun static bool eq(Object p1, Object p2) {
+        return p1.equals(p2);
+    }
+
+    fun static String box() {
+        if (!Main.eq("abacaba", "abacaba")) { return "Fail1"; }
+        if (!"abacaba".equals("abacaba")) { return "Fail 2"; }
+        if ("a".equals("b")) { return "Fail 3"; }
+        return "OK";
+    }
+}

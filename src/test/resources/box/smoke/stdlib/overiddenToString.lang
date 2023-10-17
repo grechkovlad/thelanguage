@@ -1,0 +1,17 @@
+class A {
+    fun String toString() {
+        return "OK";
+    }
+
+    constructor () { super(); }
+}
+
+class Main {
+    fun static String box() {
+        return Main.stringify(new A());
+    }
+
+    fun static String stringify(Object obj) {
+        return obj.toString();
+    }
+}

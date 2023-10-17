@@ -154,6 +154,26 @@ class CodegenBoxTests {
         }
         @Nested
         inner class Stdlib {
+            @Test
+            fun testStringEquality() {
+                runCodegenBoxTest("/smoke/stdlib/stringEquality")
+            }
+
+            @Test
+            fun testEqualsOverridding() {
+                runCodegenBoxTest("/smoke/stdlib/equalsOverridding")
+            }
+
+            @Test
+            fun testHashCodeOverridding() {
+                runCodegenBoxTest("/smoke/stdlib/hashCodeOverridding")
+            }
+
+            @Test
+            fun testOveriddenToString() {
+                runCodegenBoxTest("/smoke/stdlib/overiddenToString")
+            }
+
         }
         @Nested
         inner class Instantiating {

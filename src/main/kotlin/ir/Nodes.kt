@@ -67,6 +67,38 @@ object PrintIntMethod : BuiltinMethodReference(
     "print"
 )
 
+object ToStringMethod : BuiltinMethodReference(
+    emptyList(),
+    ObjectClassReference,
+    StringClassReference,
+    emptyList(),
+    "toString"
+)
+
+object EqualsMethodInObject : BuiltinMethodReference(
+    emptyList(),
+    ObjectClassReference,
+    BoolTypeReference,
+    listOf(ObjectClassReference),
+    "equals"
+)
+
+object EqualsMethodInString : BuiltinMethodReference(
+    emptyList(),
+    StringClassReference,
+    BoolTypeReference,
+    listOf(ObjectClassReference),
+    "equals"
+)
+
+object HashCodeMethod : BuiltinMethodReference(
+    emptyList(),
+    ObjectClassReference,
+    IntTypeReference,
+    emptyList(),
+    "hashCode"
+)
+
 object StringClassReference : ClassReference() {
     override val isInterface
         get() = false

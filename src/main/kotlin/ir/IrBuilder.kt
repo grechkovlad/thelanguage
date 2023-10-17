@@ -49,8 +49,9 @@ class IrBuilder(private val sources: List<SourceFile>) {
 
     private fun initBuiltinsInfo() {
         initSystemClassInfo()
-        classToMethodsInfo[ObjectClassReference] = MethodsOfClassScope(emptyList(), emptyList())
-        classToMethodsInfo[StringClassReference] = MethodsOfClassScope(emptyList(), emptyList())
+        classToMethodsInfo[ObjectClassReference] =
+            MethodsOfClassScope(emptyList(), listOf(ToStringMethod, EqualsMethodInObject, HashCodeMethod))
+        classToMethodsInfo[StringClassReference] = MethodsOfClassScope(emptyList(), listOf(EqualsMethodInString))
         classToMethodsInfo[UtilsClassReference] = MethodsOfClassScope(emptyList(), listOf(ParseIntMethod))
     }
 
