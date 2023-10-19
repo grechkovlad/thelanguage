@@ -120,7 +120,7 @@ class CodeGenerator(val project: Project) {
         clazz.fields.forEach { generateFieldDeclaration(it, classWriter) }
         clazz.constructors.forEach { generateConstructor(clazz, it, classWriter) }
         generateStaticInitBlock(clazz, classWriter)
-        return classWriter.also { classWriter.visitEnd() }
+        return classWriter
     }
 
     private fun generateConstructor(
@@ -143,7 +143,6 @@ class CodeGenerator(val project: Project) {
         generateStatements(constructor.body.drop(1), instructionAdapter, context)
         instructionAdapter.areturn(Type.VOID_TYPE)
         methodVisitor.visitMaxs(-1, -1)
-        methodVisitor.visitEnd()
     }
 
     private fun generateFieldInitialization(
@@ -167,7 +166,6 @@ class CodeGenerator(val project: Project) {
         generateStatements(clazz.staticInit.body, instructionAdapter, context)
         instructionAdapter.areturn(Type.VOID_TYPE)
         staticInitBlock.visitMaxs(-1, -1)
-        staticInitBlock.visitEnd()
     }
 
     private fun generateStaticFieldInitialization(
@@ -194,7 +192,6 @@ class CodeGenerator(val project: Project) {
         val context = Context(methodDeclaration)
         generateMethodBody(methodDeclaration, adapter, context)
         methodVisitor.visitMaxs(-1, -1)
-        methodVisitor.visitEnd()
     }
 
     private fun generateMethodBody(
