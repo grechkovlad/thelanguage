@@ -1,0 +1,12 @@
+class Main {
+    fun static int getFirst(Object p) {
+        return (p as int[][])[0][0];
+    }
+
+    fun static String box() {
+        var int[][] arr = new int[2][2];
+        arr[0][0] = 42;
+        if (Main.getFirst(arr) != 42) { return "Fail"; }
+        return "OK";
+    }
+}
