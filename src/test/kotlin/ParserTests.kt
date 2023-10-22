@@ -36,6 +36,11 @@ class ParserTests {
         testOnExample("misc")
     }
 
+    @Test
+    fun testCast() {
+        testOnExample("simpleCast")
+    }
+
     private fun testOnExample(name: String) {
         val srcText = readFromResources("/examples/$name.lang")
         val expected = readFromResources("/parser_ethalons/$name.txt").trim('\n')

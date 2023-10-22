@@ -39,4 +39,5 @@ interface VoidAstVisitor<T> {
     fun visit(superCall: SuperCall, context: T)
     fun visit(breakStatement: Break, context: T)
     fun visit(continueStatement: Continue, context: T)
+    fun visit(typeOp: TypeOp, context: T)
 }

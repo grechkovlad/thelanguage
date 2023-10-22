@@ -1,0 +1,25 @@
+class: A (1:1 - 7:1)
+  METHOD: foo (2:5 - 6:5)
+    RETURN TYPE: VOID
+    PARAMETERS: (2:17 - 2:26)
+      PARAMETER: p (2:18 - 2:25)
+        type: Object (2:18 - 2:23)
+    BODY:
+      BLOCK: (2:28 - 6:5)
+        IF: (3:9 - 5:9)
+          CONDITION:
+            TYPE OP: IS (3:13 - 3:18)
+              OPERAND:
+                p (3:13 - 3:13)
+              TYPE:
+                A (3:18 - 3:18)
+          THEN:
+            BLOCK: (3:21 - 5:9)
+              EXPRESSION STATEMENT: (4:14 - 4:27)
+                METHOD CALL: bar (4:14 - 4:26)
+                  TARGET:
+                    TYPE OP: AS (4:14 - 4:19)
+                      OPERAND:
+                        p (4:14 - 4:14)
+                      TYPE:
+                        A (4:19 - 4:19)

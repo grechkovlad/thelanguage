@@ -10,6 +10,7 @@ import isAccessModifier
 import kotlin.reflect.KFunction2
 import ast.BinaryOperationKind.*
 import ast.LocalVariableDeclaration
+import ast.TypeOp
 
 
 class IrBuilder(private val sources: List<SourceFile>) {
@@ -392,6 +393,7 @@ class IrBuilder(private val sources: List<SourceFile>) {
             is ast.UnaryOperation -> compileUnaryOperation(expressionAst, context)
             is ast.BoolLiteral -> if (expressionAst.value) TrueLiteral else FalseLiteral
             is ast.SuperCall -> compileSuperCall(expressionAst, context)
+            is ast.TypeOp -> compileTypeOp(expressionAst, context)
         }
     }
 
@@ -567,6 +569,12 @@ class IrBuilder(private val sources: List<SourceFile>) {
             return Not(operand)
         }
         throw TypeMismatch(BoolTypeReference, operand.type, unaryOperation.operand.location)
+    }
+
+    private fun compileTypeOp(typeOpAst: TypeOp, context: CompilationContext): Expression {
+        val expression = compileExpression(typeOpAst.expression, context)
+        val type = resolveType(typeOpAst.type)
+        return if (typeOpAst.kind == TypeOpKind.IS) Is(expression, type) else As(expression, type)
     }
 
     private fun compileBinaryOperation(binaryOperation: ast.BinaryOperation, context: CompilationContext): Expression {

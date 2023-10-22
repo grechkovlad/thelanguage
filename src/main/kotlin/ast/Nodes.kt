@@ -42,7 +42,7 @@ class FloatLiteral(val value: Float, location: Location) : Expression(location) 
     }
 }
 
-class BoolLiteral(val value: Boolean, location: Location): Expression(location) {
+class BoolLiteral(val value: Boolean, location: Location) : Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }
@@ -90,12 +90,23 @@ enum class BinaryOperationKind {
     PLUS, MINUS, MULT, DIV, LESS, LEQ, GREATER, GEQ, AND, OR, EQ, NOT_EQ
 }
 
+enum class TypeOpKind {
+    IS, AS
+}
+
 class BinaryOperation(
     val kind: BinaryOperationKind,
     val leftOperand: Expression,
     val rightOperand: Expression,
     location: Location
 ) : Expression(location) {
+    override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
+        visitor.visit(this, context)
+    }
+}
+
+class TypeOp(val expression: Expression, val type: TypeReference, val kind: TypeOpKind, location: Location) :
+    Expression(location) {
     override fun <T> accept(visitor: VoidAstVisitor<T>, context: T) {
         visitor.visit(this, context)
     }

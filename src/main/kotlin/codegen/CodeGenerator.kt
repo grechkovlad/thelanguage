@@ -363,6 +363,8 @@ class CodeGenerator(val project: Project) {
             is StringLiteral -> adapter.aconst(expression.value)
             is ThisAccess -> adapter.load(0, context.method.declaringClass.reference.asmType)
             is TypeAccess -> error("Type access should not be evaluated")
+            is As -> generateAs(expression, adapter, context)
+            is Is -> generateIs(expression, adapter, context)
         }
 
     private fun generateCreateArray(
@@ -640,6 +642,16 @@ class CodeGenerator(val project: Project) {
         getVariable: GetVariable, adapter: InstructionAdapter, context: Context
     ) {
         adapter.load(context.localIndices[getVariable.variable]!!, getVariable.variable.type.asmType)
+    }
+
+    private fun generateIs(isExpression: Is, adapter: InstructionAdapter, context: Context) {
+        generateExpression(isExpression.expression, adapter, context)
+        adapter.instanceOf(isExpression.typeOperand.asmType)
+    }
+
+    private fun generateAs(asExpression: As, adapter: InstructionAdapter, context: Context) {
+        generateExpression(asExpression.expression, adapter, context)
+        adapter.checkcast(asExpression.typeOperand.asmType)
     }
 
     private fun generateArrayLength(

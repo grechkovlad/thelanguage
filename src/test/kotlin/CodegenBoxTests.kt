@@ -73,6 +73,14 @@ class CodegenBoxTests {
             runCodegenBoxTest("/smoke/array")
         }
 
+        @Nested
+        inner class Casts {
+            @Test
+            fun testSimpleCast() {
+                runCodegenBoxTest("/smoke/casts/simpleCast")
+            }
+
+        }
         @Test
         fun testSimplestReturn() {
             runCodegenBoxTest("/smoke/simplestReturn")

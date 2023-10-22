@@ -1,0 +1,16 @@
+class A {
+    fun String foo() {
+        return "OK";
+    }
+    constructor() { super(); }
+}
+
+class Main {
+    fun static String box() {
+        var Object obj = new A();
+        if (obj is A) {
+            return (obj as A).foo();
+        }
+        return "Fail";
+    }
+}

@@ -383,4 +383,16 @@ private class StringifierVisitor(private val builder: StringBuilder) : VoidAstVi
         addIdent(context)
         append("CONTINUE")
     }
+
+    override fun visit(typeOp: TypeOp, context: Int) {
+        addIdent(context)
+        append("TYPE OP: ${typeOp.kind} ${typeOp.location.dumpWithoutFilename()}\n")
+        addIdent(context + 1)
+        append("OPERAND:\n")
+        typeOp.expression.accept(this, context + 2)
+        append("\n")
+        addIdent(context + 1)
+        append("TYPE:\n")
+        typeOp.type.accept(this, context + 2)
+    }
 }

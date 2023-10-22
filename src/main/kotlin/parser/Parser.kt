@@ -421,7 +421,19 @@ class Parser(input: CharSequence, private val fileName: String, ignoreDiagnostic
         return res
     }
 
-    private fun parseExpression() = parseBinaryOperation(mapOf(OR to BinaryOperationKind.OR), ::parseDisjunct)
+    private fun parseTypeOperation(): Expression {
+        var res = parseBinaryOperation(mapOf(OR to BinaryOperationKind.OR), ::parseDisjunct)
+        while (atKeySeq(IS, AS)) {
+            val typeOpToken = lexer.current as KeySeq
+            lexer.advance()
+            val typeReference = parseTypeReference()
+            val typeOpKind = if (typeOpToken.type == IS) TypeOpKind.IS else TypeOpKind.AS
+            res = TypeOp(res, typeReference, typeOpKind, res.location between typeReference.location)
+        }
+        return res
+    }
+
+    private fun parseExpression() = parseTypeOperation()
 
     private fun parseDisjunct() = parseBinaryOperation(mapOf(AND to BinaryOperationKind.AND), ::parseConjunct)
 
@@ -432,7 +444,7 @@ class Parser(input: CharSequence, private val fileName: String, ignoreDiagnostic
             GREATER to BinaryOperationKind.GREATER,
             GEQ to BinaryOperationKind.GEQ,
             EQUALS to BinaryOperationKind.EQ,
-            NOT_EQUALS to BinaryOperationKind.NOT_EQ,
+            NOT_EQUALS to BinaryOperationKind.NOT_EQ
         ), ::parseComparison
     )
 

@@ -2,6 +2,7 @@ package ir
 
 import ClassKind
 import ModifierType
+import ast.TypeOpKind
 
 sealed class IrNode
 
@@ -272,6 +273,19 @@ class ConstructorDeclaration(
 class IntLiteral(val value: Int) : Expression(IntTypeReference)
 class FloatLiteral(val value: Float) : Expression(FloatTypeReference)
 class StringLiteral(val value: String) : Expression(StringClassReference)
+
+sealed class TypeOp(
+    val expression: Expression,
+    val kind: TypeOpKind,
+    val typeOperand: TypeReference,
+    type: TypeReference
+) : Expression(type)
+
+class Is(expression: Expression, typeOperand: TypeReference) :
+    TypeOp(expression, TypeOpKind.IS, typeOperand, BoolTypeReference)
+
+class As(expression: Expression, typeOperand: TypeReference) :
+    TypeOp(expression, TypeOpKind.AS, typeOperand, typeOperand)
 
 sealed class BinaryOperation(val leftOperand: Expression, val rightOperand: Expression, type: TypeReference) :
     Expression(type)

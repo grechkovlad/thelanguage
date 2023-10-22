@@ -51,7 +51,9 @@ enum class KeySeqType(val stringValue: String) {
     AT("@"),
     SHARP("#"),
     BREAK("break"),
-    CONTINUE("continue")
+    CONTINUE("continue"),
+    AS("as"),
+    IS("is")
 }
 
 sealed class Token {

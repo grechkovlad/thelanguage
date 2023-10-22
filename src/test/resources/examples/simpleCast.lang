@@ -1,0 +1,7 @@
+class A {
+    fun void foo(Object p) {
+        if (p is A) {
+            (p as A).bar();
+        }
+    }
+}

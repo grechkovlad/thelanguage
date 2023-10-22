@@ -37,6 +37,11 @@ class LexerTests {
     }
 
     @Test
+    fun testCast() {
+        testOnExample("simpleCast")
+    }
+
+    @Test
     fun testRollback() {
         val lexer = LL3Lexer("class A { }", DiagnosticMarkupSupportMode.DONT_SUPPORT)
         assertTrue(assertThrows<IllegalRollbackException> { lexer.rollback() })
