@@ -3,10 +3,7 @@ package codegen
 import ClassKind
 import ModifierType
 import ir.*
-import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
-import org.jetbrains.org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
-import org.jetbrains.org.objectweb.asm.ClassWriter.COMPUTE_MAXS
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
