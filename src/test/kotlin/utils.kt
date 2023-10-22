@@ -61,7 +61,6 @@ fun runInterpreterBoxTest(path: String) {
 fun runCodegenBoxTest(path: String) {
     val srcText = readFromResources("/box/$path.lang")
     val classes = CodeGenerator(IrBuilder(listOf(Parser(srcText, path, false).parse())).build()).generate()
-    println(classes.stringify())
     val classloader = object : URLClassLoader(emptyArray()) {
         override fun findClass(name: String?): Class<*> {
             require(name != null)
