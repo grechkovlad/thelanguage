@@ -186,6 +186,11 @@ class DiagnosticTests {
         }
 
         @Test
+        fun testArrayInvariance() {
+            runDiagnosticTest("/smoke/arrayInvariance")
+        }
+
+        @Test
         fun testConstructorInInterface() {
             runDiagnosticTest("/smoke/constructorInInterface")
         }

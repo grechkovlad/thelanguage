@@ -1,0 +1,5 @@
+class Main {
+    fun static void foo() {
+        var Object[] x = @TypeMismatch new String[1] #;
+    }
+}
