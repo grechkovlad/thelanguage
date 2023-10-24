@@ -1,0 +1,36 @@
+class A {
+    constructor() { super(); }
+
+    fun String getStr() {
+        return "A";
+    }
+}
+
+class B : A {
+    constructor() { super(); }
+
+    fun String getStr() {
+        return "B";
+    }
+}
+
+class X<T> {
+    T t;
+
+    constructor(T t) {
+        super();
+        this.t = t;
+    }
+}
+
+
+class Main {
+    fun static foo(X<? out A> x) {
+        return x.t.getStr();
+    }
+
+    fun static String box() {
+        if (Main.foo(new X<B>(new B())) != "B") { return "Fail"; }
+        return "OK";
+    }
+}

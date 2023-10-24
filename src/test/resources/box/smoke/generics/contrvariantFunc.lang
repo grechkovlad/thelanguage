@@ -1,0 +1,17 @@
+class Consumer<T> {
+    constructor() { super(); }
+
+    fun String consume(T t) {
+        return t.toString();
+    }
+}
+
+class Main {
+    fun static String consumeString(Consumer<in String> consumer) {
+        return consumer.consume("OK").toString():
+    }
+
+    fun static String box() {
+        return Main.consumeString(new Consumer<Object>());
+    }
+}

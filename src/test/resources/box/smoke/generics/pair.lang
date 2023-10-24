@@ -1,0 +1,25 @@
+class Pair<T, R> {
+    field T first;
+    field R second;
+
+    constructor(T first, R second) {
+        super();
+        this.first = first;
+        this.second = second;
+    }
+}
+
+class A {
+    constructor() { super(); }
+}
+
+class Main() {
+    fun String box() {
+        val Pair<String, A> pair = new Pair<String, A>("OK", new A());
+        return Main.stringId(pair.first);
+    }
+
+    fun static String stringId(String str) {
+        return str;
+    }
+}

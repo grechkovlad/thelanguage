@@ -1,0 +1,19 @@
+class A<T> {
+    field T myField;
+
+    constructor(T t) {
+        super();
+        this.myField = t;
+    }
+
+    fun T getField() {
+        return this.myField;
+    }
+}
+
+class Main {
+    fun static String box() {
+        if (!(new A<String>("abacaba").equals("abacaba"))) { return "Fail"; }
+        return "OK";
+    }
+}

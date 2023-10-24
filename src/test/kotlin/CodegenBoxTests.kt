@@ -5,6 +5,44 @@ class CodegenBoxTests {
 
     @Nested
     inner class Smoke {
+        @Nested
+        inner class Generics {
+            @Test
+            fun testSimpleGenericMethod() {
+                runCodegenBoxTest("/smoke/generics/simpleGenericMethod")
+            }
+
+            @Test
+            fun testContrvariantFunc() {
+                runCodegenBoxTest("/smoke/generics/contrvariantFunc")
+            }
+
+            @Test
+            fun testCovarianFun() {
+                runCodegenBoxTest("/smoke/generics/covarianFun")
+            }
+
+            @Test
+            fun testClassWithTypeParameterField() {
+                runCodegenBoxTest("/smoke/generics/classWithTypeParameterField")
+            }
+
+            @Test
+            fun testGenericClassInstantiation() {
+                runCodegenBoxTest("/smoke/generics/genericClassInstantiation")
+            }
+
+            @Test
+            fun testPair() {
+                runCodegenBoxTest("/smoke/generics/pair")
+            }
+
+            @Test
+            fun testClassWithNonTrivialUpperBoundParam() {
+                runCodegenBoxTest("/smoke/generics/classWithNonTrivialUpperBoundParam")
+            }
+
+        }
         @Test
         fun testIf() {
             runCodegenBoxTest("/smoke/if")

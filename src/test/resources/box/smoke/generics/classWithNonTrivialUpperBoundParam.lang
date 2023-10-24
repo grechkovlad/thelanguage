@@ -1,0 +1,35 @@
+interface I {
+    fun String getStr();
+}
+
+class StrHolder {
+    field private String str;
+
+    constructor(String str) {
+        this.str = str;
+    }
+
+    fun String getStr() {
+        return this.str;
+    }
+}
+
+class A<T : I> {
+    field T t;
+
+    fun String foo() {
+        return t.getStr();
+    }
+
+    constructor(T t) {
+        super();
+        this.t = t;
+    }
+}
+
+class Main {
+    fun static String box() {
+        var A<StrHolder> a = new A<StrHolder>(new StrHolder("OK"));
+        return a.foo();
+    }
+}

@@ -1,0 +1,9 @@
+class Main {
+    fun static <T> T id(T t) {
+        return t;
+    }
+
+    fun static String box() {
+        return Main.id<String>("OK");
+    }
+}

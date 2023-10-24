@@ -1,0 +1,12 @@
+class A<T> {
+    fun String foo() {
+        return "OK";
+    }
+    constructor () { super(); }
+}
+
+class Main {
+    fun String box() {
+        return new A<String>().foo();
+    }
+}
