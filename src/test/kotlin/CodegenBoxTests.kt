@@ -28,6 +28,11 @@ class CodegenBoxTests {
             }
 
             @Test
+            fun testRecursiveUpperBound() {
+                runCodegenBoxTest("/smoke/generics/recursiveUpperBound")
+            }
+
+            @Test
             fun testGenericClassInstantiation() {
                 runCodegenBoxTest("/smoke/generics/genericClassInstantiation")
             }

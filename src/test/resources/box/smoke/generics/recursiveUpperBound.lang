@@ -1,0 +1,31 @@
+interface Comparable<T> {
+    fun int compare(T other);
+}
+
+class abstract Fruit<T : Fruit<T>> : Comparable<T> {
+
+    field protected int size;
+
+    constructor(int size) {
+        this.size = size;
+    }
+
+    fun int compare(T other) {
+        return size - other.size;
+    }
+}
+
+class Apple : Fruit<Apple> {
+    constructor(int size) {
+        super(size);
+    }
+}
+
+class Main {
+    fun static String box() {
+        if (new Apple(2).compare(new Apple((1))) != 1) {
+            return "Fail";
+        }
+        return "OK";
+    }
+}
